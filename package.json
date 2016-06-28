@@ -1,0 +1,31 @@
+{
+  "name": "react-native-document-picker",
+  "version": "1.0.0",
+  "description": "A react native interface to access Documents from dropbox google drive, iCloud",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Elyx0/react-native-document-picker.git"
+  },
+  "keywords": [
+    "document",
+    "picker",
+    "uidocumentmenuviewcontroller",
+    "react-native",
+    "dropbox",
+    "google-drive",
+    "icloud"
+  ],
+  "author": "Elyx0 <elyx00@gmail.com> (http://elyx0.ghost.io)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Elyx0/react-native-document-picker/issues"
+  },
+  "homepage": "https://github.com/Elyx0/react-native-document-picker#readme",
+  "devDependencies": {
+    "react-native": "^0.28.0"
+  }
+}

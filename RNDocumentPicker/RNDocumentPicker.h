@@ -1,13 +1,7 @@
-//
-//  RNDocumentPicker.h
-//  RNDocumentPicker
-//
-//  Created by Charles Darwin on 6/28/16.
-//  Copyright © 2016 Elialys. All rights reserved.
-//
+#import "RCTBridgeModule.h"
 
-#import <Foundation/Foundation.h>
+@import UIKit;
 
-@interface RNDocumentPicker : NSObject
+@interface RNDocumentPicker : NSObject <RCTBridgeModule>
 
 @end
