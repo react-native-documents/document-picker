@@ -83,7 +83,7 @@ RNFS.uploadFiles({
        }
        console.log(err);
     });
-    ```
+```
 ## Reminder
 
 You need to enable iCloud Documents to access iCloud 
