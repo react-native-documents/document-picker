@@ -43,3 +43,63 @@ The full list of UTI is available here:
 
 ## Here is how it looks:
 ![screenshot](http://i.stack.imgur.com/dv0iQ.png)
+
+
+## How to send it back ?
+
+I recommend using [https://github.com/johanneslumpe/react-native-fs](https://github.com/johanneslumpe/react-native-fs)
+
+```javascript
+let url = "file://whatever/com.bla.bla/file.ext"; //The url you received from the DocumentPicker
+
+// I STRONGLY RECOMMEND ADDING A SMALL SETTIMEOUT before uploading the url you just got. 
+const split = url.split('/');
+const name = split.pop();
+const inbox = split.pop();
+const realPath = `${RNFS.TemporaryDirectoryPath}${inbox}/${name}`;
+
+const uploadBegin = (response) => {
+  const jobId = response.jobId;
+  console.log('UPLOAD HAS BEGUN! JobId: ' + jobId);
+};
+
+const uploadProgress = (response) => {
+  const percentage = Math.floor((response.totalBytesSent/response.totalBytesExpectedToSend) * 100);
+  console.log('UPLOAD IS ' + percentage + '% DONE!');
+};
+    
+RNFS.uploadFiles({
+   toUrl: uploadUrl,
+   files: [{
+      name,
+      filename:name,
+      filepath: realPath,
+    }],
+   method: 'POST',
+   headers: {
+      'Accept': 'application/json',
+   },
+   begin: uploadBegin,
+   beginCallback: uploadBegin, // Don't ask me, only way I made it work as of 1.5.1
+   progressCallback: uploadProgress,
+   progress: uploadProgress
+   })
+   .then((response) => {
+     console.log(response,"<<< Response");
+     if (response.statusCode == 200) { //You might not be getting a statusCode at all. Check
+        console.log('FILES UPLOADED!');
+      } else {
+        console.log('SERVER ERROR');
+       }
+     })
+     .catch((err) => {
+       if(err.description === "cancelled") {
+         // cancelled by user
+       }
+       console.log(err);
+    });
+```
+## Reminder
+
+You need to enable iCloud Documents to access iCloud 
+![screen](https://313e5987718b346aaf83-f5e825270f29a84f7881423410384342.ssl.cf1.rackcdn.com/1411920674-enable-icloud-drive.png)
