@@ -48,11 +48,22 @@ The full list of UTI is available here:
 ## How to send it back ?
 
 I recommend using [https://github.com/johanneslumpe/react-native-fs](https://github.com/johanneslumpe/react-native-fs)
+I had to modify [Uploader.m](https://gist.github.com/Elyx0/5dc53bef294b42c847f1baea7cc5e911) so it would use `NSFileCoordinator` with `NSFileCoordinatorReadingForUploading` option.
+
+I added a check for file length that would be thrown into RNFS catch block.
+```obj-c
+if ([fileData length] == 0) {
+    NSError *errorUp = [NSError errorWithDomain:@"com.whatever.yourapp" code:77 userInfo:[NSDictionary dictionaryWithObject:@"empty" forKey:NSLocalizedDescriptionKey]];
+    _params.errorCallback(errorUp);
+    return;
+}
+```
+
 
 ```javascript
 let url = "file://whatever/com.bla.bla/file.ext"; //The url you received from the DocumentPicker
 
-// I STRONGLY RECOMMEND ADDING A SMALL SETTIMEOUT before uploading the url you just got. 
+// I STRONGLY RECOMMEND ADDING A SMALL SETTIMEOUT before uploading the url you just got.
 const split = url.split('/');
 const name = split.pop();
 const inbox = split.pop();
@@ -67,7 +78,7 @@ const uploadProgress = (response) => {
   const percentage = Math.floor((response.totalBytesSent/response.totalBytesExpectedToSend) * 100);
   console.log('UPLOAD IS ' + percentage + '% DONE!');
 };
-    
+
 RNFS.uploadFiles({
    toUrl: uploadUrl,
    files: [{
@@ -93,13 +104,30 @@ RNFS.uploadFiles({
        }
      })
      .catch((err) => {
-       if(err.description === "cancelled") {
-         // cancelled by user
+       if (err.description) {
+         switch (err.description) {
+           case "cancelled":
+             console.log("Upload cancelled");
+             break;
+           case "empty"
+             console.log("Empty file");
+           default:
+            //Unknown
+         }
+       } else {
+        //Weird
        }
        console.log(err);
     });
 ```
 ## Reminder
 
-You need to enable iCloud Documents to access iCloud 
+You need to enable iCloud Documents to access iCloud
 ![screen](https://313e5987718b346aaf83-f5e825270f29a84f7881423410384342.ssl.cf1.rackcdn.com/1411920674-enable-icloud-drive.png)
+
+
+## Halp wanted: Improvements
+
+- Fix Xcode warning about constraints
+- support options for the [UIDocumentMenuViewController](https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/DocumentPickerProgrammingGuide/AccessingDocuments/AccessingDocuments.html#//apple_ref/doc/uid/TP40014451-CH2-SW5)
+- Handle Upload by itself ?

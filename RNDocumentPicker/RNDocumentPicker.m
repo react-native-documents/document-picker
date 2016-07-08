@@ -34,13 +34,13 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
 
     NSArray *allowedUTIs = [RCTConvert NSArray:options[@"filetype"]];
     UIDocumentMenuViewController *documentPicker = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
-    
+
     [composeCallbacks addObject:callback];
-    
-    
+
+
     documentPicker.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
-    
+
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
@@ -56,7 +56,14 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     if (controller.documentPickerMode == UIDocumentPickerModeImport) {
         RCTResponseSenderBlock callback = [composeCallbacks lastObject];
         [composeCallbacks removeLastObject];
-        callback(@[[NSNull null], url.absoluteString]);
+        [url startAccessingSecurityScopedResource];
+        NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
+        __block NSError *error;
+        [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&error byAccessor:^(NSURL *newURL) {
+             callback(@[[NSNull null], newURL.absoluteString]);
+        }];
+        [url stopAccessingSecurityScopedResource];
+
     }
 }
 
