@@ -48,26 +48,25 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
             return;
 
         if (resultCode != Activity.RESULT_OK) {
-            callback.invoke(null, "Bad result code: " + resultCode);
+            callback.invoke("Bad result code: " + resultCode, null);
             return;
         }
 
         if (data == null) {
-            callback.invoke(null, "No data");
+            callback.invoke("No data", null);
             return;
         }
 
         try {
             Uri uri = data.getData();
-            WritableMap map = dumpImageMetaData(uri);
-            callback.invoke(null, map);
+            callback.invoke(null, toMapWithMetadata(uri));
         } catch (Exception e) {
             Log.e(NAME, "Failed to read", e);
             callback.invoke(e.getMessage(), null);
         }
     }
 
-    public WritableMap dumpImageMetaData(Uri uri) {
+    public WritableMap toMapWithMetadata(Uri uri) {
         WritableMap map = Arguments.createMap();
         map.putString("uri", uri.toString());
 
