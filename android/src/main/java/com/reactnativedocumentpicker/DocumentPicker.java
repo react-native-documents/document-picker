@@ -78,13 +78,13 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         try {
             if (cursor != null && cursor.moveToFirst()) {
 
-                map.putString("name", cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
+                map.putString("fileName", cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
 
                 int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
                 if (!cursor.isNull(sizeIndex)) {
                     String size = cursor.getString(sizeIndex);
                     if (size != null)
-                        map.putInt("size", Integer.valueOf(size));
+                        map.putInt("fileSize", Integer.valueOf(size));
                 }
             }
         } finally {

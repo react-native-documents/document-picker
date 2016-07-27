@@ -66,6 +66,9 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
             NSMutableDictionary* result = [NSMutableDictionary dictionary];
             [result setValue:newURL.absoluteString forKey:@"uri"];
 
+            NSString *fileName = [newURL lastPathComponent];
+            [result setValue:fileName forKey:@"fileName"];
+            
             NSError *attributesError = nil;
             NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:newURL.absoluteString error:&attributesError];
             
