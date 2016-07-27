@@ -56,12 +56,25 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     if (controller.documentPickerMode == UIDocumentPickerModeImport) {
         RCTResponseSenderBlock callback = [composeCallbacks lastObject];
         [composeCallbacks removeLastObject];
+
         [url startAccessingSecurityScopedResource];
+        
         NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
         __block NSError *error;
+
         [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&error byAccessor:^(NSURL *newURL) {
-             callback(@[[NSNull null], newURL.absoluteString]);
+            NSMutableDictionary* result = [NSMutableDictionary dictionary];
+            [result setValue:newURL.absoluteString forKey:@"uri"];
+
+            NSError *attributesError = nil;
+            NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:newURL.absoluteString error:&attributesError];
+            
+            NSNumber *fileSizeNumber = [fileAttributes objectForKey:NSFileSize];
+            [result setValue:fileSizeNumber forKey:@"fileSize"];
+            
+            callback(@[[NSNull null], result]);
         }];
+        
         [url stopAccessingSecurityScopedResource];
 
     }
