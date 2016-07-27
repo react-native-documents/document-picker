@@ -1,5 +1,8 @@
 package com.reactnativedocumentpicker;
 
+import android.content.Intent;
+import android.os.Bundle;
+
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -19,5 +22,9 @@ public class DocumentPicker extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void init(Callback callback) {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("image/*");
+        getReactApplicationContext().startActivityForResult(intent, OPEN_REQUEST_CODE, Bundle.EMPTY);
     }
 }
