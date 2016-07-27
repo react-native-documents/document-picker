@@ -19,6 +19,9 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
+/**
+ * @see https://developer.android.com/guide/topics/providers/document-provider.html
+ */
 public class DocumentPicker extends ReactContextBaseJavaModule implements ActivityEventListener {
     private static final String NAME = "RNDocumentPicker";
     private static final int READ_REQUEST_CODE = 41;
