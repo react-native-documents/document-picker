@@ -24,6 +24,10 @@ class DocumentPickerUtil {
   static audio() {
     return (Platform.OS === 'android') ? "audio/*" : "public.audio";
   }
+
+  static pdf() {
+    return (Platform.OS === 'android') ? "application/pdf" : "com.adobe.pdf";
+  }
 }
 
 module.exports = {DocumentPickerUtil, DocumentPicker};
