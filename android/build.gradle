@@ -1,0 +1,40 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.1.2'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 'android-23'
+    buildToolsVersion '23.0.3'
+
+    defaultConfig {
+        minSdkVersion 16
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFile getDefaultProguardFile('proguard-android.txt')
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url "http://files.couchbase.com/maven2/"
+        }
+    }
+}
+
+dependencies {
+    compile 'com.facebook.react:react-native:0.19.+'
+}
