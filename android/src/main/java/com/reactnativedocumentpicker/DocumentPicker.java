@@ -1,30 +1,98 @@
 package com.reactnativedocumentpicker;
 
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
+import android.util.Log;
 
+import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableMap;
 
-public class DocumentPicker extends ReactContextBaseJavaModule {
-    private static final int OPEN_REQUEST_CODE = 41;
+public class DocumentPicker extends ReactContextBaseJavaModule implements ActivityEventListener {
+    public static final String NAME = "RNDocumentPicker";
+    private static final int READ_REQUEST_CODE = 41;
+    private Callback callback;
 
     public DocumentPicker(ReactApplicationContext reactContext) {
         super(reactContext);
+        reactContext.addActivityEventListener(this);
     }
 
     @Override
     public String getName() {
-        return "react-native-document-picker";
+        return NAME;
     }
 
     @ReactMethod
-    public void init(Callback callback) {
+    public void show(ReadableMap args, Callback callback) {
+        this.callback = callback;
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("image/*");
-        getReactApplicationContext().startActivityForResult(intent, OPEN_REQUEST_CODE, Bundle.EMPTY);
+        getReactApplicationContext().startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != READ_REQUEST_CODE)
+            return;
+
+        if (resultCode != Activity.RESULT_OK) {
+            callback.invoke(null, "Bad result code: " + resultCode);
+            return;
+        }
+
+        if (data == null) {
+            callback.invoke(null, "No data");
+            return;
+        }
+
+        try {
+            Uri uri = data.getData();
+            WritableMap map = dumpImageMetaData(uri);
+            callback.invoke(null, map);
+        } catch (Exception e) {
+            Log.e(NAME, "Failed to read", e);
+            callback.invoke(e.getMessage(), null);
+        }
+    }
+
+    public WritableMap dumpImageMetaData(Uri uri) {
+        WritableMap map = Arguments.createMap();
+        map.putString("uri", uri.toString());
+
+        ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
+
+        map.putString("type", contentResolver.getType(uri));
+
+        Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+
+                map.putString("name", cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
+
+                int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+                if (!cursor.isNull(sizeIndex)) {
+                    String size = cursor.getString(sizeIndex);
+                    if (size != null)
+                        map.putInt("size", Integer.valueOf(size));
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+
+        return map;
+    }
+
 }
