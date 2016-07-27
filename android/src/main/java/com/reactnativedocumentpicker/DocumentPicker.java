@@ -15,12 +15,14 @@ import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
 public class DocumentPicker extends ReactContextBaseJavaModule implements ActivityEventListener {
-    public static final String NAME = "RNDocumentPicker";
+    private static final String NAME = "RNDocumentPicker";
     private static final int READ_REQUEST_CODE = 41;
+
     private Callback callback;
 
     public DocumentPicker(ReactApplicationContext reactContext) {
@@ -35,10 +37,18 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
     @ReactMethod
     public void show(ReadableMap args, Callback callback) {
-        this.callback = callback;
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/*");
+
+        if(!args.isNull("filetype")) {
+            ReadableArray filetypes = args.getArray("filetype");
+            if(filetypes.size() > 0) {
+                intent.setType(filetypes.getString(0));
+            }
+        }
+
+        this.callback = callback;
+
         getReactApplicationContext().startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
     }
 
@@ -93,5 +103,4 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
         return map;
     }
-
 }
