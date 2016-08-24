@@ -20,7 +20,7 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
 /**
- * @see https://developer.android.com/guide/topics/providers/document-provider.html
+ * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
  */
 public class DocumentPicker extends ReactContextBaseJavaModule implements ActivityEventListener {
     private static final String NAME = "RNDocumentPicker";
@@ -40,7 +40,12 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
     @ReactMethod
     public void show(ReadableMap args, Callback callback) {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        Intent intent;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        } else {
+            intent = new Intent(Intent.ACTION_PICK);
+        }
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         if(!args.isNull("filetype")) {
