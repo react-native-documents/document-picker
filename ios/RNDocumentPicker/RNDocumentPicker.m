@@ -42,6 +42,9 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
     
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
+    while (rootViewController.modalViewController) {
+        rootViewController = rootViewController.modalViewController;
+    }
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
 
@@ -49,6 +52,9 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
 - (void)documentMenu:(UIDocumentMenuViewController *)documentMenu didPickDocumentPicker:(UIDocumentPickerViewController *)documentPicker {
     documentPicker.delegate = self;
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
+    while (rootViewController.modalViewController) {
+        rootViewController = rootViewController.modalViewController;
+    }
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
 
