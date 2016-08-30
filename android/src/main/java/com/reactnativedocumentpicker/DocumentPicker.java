@@ -111,4 +111,7 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
         return map;
     }
+
+    // Required for RN 0.30+ modules than implement ActivityEventListener
+    public void onNewIntent(Intent intent) { }
 }
