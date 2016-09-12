@@ -48,9 +48,9 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         }
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-        if(!args.isNull("filetype")) {
+        if (!args.isNull("filetype")) {
             ReadableArray filetypes = args.getArray("filetype");
-            if(filetypes.size() > 0) {
+            if (filetypes.size() > 0) {
                 intent.setType(filetypes.getString(0));
             }
         }
@@ -89,7 +89,7 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         }
     }
 
-    public WritableMap toMapWithMetadata(Uri uri) {
+    private WritableMap toMapWithMetadata(Uri uri) {
         WritableMap map = Arguments.createMap();
         map.putString("uri", uri.toString());
 
@@ -98,6 +98,7 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         map.putString("type", contentResolver.getType(uri));
 
         Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
+
         try {
             if (cursor != null && cursor.moveToFirst()) {
 
@@ -111,12 +112,15 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
                 }
             }
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return map;
     }
 
     // Required for RN 0.30+ modules than implement ActivityEventListener
-    public void onNewIntent(Intent intent) { }
+    public void onNewIntent(Intent intent) {
+    }
 }
