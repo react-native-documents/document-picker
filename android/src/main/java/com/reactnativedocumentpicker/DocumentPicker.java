@@ -62,6 +62,11 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
     // removed @Override temporarily just to get it working on RN0.33 and RN0.32
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+        // Ignored, required to implement ActivityEventListener for RN 0.33
+    }
+
+    // removed @Override temporarily just to get it working on RN0.33 and RN0.32
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode != READ_REQUEST_CODE)
             return;
 
@@ -114,9 +119,4 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
     // Required for RN 0.30+ modules than implement ActivityEventListener
     public void onNewIntent(Intent intent) { }
-
-    // removed @Override temporarily just to get it working on RN0.33 and RN0.32
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Ignored, required to implement ActivityEventListener for RN 0.33
-    }
 }
