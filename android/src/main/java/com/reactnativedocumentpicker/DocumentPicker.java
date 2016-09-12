@@ -60,9 +60,9 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         getReactApplicationContext().startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
     }
 
-    // removed @Override temporarily just to get it working on RN0.33 and RN0.32
+    // removed @Override temporarily just to get it working on RN0.33 and RN0.32 - will remove
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-        // Ignored, required to implement ActivityEventListener for RN 0.33
+        onActivityResult(requestCode, resultCode, data);
     }
 
     // removed @Override temporarily just to get it working on RN0.33 and RN0.32
