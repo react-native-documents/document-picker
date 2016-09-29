@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -19,12 +20,25 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
  */
 public class DocumentPicker extends ReactContextBaseJavaModule implements ActivityEventListener {
     private static final String NAME = "RNDocumentPicker";
     private static final int READ_REQUEST_CODE = 41;
+
+    private static class Fields {
+        private static final String FILE_SIZE = "fileSize";
+        private static final String FILE_NAME = "fileName";
+        private static final String TYPE = "type";
+    }
 
     private Callback callback;
 
@@ -90,25 +104,69 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
     }
 
     private WritableMap toMapWithMetadata(Uri uri) {
-        WritableMap map = Arguments.createMap();
+        WritableMap map;
+        if(uri.toString().startsWith("/")) {
+            map = metaDataFromFile(new File(uri.toString()));
+        } else if (uri.toString().startsWith("http")) {
+            map = metaDataFromUri(uri);
+        } else {
+            map = metaDataFromContentResolver(uri);
+        }
+
         map.putString("uri", uri.toString());
+
+        return map;
+    }
+
+    private WritableMap metaDataFromUri(Uri uri) {
+        WritableMap map = Arguments.createMap();
+
+        File outputDir = getReactApplicationContext().getCacheDir();
+        try {
+            File downloaded = download(uri, outputDir);
+
+            map.putInt(Fields.FILE_SIZE, (int) downloaded.length());
+            map.putString(Fields.FILE_NAME, downloaded.getName());
+            map.putString(Fields.TYPE, mimeTypeFromName(uri.toString()));
+        } catch (IOException e) {
+            Log.e("DocumentPicker", "Failed to download file", e);
+        }
+
+        return map;
+    }
+
+    private WritableMap metaDataFromFile(File file) {
+        WritableMap map = Arguments.createMap();
+
+        if(!file.exists())
+            return map;
+
+        map.putInt(Fields.FILE_SIZE, (int) file.length());
+        map.putString(Fields.FILE_NAME, file.getName());
+        map.putString(Fields.TYPE, mimeTypeFromName(file.getAbsolutePath()));
+
+        return map;
+    }
+
+    private WritableMap metaDataFromContentResolver(Uri uri) {
+        WritableMap map = Arguments.createMap();
 
         ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 
-        map.putString("type", contentResolver.getType(uri));
+        map.putString(Fields.TYPE, contentResolver.getType(uri));
 
         Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
 
         try {
             if (cursor != null && cursor.moveToFirst()) {
 
-                map.putString("fileName", cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
+                map.putString(Fields.FILE_NAME, cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
 
                 int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
                 if (!cursor.isNull(sizeIndex)) {
                     String size = cursor.getString(sizeIndex);
                     if (size != null)
-                        map.putInt("fileSize", Integer.valueOf(size));
+                        map.putInt(Fields.FILE_SIZE, Integer.valueOf(size));
                 }
             }
         } finally {
@@ -118,6 +176,35 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         }
 
         return map;
+    }
+
+    private static File download(Uri uri, File outputDir) throws IOException {
+        File file = File.createTempFile("prefix", "extension", outputDir);
+
+        URL url = new URL(uri.toString());
+
+        ReadableByteChannel channel = Channels.newChannel(url.openStream());
+        try{
+            FileOutputStream stream = new FileOutputStream(file);
+
+            try {
+                stream.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
+                return file;
+            } finally {
+                stream.close();
+            }
+        } finally {
+            channel.close();
+        }
+    }
+
+    private static String mimeTypeFromName(String absolutePath) {
+        String extension = MimeTypeMap.getFileExtensionFromUrl(absolutePath);
+        if (extension != null) {
+            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        } else {
+            return null;
+        }
     }
 
     // Required for RN 0.30+ modules than implement ActivityEventListener
