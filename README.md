@@ -10,7 +10,7 @@ npm i --save react-native-document-picker
 
 ### Easy way: With [rnpm](https://github.com/rnpm/rnpm)
 
-`$ rnpm link`
+`$ react-native link`
 
 ### Option: Manually
 
