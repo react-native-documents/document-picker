@@ -1,7 +1,7 @@
 {
-  "name": "react-native-document-picker",
+  "name": "CM-react-native-document-picker",
   "version": "1.0.5",
-  "description": "A react native interface to access Documents from dropbox google drive, iCloud", This is a fork with some fixes.
+  "description": "A react native interface to access Documents from dropbox google drive, iCloud, This is a fork with some fixes.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
