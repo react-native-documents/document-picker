@@ -5,7 +5,7 @@ A React Native wrapper for Apple's ``UIDocumentMenuViewController``
 ### Installation
 
 ```bash
-npm i --save react-native-document-picker
+npm i npm --save install CM-react-native-document-picker
 ```
 
 ### Easy way: With [rnpm](https://github.com/rnpm/rnpm)
