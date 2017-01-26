@@ -1,6 +1,9 @@
 # react-native-document-picker
 
 A React Native wrapper for Apple's ``UIDocumentMenuViewController``
+This one has ipad support, the original didnt.
+( Original: https://github.com/Elyx0/react-native-document-picker )
+
 
 ### Installation
 
