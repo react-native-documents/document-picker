@@ -57,9 +57,11 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         Intent intent;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+
         } else {
             intent = new Intent(Intent.ACTION_PICK);
         }
+
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         if (!args.isNull("filetype")) {
@@ -68,9 +70,9 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
                 intent.setType(filetypes.getString(0));
             }
         }
-
+        intent.setType("*/*");
         this.callback = callback;
-
+        //Intent.createChooser(intent, "Select file to Upload")
         getReactApplicationContext().startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
     }
 

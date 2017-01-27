@@ -1,6 +1,8 @@
 #import "RNDocumentPicker.h"
 #import "RCTConvert.h"
 #import "RCTBridge.h"
+#define IDIOM    UI_USER_INTERFACE_IDIOM()
+#define IPAD     UIUserInterfaceIdiomPad
 
 @interface RNDocumentPicker () <UIDocumentMenuDelegate,UIDocumentPickerDelegate>
 @end
@@ -35,26 +37,47 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     NSArray *allowedUTIs = [RCTConvert NSArray:options[@"filetype"]];
     UIDocumentMenuViewController *documentPicker = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
     
+    
     [composeCallbacks addObject:callback];
     
     
     documentPicker.delegate = self;
+    
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
     
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
     while (rootViewController.modalViewController) {
         rootViewController = rootViewController.modalViewController;
+        
     }
+    if ( IDIOM == IPAD ) {
+        [documentPicker.popoverPresentationController setSourceRect: CGRectMake(rootViewController.view.frame.size.width/2, rootViewController.view.frame.size.height - rootViewController.view.frame.size.height / 6, 0, 0)];
+        [documentPicker.popoverPresentationController setSourceView: rootViewController.view];
+    }
+    
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
 
 
 - (void)documentMenu:(UIDocumentMenuViewController *)documentMenu didPickDocumentPicker:(UIDocumentPickerViewController *)documentPicker {
     documentPicker.delegate = self;
+    
+    documentPicker.modalPresentationStyle = UIModalPresentationPopover;
+    
+    
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
+    UIPopoverController *popup = [[UIPopoverController alloc] initWithContentViewController:documentPicker];
+    
+    
     while (rootViewController.modalViewController) {
         rootViewController = rootViewController.modalViewController;
+        
     }
+    if ( IDIOM == IPAD ) {
+        [documentPicker.popoverPresentationController setSourceRect: CGRectMake(rootViewController.view.frame.size.width/2, rootViewController.view.frame.size.height - rootViewController.view.frame.size.height / 6, 0, 0)];
+        [documentPicker.popoverPresentationController setSourceView: rootViewController.view];
+    }
+
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
 

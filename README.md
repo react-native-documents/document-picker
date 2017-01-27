@@ -1,11 +1,14 @@
 # react-native-document-picker
 
 A React Native wrapper for Apple's ``UIDocumentMenuViewController``
+This one has ipad support, the original didnt.
+( Original: https://github.com/Elyx0/react-native-document-picker )
+
 
 ### Installation
 
 ```bash
-npm i --save react-native-document-picker
+npm i npm --save install CM-react-native-document-picker
 ```
 
 ### Easy way: With [rnpm](https://github.com/rnpm/rnpm)
@@ -14,7 +17,7 @@ npm i --save react-native-document-picker
 
 ### Option: Manually
 
-1. Run `npm install react-native-document-picker --save`
+1. Run `npm install CM-react-native-document-picker --save`
 2. Open your project in XCode, right click on `Libraries` and click `Add
    Files to "Your Project Name"` [(Screenshot)](http://url.brentvatne.ca/jQp8) then [(Screenshot)](http://url.brentvatne.ca/1gqUD).
 3. Add `libRNDocumentPicker.a` to `Build Phases -> Link Binary With Libraries`
