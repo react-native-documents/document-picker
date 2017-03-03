@@ -1,6 +1,12 @@
 #import "RNDocumentPicker.h"
+
+#if __has_include(<React/RCTConvert.h>)
+#import <React/RCTConvert.h>
+#import <React/RCTBridge.h>
+#else // back compatibility for RN version < 0.40
 #import "RCTConvert.h"
 #import "RCTBridge.h"
+#endif
 
 @interface RNDocumentPicker () <UIDocumentMenuDelegate,UIDocumentPickerDelegate>
 @end
@@ -31,16 +37,16 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(show:(NSDictionary *)options
                   callback:(RCTResponseSenderBlock)callback) {
-    
+
     NSArray *allowedUTIs = [RCTConvert NSArray:options[@"filetype"]];
     UIDocumentMenuViewController *documentPicker = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
-    
+
     [composeCallbacks addObject:callback];
-    
-    
+
+
     documentPicker.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
-    
+
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
     while (rootViewController.modalViewController) {
         rootViewController = rootViewController.modalViewController;
@@ -62,18 +68,18 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     if (controller.documentPickerMode == UIDocumentPickerModeImport) {
         RCTResponseSenderBlock callback = [composeCallbacks lastObject];
         [composeCallbacks removeLastObject];
-        
+
         [url startAccessingSecurityScopedResource];
-        
+
         NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
         __block NSError *error;
-        
+
         [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&error byAccessor:^(NSURL *newURL) {
             NSMutableDictionary* result = [NSMutableDictionary dictionary];
-            
+
             [result setValue:newURL.absoluteString forKey:@"uri"];
             [result setValue:[newURL lastPathComponent] forKey:@"fileName"];
-            
+
             NSError *attributesError = nil;
             NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:newURL.path error:&attributesError];
             if(!attributesError) {
@@ -81,10 +87,10 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
             } else {
                 NSLog(@"%@", attributesError);
             }
-            
+
             callback(@[[NSNull null], result]);
         }];
-        
+
         [url stopAccessingSecurityScopedResource];
     }
 }
