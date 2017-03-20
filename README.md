@@ -28,11 +28,23 @@ npm i --save react-native-document-picker
 ```javascript
 const DocumentPicker = require('react-native').NativeModules.RNDocumentPicker;
 
+// iPhone/Android
 DocumentPicker.show({
       filetype: ['public.image'],
     },(error,url) => {
       alert(url);
     });
+
+// iPad
+const {pageX, pageY} = event.nativeEvent;
+
+DocumentPicker.show({
+  top: pageY,
+  left: pageX,
+  filetype: ['public.image'],
+}, (error, url) => {
+  alert(url);
+});
 
 ```
 
