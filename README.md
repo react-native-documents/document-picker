@@ -53,7 +53,7 @@ dependencies {
 // file: MainApplication.java
 ...
 
-import com.filepicker.FilePickerPackage; // import package
+import com.reactnativedocumentpicker.ReactNativeDocumentPicker;; // Import package
 
 public class MainApplication extends Application implements ReactApplication {
 
