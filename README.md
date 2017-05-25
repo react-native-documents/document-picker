@@ -39,6 +39,7 @@ rnpm link
 include ':react-native-document-picker'
 project(':react-native-document-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-document-picker/android')
 ```
+
 ```gradle
 // file: android/app/build.gradle
 ...
@@ -70,6 +71,7 @@ public class MainApplication extends Application implements ReactApplication {
     }
 ...
 }
+```
 
 ## Example
 ```javascript
