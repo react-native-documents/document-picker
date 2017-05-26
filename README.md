@@ -1,6 +1,6 @@
 # react-native-document-picker
 
-A React Native wrapper for Apple's ``UIDocumentMenuViewController``
+A React Native wrapper for Apple's ``UIDocumentMenuViewController`` and for Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK``.
 
 ### Installation
 
@@ -8,11 +8,21 @@ A React Native wrapper for Apple's ``UIDocumentMenuViewController``
 npm i --save react-native-document-picker
 ```
 
-### Easy way: With [rnpm](https://github.com/rnpm/rnpm)
+**Automatically Link Native Modules**
 
-`$ react-native link`
+For 0.29.2+ projects, simply link native packages via the following command (note: rnpm has been merged into react-native)
 
-### Option: Manually
+```
+react-native link
+```
+
+As for projects < 0.29 you need `rnpm` to link native packages
+
+```sh
+rnpm link
+```
+
+**Manually Link Native Modules**
 
 1. Run `npm install react-native-document-picker --save`
 2. Open your project in XCode, right click on `Libraries` and click `Add
@@ -20,9 +30,48 @@ npm i --save react-native-document-picker
 3. Add `libRNDocumentPicker.a` to `Build Phases -> Link Binary With Libraries`
    [(Screenshot)](http://url.brentvatne.ca/17Xfe).
 
+### Android
 
+```gradle
+// file: android/settings.gradle
+...
 
+include ':react-native-document-picker'
+project(':react-native-document-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-document-picker/android')
+```
 
+```gradle
+// file: android/app/build.gradle
+...
+
+dependencies {
+    ...
+    compile project(':react-native-document-picker')
+}
+```
+
+```java
+// file: MainApplication.java
+...
+
+import com.reactnativedocumentpicker.ReactNativeDocumentPicker;; // Import package
+
+public class MainApplication extends Application implements ReactApplication {
+
+   /**
+   * A list of packages used by the app. If the app uses additional views
+   * or modules besides the default ones, add more packages here.
+   */
+    @Override
+    protected List<ReactPackage> getPackages() {
+      return Arrays.<ReactPackage>asList(
+          new MainReactPackage(),
+            new ReactNativeDocumentPicker() // Add package
+      );
+    }
+...
+}
+```
 
 ## Example
 ```javascript
