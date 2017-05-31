@@ -74,29 +74,50 @@ public class MainApplication extends Application implements ReactApplication {
 ```
 
 ## Example
+### Iphone and Android
 ```javascript
 const DocumentPicker = require('react-native').NativeModules.RNDocumentPicker;
 
-// iPhone/Android
 DocumentPicker.show({
       filetype: ['public.image'],
     },(error,url) => {
       alert(url);
     });
-
-// iPad
-const {pageX, pageY} = event.nativeEvent;
+```
+### Ipad
+In Ipad, the position of the picker can be changed by specifying it's distance from the top and left border of the screen.
+```javascript
+import { Dimensions } from 'react-native';
+const DocumentPicker = require('react-native').NativeModules.RNDocumentPicker;
+const {height, width} = Dimensions.get('window'); // Get Device's screen height and width
 
 DocumentPicker.show({
-  top: pageY,
-  left: pageX,
+  top: height, // Place the document picker at bottom left corner of the screen
+  left: width,
   filetype: ['public.image'],
 }, (error, url) => {
   alert(url);
 });
 
 ```
+### To detect iPad in react native
+```javascript
+import { Dimensions } from 'react-native';
+const {height, width} = Dimensions.get('window'); 
+const aspectRatio = height/width;
 
+if(aspectRatio>1.6) {
+
+   // Code for Iphone
+
+}
+else {
+
+   // Code for Ipad
+   
+}
+```
+aspect ratio of ipad is 4:3 (1.334) and aspect ratio of iphone is 16:9 (1.778)
 ### Note
 The full list of UTI is available here:
 [(https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)](https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html
