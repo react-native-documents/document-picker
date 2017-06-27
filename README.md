@@ -75,11 +75,11 @@ public class MainApplication extends Application implements ReactApplication {
 
 ## Example
 ```javascript
-const DocumentPicker = require('react-native').NativeModules.RNDocumentPicker;
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 
 // iPhone/Android
 DocumentPicker.show({
-      filetype: ['public.image'],
+      filetype: [DocumentPickerUtil.images()],
     },(error,url) => {
       alert(url);
     });
