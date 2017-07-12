@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
@@ -54,6 +56,8 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
     @ReactMethod
     public void show(ReadableMap args, Callback callback) {
+        String[] mimetypes;
+
         Intent intent;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -61,11 +65,17 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
             intent = new Intent(Intent.ACTION_PICK);
         }
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
 
         if (!args.isNull("filetype")) {
             ReadableArray filetypes = args.getArray("filetype");
+
             if (filetypes.size() > 0) {
-                intent.setType(filetypes.getString(0));
+                mimetypes = new String[filetypes.size()];
+                for(int i=0; i<filetypes.size(); i++){
+                    mimetypes[i] = filetypes.getString(i);
+                }
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
             }
         }
 
@@ -211,3 +221,4 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
     public void onNewIntent(Intent intent) {
     }
 }
+
