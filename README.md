@@ -80,8 +80,14 @@ import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker
 // iPhone/Android
 DocumentPicker.show({
       filetype: [DocumentPickerUtil.images()],
-    },(error,url) => {
-      alert(url);
+    },(error,res) => {
+      // Android
+      console.log(
+         res.uri,
+         res.type, // mime type
+         res.fileName,
+         res.fileSize
+      );
     });
 
 // iPad
