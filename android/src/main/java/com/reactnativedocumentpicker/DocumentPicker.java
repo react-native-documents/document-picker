@@ -59,11 +59,7 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         String[] mimetypes;
 
         Intent intent;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            intent = new Intent(Intent.ACTION_GET_CONTENT);
-        } else {
-            intent = new Intent(Intent.ACTION_PICK);
-        }
+        intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
 
