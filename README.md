@@ -188,10 +188,10 @@ RNFS.uploadFiles({
     });
 ```
 ## File Type 
-** All type of Files ** ``` 'public.allFiles' or DocumentPickerUtil.allFiles()```
-** Only PDF ** ``` 'public.pdf' or DocumentPickerUtil.pdf() ```
-** Audio ** ``` 'public.audio' or DocumentPickerUtil.audio()```
-** Plain Text ** ``` 'public.plainText' or DocumentPickerUtil.plainText() ```
+**All type of Files** ``` 'public.allFiles' or DocumentPickerUtil.allFiles()``` 
+**Only PDF** ``` 'public.pdf' or DocumentPickerUtil.pdf() ```
+**Audio** ``` 'public.audio' or DocumentPickerUtil.audio()``` 
+**Plain Text** ``` 'public.plainText' or DocumentPickerUtil.plainText() ```
 
 ## Reminder
 
