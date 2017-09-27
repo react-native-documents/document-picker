@@ -116,8 +116,14 @@ The full list of UTI is available here:
 )]
 
 ## Here is how it looks:
-![screenshot](http://i.stack.imgur.com/dv0iQ.png)
 
+### iOS:
+![screenshot-ios-1](http://i.stack.imgur.com/dv0iQ.png)
+
+### Android:
+![screenshot-android-1](http://i.imgur.com/LlLOhKu.png)
+![screenshot-android-2](http://i.imgur.com/Dc5cWjY.png)
+![screenshot-android-3](http://i.imgur.com/KEugOuX.png)
 
 ## How to send it back ?
 
