@@ -30,6 +30,13 @@ rnpm link
 3. Add `libRNDocumentPicker.a` to `Build Phases -> Link Binary With Libraries`
    [(Screenshot)](http://url.brentvatne.ca/17Xfe).
 
+**CocoaPods**
+
+Add the following to your podfile:
+```
+pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker`
+```
+
 ### Android
 
 ```gradle
