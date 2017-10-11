@@ -1,9 +1,9 @@
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'com.android.tools.build:gradle:2.3.+'
     }
 }
 
@@ -28,11 +28,7 @@ android {
 
 allprojects {
     repositories {
-        mavenLocal()
-        jcenter()
-        maven {
-            url "http://files.couchbase.com/maven2/"
-        }
+        mavenCentral()
     }
 }
 
