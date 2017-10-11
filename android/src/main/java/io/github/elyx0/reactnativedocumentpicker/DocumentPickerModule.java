@@ -7,11 +7,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -26,13 +25,17 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 	private static final String NAME = "RNDocumentPicker";
 	private static final int READ_REQUEST_CODE = 41;
 
+	private static final String E_UNKNOWN_ACTIVITY_RESULT = "UNKNOWN_ACTIVITY_RESULT";
+	private static final String E_INVALID_DATA_RETURNED = "INVALID_DATA_RETURNED";
+	private static final String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
+
 	private static class Fields {
 		private static final String FILE_SIZE = "fileSize";
 		private static final String FILE_NAME = "fileName";
 		private static final String TYPE = "type";
 	}
 
-	private Callback callback;
+	private Promise promise;
 
 	public DocumentPickerModule(ReactApplicationContext reactContext) {
 		super(reactContext);
@@ -45,7 +48,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 	}
 
 	@ReactMethod
-	public void show(ReadableMap args, Callback callback) {
+	public void show(ReadableMap args, Promise promise) {
 		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 		intent.addCategory(Intent.CATEGORY_OPENABLE);
 
@@ -56,7 +59,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 			}
 		}
 
-		this.callback = callback;
+		this.promise = promise;
 
 		getReactApplicationContext().startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
 	}
@@ -72,21 +75,20 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 			return;
 
 		if (resultCode != Activity.RESULT_OK) {
-			callback.invoke("Bad result code: " + resultCode, null);
+			promise.reject(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
 			return;
 		}
 
 		if (data == null) {
-			callback.invoke("No data", null);
+			promise.reject(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
 			return;
 		}
 
 		try {
 			Uri uri = data.getData();
-			callback.invoke(null, toMapWithMetadata(uri));
+			promise.resolve(toMapWithMetadata(uri));
 		} catch (Exception e) {
-			Log.e(NAME, "Failed to read", e);
-			callback.invoke(e.getMessage(), null);
+			promise.reject(E_UNEXPECTED_EXCEPTION, e.getMessage(), e);
 		}
 	}
 

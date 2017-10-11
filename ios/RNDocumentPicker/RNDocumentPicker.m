@@ -17,7 +17,8 @@
 
 @implementation RNDocumentPicker {
     NSMutableArray *composeViews;
-    NSMutableArray *composeCallbacks;
+    NSMutableArray *composeResolvers;
+    NSMutableArray *composeRejecters;
 }
 
 @synthesize bridge = _bridge;
@@ -25,7 +26,8 @@
 - (instancetype)init
 {
     if ((self = [super init])) {
-        composeCallbacks = [[NSMutableArray alloc] init];
+        composeResolvers = [[NSMutableArray alloc] init];
+        composeRejecters = [[NSMutableArray alloc] init];
         composeViews = [[NSMutableArray alloc] init];
     }
     return self;
@@ -39,13 +41,14 @@
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(show:(NSDictionary *)options
-                  callback:(RCTResponseSenderBlock)callback) {
-
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+{
     NSArray *allowedUTIs = [RCTConvert NSArray:options[@"filetype"]];
     UIDocumentMenuViewController *documentPicker = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
 
-    [composeCallbacks addObject:callback];
-
+    [composeResolvers addObject:resolve];
+    [composeRejecters addObject:reject];
 
     documentPicker.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -66,7 +69,8 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
 }
 
 
-- (void)documentMenu:(UIDocumentMenuViewController *)documentMenu didPickDocumentPicker:(UIDocumentPickerViewController *)documentPicker {
+- (void)documentMenu:(UIDocumentMenuViewController *)documentMenu didPickDocumentPicker:(UIDocumentPickerViewController *)documentPicker
+{
     documentPicker.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
 
@@ -83,10 +87,13 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
 
-- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url {
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url
+{
     if (controller.documentPickerMode == UIDocumentPickerModeImport) {
-        RCTResponseSenderBlock callback = [composeCallbacks lastObject];
-        [composeCallbacks removeLastObject];
+        RCTPromiseResolveBlock resolve = [composeResolvers lastObject];
+        RCTPromiseRejectBlock reject = [composeRejecters lastObject];
+        [composeResolvers removeLastObject];
+        [composeRejecters removeLastObject];
 
         [url startAccessingSecurityScopedResource];
 
@@ -107,7 +114,7 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
                 NSLog(@"%@", attributesError);
             }
 
-            callback(@[[NSNull null], result]);
+            resolve(result);
         }];
 
         [url stopAccessingSecurityScopedResource];
