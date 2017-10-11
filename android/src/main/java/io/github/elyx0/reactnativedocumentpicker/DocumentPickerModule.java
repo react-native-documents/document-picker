@@ -10,6 +10,7 @@ import android.provider.OpenableColumns;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.BaseActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -21,7 +22,7 @@ import com.facebook.react.bridge.WritableMap;
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
  */
-public class DocumentPickerModule extends ReactContextBaseJavaModule implements ActivityEventListener {
+public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String NAME = "RNDocumentPicker";
 	private static final int READ_REQUEST_CODE = 41;
 
@@ -37,11 +38,29 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 		private static final String TYPE = "type";
 	}
 
+	private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
+		@Override
+		public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+			if (requestCode == READ_REQUEST_CODE) {
+				if (promise != null) {
+					onShowActivityResult(resultCode, data, promise);
+					promise = null;
+				}
+			}
+		}
+	};
+
 	private Promise promise;
 
 	public DocumentPickerModule(ReactApplicationContext reactContext) {
 		super(reactContext);
-		reactContext.addActivityEventListener(this);
+		reactContext.addActivityEventListener(activityEventListener);
+	}
+
+	@Override
+	public void onCatalystInstanceDestroy() {
+		super.onCatalystInstanceDestroy();
+		getReactApplicationContext().removeActivityEventListener(activityEventListener);
 	}
 
 	@Override
@@ -78,16 +97,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 		}
 	}
 
-	// removed @Override temporarily just to get it working on RN0.33 and RN0.32 - will remove
-	public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-		onActivityResult(requestCode, resultCode, data);
-	}
-
-	// removed @Override temporarily just to get it working on RN0.33 and RN0.32
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode != READ_REQUEST_CODE)
-			return;
-
+	public void onShowActivityResult(int resultCode, Intent data, Promise promise) {
 		if (resultCode != Activity.RESULT_OK) {
 			promise.reject(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
 			return;
@@ -136,9 +146,5 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 		}
 
 		return map;
-	}
-
-	// Required for RN 0.30+ modules than implement ActivityEventListener
-	public void onNewIntent(Intent intent) {
 	}
 }
