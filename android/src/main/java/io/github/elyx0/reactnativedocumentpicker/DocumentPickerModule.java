@@ -25,6 +25,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 	private static final String NAME = "RNDocumentPicker";
 	private static final int READ_REQUEST_CODE = 41;
 
+	private static final String E_ACTIVITY_DOES_NOT_EXIST = "ACTIVITY_DOES_NOT_EXIST";
+	private static final String E_FAILED_TO_SHOW_PICKER = "FAILED_TO_SHOW_PICKER";
 	private static final String E_UNKNOWN_ACTIVITY_RESULT = "UNKNOWN_ACTIVITY_RESULT";
 	private static final String E_INVALID_DATA_RETURNED = "INVALID_DATA_RETURNED";
 	private static final String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
@@ -49,19 +51,31 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 
 	@ReactMethod
 	public void show(ReadableMap args, Promise promise) {
-		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-		intent.addCategory(Intent.CATEGORY_OPENABLE);
+		Activity currentActivity = getCurrentActivity();
 
-		if (!args.isNull("filetype")) {
-			ReadableArray filetypes = args.getArray("filetype");
-			if (filetypes.size() > 0) {
-				intent.setType(filetypes.getString(0));
-			}
+		if (currentActivity == null) {
+			promise.reject(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");
+			return;
 		}
 
 		this.promise = promise;
 
-		getReactApplicationContext().startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
+		try {
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+			intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+			if (!args.isNull("filetype")) {
+				ReadableArray filetypes = args.getArray("filetype");
+				if (filetypes.size() > 0) {
+					intent.setType(filetypes.getString(0));
+				}
+			}
+
+			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
+		} catch (Exception e) {
+			this.promise.reject(E_FAILED_TO_SHOW_PICKER, "Failed to show document picker");
+			this.promise = null;
+		}
 	}
 
 	// removed @Override temporarily just to get it working on RN0.33 and RN0.32 - will remove
