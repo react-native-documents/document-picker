@@ -61,7 +61,7 @@ dependencies {
 // file: MainApplication.java
 ...
 
-import io.github.elyx0.reactnativedocumentpicker.ReactNativeDocumentPicker; // Import package
+import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage; // Import package
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -73,7 +73,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ReactNativeDocumentPicker() // Add package
+            new DocumentPickerPackage() // Add package
       );
     }
 ...

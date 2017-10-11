@@ -30,7 +30,7 @@ import java.nio.channels.ReadableByteChannel;
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
  */
-public class DocumentPicker extends ReactContextBaseJavaModule implements ActivityEventListener {
+public class DocumentPickerModule extends ReactContextBaseJavaModule implements ActivityEventListener {
 	private static final String NAME = "RNDocumentPicker";
 	private static final int READ_REQUEST_CODE = 41;
 
@@ -42,7 +42,7 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
 	private Callback callback;
 
-	public DocumentPicker(ReactApplicationContext reactContext) {
+	public DocumentPickerModule(ReactApplicationContext reactContext) {
 		super(reactContext);
 		reactContext.addActivityEventListener(this);
 	}
