@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
-import android.webkit.MimeTypeMap;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -19,13 +18,6 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
@@ -54,12 +46,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 
 	@ReactMethod
 	public void show(ReadableMap args, Callback callback) {
-		Intent intent;
-		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-			intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-		} else {
-			intent = new Intent(Intent.ACTION_PICK);
-		}
+		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 		intent.addCategory(Intent.CATEGORY_OPENABLE);
 
 		if (!args.isNull("filetype")) {
@@ -104,52 +91,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 	}
 
 	private WritableMap toMapWithMetadata(Uri uri) {
-		WritableMap map;
-		if (uri.toString().startsWith("/")) {
-			map = metaDataFromFile(new File(uri.toString()));
-		} else if (uri.toString().startsWith("http")) {
-			map = metaDataFromUri(uri);
-		} else {
-			map = metaDataFromContentResolver(uri);
-		}
+		WritableMap map = Arguments.createMap();
 
 		map.putString("uri", uri.toString());
-
-		return map;
-	}
-
-	private WritableMap metaDataFromUri(Uri uri) {
-		WritableMap map = Arguments.createMap();
-
-		File outputDir = getReactApplicationContext().getCacheDir();
-		try {
-			File downloaded = download(uri, outputDir);
-
-			map.putInt(Fields.FILE_SIZE, (int) downloaded.length());
-			map.putString(Fields.FILE_NAME, downloaded.getName());
-			map.putString(Fields.TYPE, mimeTypeFromName(uri.toString()));
-		} catch (IOException e) {
-			Log.e("DocumentPicker", "Failed to download file", e);
-		}
-
-		return map;
-	}
-
-	private WritableMap metaDataFromFile(File file) {
-		WritableMap map = Arguments.createMap();
-
-		if (!file.exists())
-			return map;
-
-		map.putInt(Fields.FILE_SIZE, (int) file.length());
-		map.putString(Fields.FILE_NAME, file.getName());
-		map.putString(Fields.TYPE, mimeTypeFromName(file.getAbsolutePath()));
-
-		return map;
-	}
-
-	private WritableMap metaDataFromContentResolver(Uri uri) {
-		WritableMap map = Arguments.createMap();
 
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 
@@ -176,35 +120,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule implements 
 		}
 
 		return map;
-	}
-
-	private static File download(Uri uri, File outputDir) throws IOException {
-		File file = File.createTempFile("prefix", "extension", outputDir);
-
-		URL url = new URL(uri.toString());
-
-		ReadableByteChannel channel = Channels.newChannel(url.openStream());
-		try {
-			FileOutputStream stream = new FileOutputStream(file);
-
-			try {
-				stream.getChannel().transferFrom(channel, 0, Long.MAX_VALUE);
-				return file;
-			} finally {
-				stream.close();
-			}
-		} finally {
-			channel.close();
-		}
-	}
-
-	private static String mimeTypeFromName(String absolutePath) {
-		String extension = MimeTypeMap.getFileExtensionFromUrl(absolutePath);
-		if (extension != null) {
-			return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-		} else {
-			return null;
-		}
 	}
 
 	// Required for RN 0.30+ modules than implement ActivityEventListener
