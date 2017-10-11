@@ -61,7 +61,7 @@ dependencies {
 // file: MainApplication.java
 ...
 
-import com.reactnativedocumentpicker.ReactNativeDocumentPicker;; // Import package
+import io.github.elyx0.reactnativedocumentpicker.ReactNativeDocumentPicker; // Import package
 
 public class MainApplication extends Application implements ReactApplication {
 
