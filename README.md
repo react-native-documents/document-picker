@@ -82,11 +82,11 @@ public class MainApplication extends Application implements ReactApplication {
 
 ## Example
 ```javascript
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+import DocumentPicker from 'react-native-document-picker';
 
 // iPhone/Android
 DocumentPicker.show({
-      type: [DocumentPickerUtil.images()],
+      type: [DocumentPicker.types.images],
     },(error,res) => {
       // Android
       console.log(
