@@ -1,7 +1,20 @@
 'use strict';
-
 import {Platform, NativeModules} from "react-native";
-const DocumentPicker = NativeModules.RNDocumentPicker;
+const {RNDocumentPicker} = NativeModules;
+
+if (!RNDocumentPicker) {
+  // Use a timeout to ensure the warning is displayed in the YellowBox
+  setTimeout(() => {
+    console.warn('RNDocumentPicker: Native module is not available, make sure you have finished the installation process and rebuilt your app');
+  }, 0);
+}
+
+class DocumentPicker {
+  static show(opts) {
+    opts = opts || {};
+    return RNDocumentPicker.show(opts);
+  }
+}
 
 /**
  * Android requires mime types, iOS is a bit more complicated:
