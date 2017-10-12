@@ -5,7 +5,9 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 
 import com.facebook.react.bridge.ActivityEventListener;
@@ -129,8 +131,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 		try {
 			if (cursor != null && cursor.moveToFirst()) {
-
 				map.putString(FIELD_NAME, cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
+
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+					int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
+					if (!cursor.isNull(mimeIndex)) {
+						map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
+					}
+				}
 
 				int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
 				if (!cursor.isNull(sizeIndex)) {
