@@ -85,29 +85,32 @@ public class MainApplication extends Application implements ReactApplication {
 import DocumentPicker from 'react-native-document-picker';
 
 // iPhone/Android
-DocumentPicker.show({
-      type: [DocumentPicker.types.images],
-    },(error,res) => {
-      // Android
-      console.log(
-         res.uri,
-         res.type, // mime type
-         res.fileName,
-         res.fileSize
-      );
-    });
+try {
+  const res = await DocumentPicker.show({
+    type: [DocumentPicker.types.images],
+  });
+  console.log(
+     res.uri,
+     res.type, // mime type
+     res.fileName,
+     res.fileSize
+  );
+} catch ( err ) {
+  if ( DocumentPicker.isCancel(err) ) {
+    // User cancelled the picker, exit any dialogs or menus and move on
+  } else {
+    throw err;
+  }
+}
 
 // iPad
 const {pageX, pageY} = event.nativeEvent;
 
-DocumentPicker.show({
+await DocumentPicker.show({
   top: pageY,
   left: pageX,
   type: ['public.image'],
-}, (error, url) => {
-  alert(url);
 });
-
 ```
 
 ### Note
