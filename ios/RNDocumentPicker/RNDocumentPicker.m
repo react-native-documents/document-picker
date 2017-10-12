@@ -11,9 +11,10 @@
 #define IDIOM    UI_USER_INTERFACE_IDIOM()
 #define IPAD     UIUserInterfaceIdiomPad
 
+static NSString *const E_DOCUMENT_PICKER_CANCELED = @"DOCUMENT_PICKER_CANCELED";
+
 @interface RNDocumentPicker () <UIDocumentMenuDelegate,UIDocumentPickerDelegate>
 @end
-
 
 @implementation RNDocumentPicker {
     NSMutableArray *composeViews;
@@ -118,6 +119,26 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
         }];
 
         [url stopAccessingSecurityScopedResource];
+    }
+}
+
+- (void)documentMenuWasCancelled:(UIDocumentMenuViewController *)controller
+{
+    RCTPromiseRejectBlock reject = [composeRejecters lastObject];
+    [composeResolvers removeLastObject];
+    [composeRejecters removeLastObject];
+    
+    reject(E_DOCUMENT_PICKER_CANCELED, @"User canceled document picker", nil);
+}
+
+- (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
+{
+    if (controller.documentPickerMode == UIDocumentPickerModeImport) {
+        RCTPromiseRejectBlock reject = [composeRejecters lastObject];
+        [composeResolvers removeLastObject];
+        [composeRejecters removeLastObject];
+        
+        reject(E_DOCUMENT_PICKER_CANCELED, @"User canceled document picker", nil);
     }
 }
 

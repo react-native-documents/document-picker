@@ -28,6 +28,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private static final String E_ACTIVITY_DOES_NOT_EXIST = "ACTIVITY_DOES_NOT_EXIST";
 	private static final String E_FAILED_TO_SHOW_PICKER = "FAILED_TO_SHOW_PICKER";
+	private static final String E_DOCUMENT_PICKER_CANCELED = "DOCUMENT_PICKER_CANCELED";
 	private static final String E_UNKNOWN_ACTIVITY_RESULT = "UNKNOWN_ACTIVITY_RESULT";
 	private static final String E_INVALID_DATA_RETURNED = "INVALID_DATA_RETURNED";
 	private static final String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
@@ -98,21 +99,21 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	}
 
 	public void onShowActivityResult(int resultCode, Intent data, Promise promise) {
-		if (resultCode != Activity.RESULT_OK) {
+		if ( resultCode == Activity.RESULT_CANCELED) {
+			promise.reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
+		} else if (resultCode != Activity.RESULT_OK) {
+			if (data != null) {
+				try {
+					Uri uri = data.getData();
+					promise.resolve(toMapWithMetadata(uri));
+				} catch (Exception e) {
+					promise.reject(E_UNEXPECTED_EXCEPTION, e.getMessage(), e);
+				}
+			} else {
+				promise.reject(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
+			}
+		} else {
 			promise.reject(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
-			return;
-		}
-
-		if (data == null) {
-			promise.reject(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
-			return;
-		}
-
-		try {
-			Uri uri = data.getData();
-			promise.resolve(toMapWithMetadata(uri));
-		} catch (Exception e) {
-			promise.reject(E_UNEXPECTED_EXCEPTION, e.getMessage(), e);
 		}
 	}
 

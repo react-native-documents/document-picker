@@ -1,5 +1,5 @@
 'use strict';
-import {Platform, NativeModules} from "react-native";
+import {Platform, NativeModules} from 'react-native';
 const {RNDocumentPicker} = NativeModules;
 
 if (!RNDocumentPicker) {
@@ -9,10 +9,16 @@ if (!RNDocumentPicker) {
   }, 0);
 }
 
+const E_DOCUMENT_PICKER_CANCELED = 'DOCUMENT_PICKER_CANCELED';
+
 class DocumentPicker {
   static show(opts) {
     opts = opts || {};
     return RNDocumentPicker.show(opts);
+  }
+
+  static isCancel(err) {
+    return err && err.code === E_DOCUMENT_PICKER_CANCELED;
   }
 }
 
