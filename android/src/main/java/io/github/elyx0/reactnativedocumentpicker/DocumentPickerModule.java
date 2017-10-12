@@ -101,7 +101,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	public void onShowActivityResult(int resultCode, Intent data, Promise promise) {
 		if ( resultCode == Activity.RESULT_CANCELED) {
 			promise.reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
-		} else if (resultCode != Activity.RESULT_OK) {
+		} else if (resultCode == Activity.RESULT_OK) {
 			if (data != null) {
 				try {
 					Uri uri = data.getData();
