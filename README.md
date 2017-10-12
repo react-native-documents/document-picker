@@ -92,7 +92,7 @@ try {
   console.log(
      res.uri,
      res.type, // mime type
-     res.fileName,
+     res.name,
      res.fileSize
   );
 } catch ( err ) {

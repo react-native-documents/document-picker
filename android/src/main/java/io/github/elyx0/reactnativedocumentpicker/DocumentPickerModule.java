@@ -33,11 +33,10 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String E_INVALID_DATA_RETURNED = "INVALID_DATA_RETURNED";
 	private static final String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
 
-	private static class Fields {
-		private static final String FILE_SIZE = "fileSize";
-		private static final String FILE_NAME = "fileName";
-		private static final String TYPE = "type";
-	}
+	private static final String FIELD_URL = "url";
+	private static final String FIELD_NAME = "name";
+	private static final String FIELD_TYPE = "type";
+	private static final String FIELD_FILE_SIZE = "fileSize";
 
 	private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
 		@Override
@@ -120,24 +119,24 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private WritableMap toMapWithMetadata(Uri uri) {
 		WritableMap map = Arguments.createMap();
 
-		map.putString("uri", uri.toString());
+		map.putString(FIELD_URL, uri.toString());
 
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 
-		map.putString(Fields.TYPE, contentResolver.getType(uri));
+		map.putString(FIELD_TYPE, contentResolver.getType(uri));
 
 		Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
 
 		try {
 			if (cursor != null && cursor.moveToFirst()) {
 
-				map.putString(Fields.FILE_NAME, cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
+				map.putString(FIELD_NAME, cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
 
 				int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
 				if (!cursor.isNull(sizeIndex)) {
 					String size = cursor.getString(sizeIndex);
 					if (size != null)
-						map.putInt(Fields.FILE_SIZE, Integer.valueOf(size));
+						map.putInt(FIELD_FILE_SIZE, Integer.valueOf(size));
 				}
 			}
 		} finally {
