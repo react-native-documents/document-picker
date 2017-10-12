@@ -84,10 +84,10 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-			if (!args.isNull("filetype")) {
-				ReadableArray filetypes = args.getArray("filetype");
-				if (filetypes.size() > 0) {
-					intent.setType(filetypes.getString(0));
+			if (!args.isNull("type")) {
+				ReadableArray types = args.getArray("type");
+				if (types.size() > 0) {
+					intent.setType(types.getString(0));
 				}
 			}
 

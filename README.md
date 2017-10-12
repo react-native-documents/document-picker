@@ -86,7 +86,7 @@ import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker
 
 // iPhone/Android
 DocumentPicker.show({
-      filetype: [DocumentPickerUtil.images()],
+      type: [DocumentPickerUtil.images()],
     },(error,res) => {
       // Android
       console.log(
@@ -103,7 +103,7 @@ const {pageX, pageY} = event.nativeEvent;
 DocumentPicker.show({
   top: pageY,
   left: pageX,
-  filetype: ['public.image'],
+  type: ['public.image'],
 }, (error, url) => {
   alert(url);
 });

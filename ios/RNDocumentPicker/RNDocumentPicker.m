@@ -45,7 +45,7 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    NSArray *allowedUTIs = [RCTConvert NSArray:options[@"filetype"]];
+    NSArray *allowedUTIs = [RCTConvert NSArray:options[@"type"]];
     UIDocumentMenuViewController *documentPicker = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
 
     [composeResolvers addObject:resolve];
