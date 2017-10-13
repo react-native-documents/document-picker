@@ -131,7 +131,10 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 		try {
 			if (cursor != null && cursor.moveToFirst()) {
-				map.putString(FIELD_NAME, cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)));
+				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+				if (!cursor.isNull(displayNameIndex)) {
+					map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
+				}
 
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 					int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
