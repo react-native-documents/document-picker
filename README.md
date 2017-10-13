@@ -1,5 +1,7 @@
 # react-native-document-picker
 
+## WARNING: Experimental branch of v3 /!\
+
 A React Native wrapper for Apple's ``UIDocumentMenuViewController`` and for Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK``.
 
 ### Installation
