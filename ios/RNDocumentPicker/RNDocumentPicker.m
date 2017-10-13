@@ -63,8 +63,8 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
     
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
-    while (rootViewController.modalViewController) {
-        rootViewController = rootViewController.modalViewController;
+    while (rootViewController.presentedViewController) {
+        rootViewController = rootViewController.presentedViewController;
     }
     
     if ( IDIOM == IPAD ) {
@@ -85,8 +85,8 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
     
-    while (rootViewController.modalViewController) {
-        rootViewController = rootViewController.modalViewController;
+    while (rootViewController.presentedViewController) {
+        rootViewController = rootViewController.presentedViewController;
     }
     if ( IDIOM == IPAD ) {
         [documentPicker.popoverPresentationController setSourceRect: CGRectMake(rootViewController.view.frame.size.width/2, rootViewController.view.frame.size.height - rootViewController.view.frame.size.height / 6, 0, 0)];
