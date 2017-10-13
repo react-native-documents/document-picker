@@ -12,6 +12,7 @@
 #define IPAD     UIUserInterfaceIdiomPad
 
 static NSString *const E_DOCUMENT_PICKER_CANCELED = @"DOCUMENT_PICKER_CANCELED";
+static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
 
 static NSString *const FIELD_URI = @"uri";
 static NSString *const FIELD_NAME = @"name";
@@ -107,21 +108,25 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
 
         [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&error byAccessor:^(NSURL *newURL) {
             NSMutableDictionary* result = [NSMutableDictionary dictionary];
-
-            [result setValue:newURL.absoluteString forKey:FIELD_URI];
-            [result setValue:[newURL lastPathComponent] forKey:FIELD_NAME];
-
-            NSError *attributesError = nil;
-            NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:newURL.path error:&attributesError];
-            if(!attributesError) {
-                [result setValue:[fileAttributes objectForKey:NSFileSize] forKey:FIELD_FILE_SIZE];
+            
+            if (error) {
+                reject(E_INVALID_DATA_RETURNED, error.localizedDescription, error);
             } else {
-                NSLog(@"%@", attributesError);
+                [result setValue:newURL.absoluteString forKey:FIELD_URI];
+                [result setValue:[newURL lastPathComponent] forKey:FIELD_NAME];
+
+                NSError *attributesError = nil;
+                NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:newURL.path error:&attributesError];
+                if(!attributesError) {
+                    [result setValue:[fileAttributes objectForKey:NSFileSize] forKey:FIELD_FILE_SIZE];
+                } else {
+                    NSLog(@"%@", attributesError);
+                }
+
+                resolve(result);
             }
-
-            resolve(result);
         }];
-
+        
         [url stopAccessingSecurityScopedResource];
     }
 }
