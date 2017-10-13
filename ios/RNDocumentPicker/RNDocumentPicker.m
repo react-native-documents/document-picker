@@ -1,5 +1,7 @@
 #import "RNDocumentPicker.h"
 
+#import <MobileCoreServices/MobileCoreServices.h>
+
 #if __has_include(<React/RCTConvert.h>)
 #import <React/RCTConvert.h>
 #import <React/RCTBridge.h>
@@ -16,6 +18,7 @@ static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
 
 static NSString *const FIELD_URI = @"uri";
 static NSString *const FIELD_NAME = @"name";
+static NSString *const FIELD_TYPE = @"type";
 static NSString *const FIELD_SIZE = @"size";
 
 @interface RNDocumentPicker () <UIDocumentMenuDelegate,UIDocumentPickerDelegate>
@@ -121,6 +124,16 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
                     [result setValue:[fileAttributes objectForKey:NSFileSize] forKey:FIELD_SIZE];
                 } else {
                     NSLog(@"%@", attributesError);
+                }
+                
+                if ( newURL.pathExtension != nil ) {
+                    CFStringRef extension = (__bridge CFStringRef)[newURL pathExtension];
+                    CFStringRef uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension, NULL);
+                    CFStringRef mimeType = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType);
+                    CFRelease(uti);
+                    
+                    NSString *mimeTypeString = (__bridge_transfer NSString *)mimeType;
+                    [result setValue:mimeTypeString forKey:FIELD_TYPE];
                 }
                 
                 resolve(result);
