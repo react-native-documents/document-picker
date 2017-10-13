@@ -2,7 +2,7 @@
 
 ## WARNING: Experimental branch of v3 /!\
 
-A React Native wrapper for Apple's ``UIDocumentMenuViewController`` and for Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK``.
+A React Native wrapper for Apple's ``UIDocumentPickerViewController`` and for Android's ``Intent.ACTION_GET_CONTENT``.
 
 ### Installation
 
@@ -12,16 +12,10 @@ npm i --save react-native-document-picker
 
 **Automatically Link Native Modules**
 
-For 0.29.2+ projects, simply link native packages via the following command (note: rnpm has been merged into react-native)
+Link native packages via the following command:
 
 ```
 react-native link
-```
-
-As for projects < 0.29 you need `rnpm` to link native packages
-
-```sh
-rnpm link
 ```
 
 **Manually Link Native Modules**
@@ -190,10 +184,10 @@ RNFS.uploadFiles({
     });
 ```
 ## File Type 
-***All type of Files*** ``` 'public.allFiles' or DocumentPickerUtil.allFiles()```<br/> 
-***Only PDF*** ``` 'public.pdf' or DocumentPickerUtil.pdf() ``` <br/> 
-***Audio*** ``` 'public.audio' or DocumentPickerUtil.audio()``` <br/> 
-***Plain Text*** ``` 'public.plainText' or DocumentPickerUtil.plainText() ``` <br/> 
+***All type of Files*** ``` 'public.allFiles' or DocumentPicker.types.allFiles```<br/> 
+***Only PDF*** ``` 'public.pdf' or DocumentPicker.types.pdf ``` <br/> 
+***Audio*** ``` 'public.audio' or DocumentPicker.types.audio``` <br/> 
+***Plain Text*** ``` 'public.plainText' or DocumentPicker.types.plainText ``` <br/> 
 
 ## Reminder
 
