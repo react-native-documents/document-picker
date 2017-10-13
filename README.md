@@ -86,7 +86,6 @@ public class MainApplication extends Application implements ReactApplication {
 ```javascript
 import DocumentPicker from 'react-native-document-picker';
 
-// iPhone/Android
 try {
   const res = await DocumentPicker.show({
     type: [DocumentPicker.types.images],
@@ -104,15 +103,6 @@ try {
     throw err;
   }
 }
-
-// iPad
-const {pageX, pageY} = event.nativeEvent;
-
-await DocumentPicker.show({
-  top: pageY,
-  left: pageX,
-  type: ['public.image'],
-});
 ```
 
 ### Note

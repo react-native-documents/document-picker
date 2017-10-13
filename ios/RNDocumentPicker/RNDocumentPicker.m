@@ -10,9 +10,6 @@
 #import "RCTBridge.h"
 #endif
 
-#define IDIOM    UI_USER_INTERFACE_IDIOM()
-#define IPAD     UIUserInterfaceIdiomPad
-
 static NSString *const E_DOCUMENT_PICKER_CANCELED = @"DOCUMENT_PICKER_CANCELED";
 static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
 
@@ -21,7 +18,7 @@ static NSString *const FIELD_NAME = @"name";
 static NSString *const FIELD_TYPE = @"type";
 static NSString *const FIELD_SIZE = @"size";
 
-@interface RNDocumentPicker () <UIDocumentMenuDelegate,UIDocumentPickerDelegate>
+@interface RNDocumentPicker () <UIDocumentPickerDelegate>
 @end
 
 @implementation RNDocumentPicker {
@@ -54,7 +51,7 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     NSArray *allowedUTIs = [RCTConvert NSArray:options[@"type"]];
-    UIDocumentMenuViewController *documentPicker = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
+    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
     
     [composeResolvers addObject:resolve];
     [composeRejecters addObject:reject];
@@ -65,32 +62,6 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
     while (rootViewController.presentedViewController) {
         rootViewController = rootViewController.presentedViewController;
-    }
-    
-    if ( IDIOM == IPAD ) {
-        NSNumber *top = [RCTConvert NSNumber:options[@"top"]];
-        NSNumber *left = [RCTConvert NSNumber:options[@"left"]];
-        [documentPicker.popoverPresentationController setSourceRect: CGRectMake([left floatValue], [top floatValue], 0, 0)];
-        [documentPicker.popoverPresentationController setSourceView: rootViewController.view];
-    }
-    
-    [rootViewController presentViewController:documentPicker animated:YES completion:nil];
-}
-
-
-- (void)documentMenu:(UIDocumentMenuViewController *)documentMenu didPickDocumentPicker:(UIDocumentPickerViewController *)documentPicker
-{
-    documentPicker.delegate = self;
-    documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
-    
-    UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
-    
-    while (rootViewController.presentedViewController) {
-        rootViewController = rootViewController.presentedViewController;
-    }
-    if ( IDIOM == IPAD ) {
-        [documentPicker.popoverPresentationController setSourceRect: CGRectMake(rootViewController.view.frame.size.width/2, rootViewController.view.frame.size.height - rootViewController.view.frame.size.height / 6, 0, 0)];
-        [documentPicker.popoverPresentationController setSourceView: rootViewController.view];
     }
     
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
@@ -142,15 +113,6 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
         
         [url stopAccessingSecurityScopedResource];
     }
-}
-
-- (void)documentMenuWasCancelled:(UIDocumentMenuViewController *)controller
-{
-    RCTPromiseRejectBlock reject = [composeRejecters lastObject];
-    [composeResolvers removeLastObject];
-    [composeRejecters removeLastObject];
-    
-    reject(E_DOCUMENT_PICKER_CANCELED, @"User canceled document picker", nil);
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
