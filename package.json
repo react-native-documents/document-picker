@@ -25,7 +25,11 @@
     "url": "https://github.com/Elyx0/react-native-document-picker/issues"
   },
   "homepage": "https://github.com/Elyx0/react-native-document-picker#readme",
+  "peerDependencies": {
+    "react-native": ">= 0.33"
+  },
   "devDependencies": {
-    "react-native": "^0.28.0"
+    "react": "^16.0.0-beta.5",
+    "react-native": "^0.49.3"
   }
 }
