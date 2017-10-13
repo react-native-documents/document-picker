@@ -92,6 +92,10 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				}
 			}
 
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+				 intent = Intent.createChooser(intent, null);
+			}
+
 			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
 		} catch (Exception e) {
 			this.promise.reject(E_FAILED_TO_SHOW_PICKER, "Failed to show document picker");
@@ -100,7 +104,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	}
 
 	public void onShowActivityResult(int resultCode, Intent data, Promise promise) {
-		if ( resultCode == Activity.RESULT_CANCELED) {
+		if (resultCode == Activity.RESULT_CANCELED) {
 			promise.reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
 		} else if (resultCode == Activity.RESULT_OK) {
 			if (data != null) {
