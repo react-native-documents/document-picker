@@ -38,7 +38,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String FIELD_URL = "url";
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
-	private static final String FIELD_FILE_SIZE = "fileSize";
+	private static final String FIELD_SIZE = "size";
 
 	private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
 		@Override
@@ -149,7 +149,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 				int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
 				if (!cursor.isNull(sizeIndex)) {
-					map.putInt(FIELD_FILE_SIZE, cursor.getInt(sizeIndex));
+					map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
 				}
 			}
 		} finally {

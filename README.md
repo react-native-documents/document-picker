@@ -93,7 +93,7 @@ try {
      res.uri,
      res.type, // mime type
      res.name,
-     res.fileSize
+     res.size
   );
 } catch ( err ) {
   if ( DocumentPicker.isCancel(err) ) {
