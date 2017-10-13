@@ -52,25 +52,25 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
 {
     NSArray *allowedUTIs = [RCTConvert NSArray:options[@"type"]];
     UIDocumentMenuViewController *documentPicker = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
-
+    
     [composeResolvers addObject:resolve];
     [composeRejecters addObject:reject];
-
+    
     documentPicker.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
-
+    
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
     while (rootViewController.modalViewController) {
         rootViewController = rootViewController.modalViewController;
     }
-
+    
     if ( IDIOM == IPAD ) {
         NSNumber *top = [RCTConvert NSNumber:options[@"top"]];
         NSNumber *left = [RCTConvert NSNumber:options[@"left"]];
         [documentPicker.popoverPresentationController setSourceRect: CGRectMake([left floatValue], [top floatValue], 0, 0)];
         [documentPicker.popoverPresentationController setSourceView: rootViewController.view];
     }
-
+    
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
 
@@ -79,7 +79,7 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
 {
     documentPicker.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
-
+    
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
     
     while (rootViewController.modalViewController) {
@@ -89,7 +89,7 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
         [documentPicker.popoverPresentationController setSourceRect: CGRectMake(rootViewController.view.frame.size.width/2, rootViewController.view.frame.size.height - rootViewController.view.frame.size.height / 6, 0, 0)];
         [documentPicker.popoverPresentationController setSourceView: rootViewController.view];
     }
-
+    
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
 
@@ -100,12 +100,12 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
         RCTPromiseRejectBlock reject = [composeRejecters lastObject];
         [composeResolvers removeLastObject];
         [composeRejecters removeLastObject];
-
+        
         [url startAccessingSecurityScopedResource];
-
+        
         NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
         __block NSError *error;
-
+        
         [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&error byAccessor:^(NSURL *newURL) {
             NSMutableDictionary* result = [NSMutableDictionary dictionary];
             
@@ -114,7 +114,7 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
             } else {
                 [result setValue:newURL.absoluteString forKey:FIELD_URI];
                 [result setValue:[newURL lastPathComponent] forKey:FIELD_NAME];
-
+                
                 NSError *attributesError = nil;
                 NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:newURL.path error:&attributesError];
                 if(!attributesError) {
@@ -122,7 +122,7 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
                 } else {
                     NSLog(@"%@", attributesError);
                 }
-
+                
                 resolve(result);
             }
         }];
