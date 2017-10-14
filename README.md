@@ -237,11 +237,6 @@ RNFS.uploadFiles({
        console.log(err);
     });
 ```
-## File Type 
-***All type of Files*** ``` 'public.allFiles' or DocumentPicker.types.allFiles```<br/> 
-***Only PDF*** ``` 'public.pdf' or DocumentPicker.types.pdf ``` <br/> 
-***Audio*** ``` 'public.audio' or DocumentPicker.types.audio``` <br/> 
-***Plain Text*** ``` 'public.plainText' or DocumentPicker.types.plainText ``` <br/> 
 
 ## Reminder
 
@@ -252,5 +247,5 @@ You need to enable iCloud Documents to access iCloud
 ## Halp wanted: Improvements
 
 - Fix Xcode warning about constraints
-- support options for the [UIDocumentMenuViewController](https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/DocumentPickerProgrammingGuide/AccessingDocuments/AccessingDocuments.html#//apple_ref/doc/uid/TP40014451-CH2-SW5)
+- support options for the [UIDocumentPickerViewController](https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/DocumentPickerProgrammingGuide/AccessingDocuments/AccessingDocuments.html#//apple_ref/doc/uid/TP40014451-CH2-SW5)
 - Handle Upload by itself ?
