@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
+import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -57,6 +58,15 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 	};
 
+	private String[] readableArrayToStringArray(ReadableArray readableArray) {
+		int l = readableArray.size();
+		String[] array = new String[l];
+		for(int i = 0; i < l; ++i) {
+			array[i] = readableArray.getString(i);
+		}
+		return array;
+	}
+
 	private Promise promise;
 
 	public DocumentPickerModule(ReactApplicationContext reactContext) {
@@ -90,9 +100,17 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 
+			intent.setType("*/*");
 			if (!args.isNull(OPTION_TYPE)) {
 				ReadableArray types = args.getArray(OPTION_TYPE);
-				if (types.size() > 0) {
+				if (types.size() > 1) {
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+						String[] mimeTypes = readableArrayToStringArray(types);
+						intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+					} else {
+						Log.e(NAME, "Multiple type values not supported below API level 19");
+					}
+				} else if (types.size() == 1) {
 					intent.setType(types.getString(0));
 				}
 			}

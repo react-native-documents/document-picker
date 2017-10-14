@@ -2,7 +2,7 @@
 import {Platform, NativeModules} from 'react-native';
 const {RNDocumentPicker} = NativeModules;
 
-if (!RNDocumentPicker) {
+if ( !RNDocumentPicker ) {
   // Use a timeout to ensure the warning is displayed in the YellowBox
   setTimeout(() => {
     console.warn('RNDocumentPicker: Native module is not available, make sure you have finished the installation process and rebuilt your app');
@@ -43,6 +43,10 @@ function pick(opts) {
       throw new TypeError('Invalid type option, expected a string not: ' + type);
     }
   });
+
+  if ( opts.type.length > 1 && Platform.OS === 'android' && Platform.Version < 19 ) {
+    console.warn(`RNDocumentPicker: Android API level ${Platform.Version} does not support multiple types, falling back to */*`);
+  }
 
   return RNDocumentPicker.pick(opts);
 }
