@@ -127,7 +127,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.promise.reject(E_FAILED_TO_SHOW_PICKER, "Failed to show document picker", e);
+			this.promise.reject(E_FAILED_TO_SHOW_PICKER, e.getMessage());
 			this.promise = null;
 		}
 	}
