@@ -41,7 +41,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String OPTION_TYPE = "type";
 	private static final String OPTION_MULIPLE = "multiple";
 
-	private static final String FIELD_URL = "url";
+	private static final String FIELD_URI = "uri";
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
@@ -172,7 +172,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private WritableMap getMetadata(Uri uri) {
 		WritableMap map = Arguments.createMap();
 
-		map.putString(FIELD_URL, uri.toString());
+		map.putString(FIELD_URI, uri.toString());
 
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 
