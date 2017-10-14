@@ -1,6 +1,7 @@
 package io.github.elyx0.reactnativedocumentpicker;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,6 +20,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
 /**
@@ -34,6 +36,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String E_UNKNOWN_ACTIVITY_RESULT = "UNKNOWN_ACTIVITY_RESULT";
 	private static final String E_INVALID_DATA_RETURNED = "INVALID_DATA_RETURNED";
 	private static final String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
+
+	private static final String OPTION_TYPE = "type";
+	private static final String OPTION_MULIPLE = "multiple";
 
 	private static final String FIELD_URL = "url";
 	private static final String FIELD_NAME = "name";
@@ -71,7 +76,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	}
 
 	@ReactMethod
-	public void show(ReadableMap args, Promise promise) {
+	public void pick(ReadableMap args, Promise promise) {
 		Activity currentActivity = getCurrentActivity();
 
 		if (currentActivity == null) {
@@ -85,15 +90,20 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-			if (!args.isNull("type")) {
-				ReadableArray types = args.getArray("type");
+			if (!args.isNull(OPTION_TYPE)) {
+				ReadableArray types = args.getArray(OPTION_TYPE);
 				if (types.size() > 0) {
 					intent.setType(types.getString(0));
 				}
 			}
 
+			boolean multiple = !args.isNull(OPTION_MULIPLE) && args.getBoolean(OPTION_MULIPLE);
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+				intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
+			}
+
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-				 intent = Intent.createChooser(intent, null);
+				intent = Intent.createChooser(intent, null);
 			}
 
 			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
@@ -107,22 +117,40 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		if (resultCode == Activity.RESULT_CANCELED) {
 			promise.reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
 		} else if (resultCode == Activity.RESULT_OK) {
+			Uri uri = null;
+			ClipData clipData = null;
+
 			if (data != null) {
-				try {
-					Uri uri = data.getData();
-					promise.resolve(toMapWithMetadata(uri));
-				} catch (Exception e) {
-					promise.reject(E_UNEXPECTED_EXCEPTION, e.getMessage(), e);
+				uri = data.getData();
+				clipData = data.getClipData();
+			}
+
+			try {
+				WritableArray results = Arguments.createArray();
+
+				if (uri != null) {
+					results.pushMap(getMetadata(uri));
+				} else if (clipData != null && clipData.getItemCount() > 0) {
+					final int length = clipData.getItemCount();
+					for (int i = 0; i < length; ++i) {
+						ClipData.Item item = clipData.getItemAt(i);
+						results.pushMap(getMetadata(item.getUri()));
+					}
+				} else {
+					promise.reject(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
+					return;
 				}
-			} else {
-				promise.reject(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
+
+				promise.resolve(results);
+			} catch (Exception e) {
+				promise.reject(E_UNEXPECTED_EXCEPTION, e.getMessage(), e);
 			}
 		} else {
 			promise.reject(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
 		}
 	}
 
-	private WritableMap toMapWithMetadata(Uri uri) {
+	private WritableMap getMetadata(Uri uri) {
 		WritableMap map = Arguments.createMap();
 
 		map.putString(FIELD_URL, uri.toString());
