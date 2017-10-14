@@ -76,6 +76,43 @@ public class MainApplication extends Application implements ReactApplication {
 }
 ```
 
+## API
+
+### `DocumentPicker.pick(opts)` and `DocumentPicker.pickMultiple(opts)`
+
+Use `pick` or `pickMultiple` to open a document picker for the user to select file(s). Both methods return a Promise. `pick` will only allow a single selection and the Promise will resolve to that single result. `pickMultiple` will allow multiple selection and the Promise returned will always resolve to an array of results.
+
+**Options:**
+
+* **`type`**:`string|Array<string>`: The type or types of documents to allow selection of. May be an array of types as single type string.
+  * On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`.
+  * On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
+  * If `type` is omitted it will be treated as `*/*` or `public.content`.
+  * Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
+
+**Result:**
+
+The object a `pick` Promise resolves to or the objects in the array a `pickMultiple` Promise resolves to will contain the following keys.
+
+* **`uri`**: The URI representing the document picked by the user. *On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver.*
+* **`type`**: The MIME type of the file. *On Android some DocumentProviders may not provide MIME types for their documents. On iOS this MIME type is based on the best MIME type for the file extension according to Apple's internal "Uniform Type Identifiers" database.*
+* **`name`**: The display name of the file. *This is normally the filename of the file, but Android does not guarantee that this will be a filename from all DocumentProviders.*
+* **`size`**: The file size of the document. *On Android some DocumentProviders may not provide this information for a document.*
+
+### `DocumentPicker.types.*`
+
+`DocumentPicker.types.*` provides a few common types for use as `type` values, these types will use the correct format for each platform (MIME types on Android, UTIs on iOS).
+
+* `DocumentPicker.types.allFiles`: All document types, on Android this is `*/*`, on iOS is is `public.content` (note that some binary and archive types do not inherit from `public.content`)
+* `DocumentPicker.types.images`: All image types (`image/*` or  `public.image`)
+* `DocumentPicker.types.plainText`: Plain text files ie: `.txt` (`text/plain` or  `public.plain-text`)
+* `DocumentPicker.types.audio`: All audio types (`audio/*` or  `public.audio`)
+* `DocumentPicker.types.pdf`: PDF documents (`application/pdf` or  `com.adobe.pdf`)
+
+### `DocumentPicker.isCancel(err)`
+
+If the user cancels the document picker without choosing a file (by pressing the system back button on Android or the Cancel button on iOS) the Promise will be rejected with a cancellation error. You can check for this error using `DocumentPicker.isCancel(err)` allowing you to ignore it and cleanup any parts of your interface that may not be needed anymore.
+
 ## Example
 ```javascript
 import DocumentPicker from 'react-native-document-picker';
@@ -120,11 +157,6 @@ try {
   }
 }
 ```
-
-### Note
-The full list of UTI is available here:
-[(https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)](https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html
-)]
 
 ## Here is how it looks:
 ![screenshot](http://i.stack.imgur.com/dv0iQ.png)
