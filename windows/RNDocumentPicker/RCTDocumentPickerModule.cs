@@ -12,8 +12,7 @@ using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
-using Windows.Storage.FileProperties;
-using Windows.Storage.Streams;
+using Windows.Storage.Pickers;
 using ZXing;
 using static System.FormattableString;
 
@@ -38,10 +37,31 @@ namespace RNDocumentPicker
         [ReactMethod]
         public async void show(JObject args, IPromise promise)
         {
+            FileOpenPicker openPicker = new FileOpenPicker();
+            openPicker.ViewMode = PickerViewMode.List;
+            openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+
             var fileType = options.Value<int>("filetype");
             if(fileType)
             {
-                promise.Resolve(fileType);
+                openPicker.fileTypeFilter.replaceAll(fileType.Split(" "));
+            } else {
+                openPicker.fileTypeFilter.replaceAll(["*"]);
+            }
+
+            StorageFile file = await openPicker.PickSingleFileAsync();
+            if (file != null)
+            {
+                promise.Resolve(new JObject
+                {
+                    { "uri", storageFile.Path },
+                    { "type", storageFile.ContentType },
+                    { "fileName", storageFile.Name }
+                });
+            }
+            else
+            {
+                promise.Resolve();
             }
         }
     }

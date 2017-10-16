@@ -9,24 +9,57 @@ const DocumentPicker = NativeModules.RNDocumentPicker;
  * @see https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html
  */
 class DocumentPickerUtil {
+
+  static getAllTypes() {
+    switch(Platform.OS) {
+      case 'ios':
+        return {
+          'allFiles': 'public.content',
+          'images': 'public.image',
+          'plainText': 'public.plain-text',
+          'audio': 'public.audio',
+          'pdf': 'com.adobe.pdf',
+        };
+      case 'android':
+        return {
+          'allFiles': '*/*',
+          'images': 'image/*',
+          'plainText': 'text/plain',
+          'audio': 'audio/*',
+          'pdf': 'application/pdf',
+        };
+      case 'windows':
+        return {
+          'allFiles': '*',
+          'images': '.png .jpg .jpeg',
+          'plainText': '.txt',
+          'audio': '.adts .adt .aac .aif .aifc .aiff .au .snd .mid .midi .rmi .mp3 .mp2 .m3u .m4a .wav .wma .wax .asf .3g2 .3gp .m4b .mp4',
+          'pdf': '.pdf',
+        };
+      default:
+        return null;
+    } 
+    return null;
+  }
+
   static allFiles() {
-    return (Platform.OS === 'android') ? "*/*" : "public.content";
+    return this.getAllTypes().allFiles;
   }
 
   static images() {
-    return (Platform.OS === 'android') ? "image/*" : "public.image";
+    return this.getAllTypes().images;
   }
 
   static plainText() {
-    return (Platform.OS === 'android') ? "text/plain" : "public.plain-text";
+    return this.getAllTypes().plainText;
   }
 
   static audio() {
-    return (Platform.OS === 'android') ? "audio/*" : "public.audio";
+    return this.getAllTypes().audio
   }
 
   static pdf() {
-    return (Platform.OS === 'android') ? "application/pdf" : "com.adobe.pdf";
+    return this.getAllTypes().pdf;
   }
 }
 
