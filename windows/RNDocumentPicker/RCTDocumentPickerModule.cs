@@ -35,7 +35,7 @@ namespace RNDocumentPicker
         }
 
         [ReactMethod]
-        public async void show(JObject args, IPromise promise)
+        public async void show(JObject args, ICallback callback)
         {
             FileOpenPicker openPicker = new FileOpenPicker();
             openPicker.ViewMode = PickerViewMode.List;
@@ -52,16 +52,19 @@ namespace RNDocumentPicker
             StorageFile file = await openPicker.PickSingleFileAsync();
             if (file != null)
             {
-                promise.Resolve(new JObject
+                callback.Invoke(new object[]
+                {   (object) null, 
+                    (object) new JObject
                 {
                     { "uri", storageFile.Path },
                     { "type", storageFile.ContentType },
                     { "fileName", storageFile.Name }
+                }
                 });
             }
             else
             {
-                promise.Resolve();
+                callback.Invoke(new object[]{(object) null, (object) null});
             }
         }
     }
