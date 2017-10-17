@@ -51,19 +51,37 @@ function pick(opts) {
   return RNDocumentPicker.pick(opts);
 }
 
+const PlatformTypes = {
+  ios: {
+    'allFiles': 'public.content',
+    'images': 'public.image',
+    'plainText': 'public.plain-text',
+    'audio': 'public.audio',
+    'pdf': 'com.adobe.pdf',
+  },
+  android: {
+    'allFiles': '*/*',
+    'images': 'image/*',
+    'plainText': 'text/plain',
+    'audio': 'audio/*',
+    'pdf': 'application/pdf',
+  },
+  windows: {
+    'allFiles': '*',
+    'images': '.png .jpg .jpeg',
+    'plainText': '.txt',
+    'audio': '.adts .adt .aac .aif .aifc .aiff .au .snd .mid .midi .rmi .mp3 .mp2 .m3u .m4a .wav .wma .wax .asf .3g2 .3gp .m4b .mp4',
+    'pdf': '.pdf',
+  }
+};
+
 export default class DocumentPicker {
   /**
    * Android requires mime types, iOS is a bit more complicated:
    *
    * @see https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html
    */
-  static types = {
-    allFiles: Platform.OS === 'ios' ? 'public.content' : '*/*',
-    images: Platform.OS === 'ios' ? 'public.image' : 'image/*',
-    plainText: Platform.OS === 'ios' ? 'public.plain-text' : 'text/plain',
-    audio: Platform.OS === 'ios' ? 'public.audio' : 'audio/*',
-    pdf: Platform.OS === 'ios' ? 'com.adobe.pdf' : 'application/pdf',
-  };
+  static types = PlatformTypes[Platform.OS]
 
   static pick(opts) {
     opts = opts || {};
