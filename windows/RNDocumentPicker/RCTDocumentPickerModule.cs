@@ -31,7 +31,7 @@ namespace RNDocumentPicker
         {
             get
             {
-                return "RCTDocumentPickerModule";
+                return "RNDocumentPicker";
             }
         }
 
@@ -48,13 +48,6 @@ namespace RNDocumentPicker
         public void OnResume()
         {
             _isInForeground = true;
-
-            var pendingPicker = _pendingPicker;
-            _pendingPicker = null;
-            if (pendingPicker != null)
-            {
-                //pendingPicker.
-            }
         }
 
         public void OnDestroy()

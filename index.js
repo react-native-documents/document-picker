@@ -1,7 +1,7 @@
 'use strict';
 
 import {Platform, NativeModules} from "react-native";
-const DocumentPicker = NativeModules.RNDocumentPicker || NativeModules.DocumentPickerModule;
+const DocumentPicker = NativeModules.RNDocumentPicker;
 
 /**
  * Android requires mime types, iOS is a bit more complicated:

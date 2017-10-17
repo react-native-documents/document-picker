@@ -1,73 +1,15 @@
 {
-  "_args": [
-    [
-      {
-        "raw": "react-native-document-picker@github:anumang/react-native-document-picker#windows",
-        "scope": null,
-        "escapedName": "react-native-document-picker",
-        "name": "react-native-document-picker",
-        "rawSpec": "github:anumang/react-native-document-picker#windows",
-        "spec": "github:anumang/react-native-document-picker#windows",
-        "type": "hosted",
-        "hosted": {
-          "type": "github",
-          "ssh": "git@github.com:anumang/react-native-document-picker.git#windows",
-          "sshUrl": "git+ssh://git@github.com/anumang/react-native-document-picker.git#windows",
-          "httpsUrl": "git+https://github.com/anumang/react-native-document-picker.git#windows",
-          "gitUrl": "git://github.com/anumang/react-native-document-picker.git#windows",
-          "shortcut": "github:anumang/react-native-document-picker#windows",
-          "directUrl": "https://raw.githubusercontent.com/anumang/react-native-document-picker/windows/package.json"
-        }
-      },
-      "C:\\Users\\Administrator\\Desktop\\projects\\DIMA\\DIMA-ReactNative"
-    ]
-  ],
-  "_from": "anumang/react-native-document-picker#windows",
-  "_id": "react-native-document-picker@2.1.0",
-  "_inCache": true,
-  "_location": "/react-native-document-picker",
-  "_phantomChildren": {},
-  "_requested": {
-    "raw": "react-native-document-picker@github:anumang/react-native-document-picker#windows",
-    "scope": null,
-    "escapedName": "react-native-document-picker",
-    "name": "react-native-document-picker",
-    "rawSpec": "github:anumang/react-native-document-picker#windows",
-    "spec": "github:anumang/react-native-document-picker#windows",
-    "type": "hosted",
-    "hosted": {
-      "type": "github",
-      "ssh": "git@github.com:anumang/react-native-document-picker.git#windows",
-      "sshUrl": "git+ssh://git@github.com/anumang/react-native-document-picker.git#windows",
-      "httpsUrl": "git+https://github.com/anumang/react-native-document-picker.git#windows",
-      "gitUrl": "git://github.com/anumang/react-native-document-picker.git#windows",
-      "shortcut": "github:anumang/react-native-document-picker#windows",
-      "directUrl": "https://raw.githubusercontent.com/anumang/react-native-document-picker/windows/package.json"
-    }
-  },
-  "_requiredBy": [
-    "/"
-  ],
-  "_resolved": "git://github.com/anumang/react-native-document-picker.git#813f51c4fc14e2f20d48d191bedef79c8251c6c2",
-  "_shasum": "30d34080b94d2b51c2ff19d84f5cf23581dd8b4b",
-  "_shrinkwrap": null,
-  "_spec": "react-native-document-picker@github:anumang/react-native-document-picker#windows",
-  "_where": "C:\\Users\\Administrator\\Desktop\\projects\\DIMA\\DIMA-ReactNative",
-  "author": {
-    "name": "Elyx0",
-    "email": "elyx00@gmail.com",
-    "url": "@Elyx0"
-  },
-  "bugs": {
-    "url": "https://github.com/Elyx0/react-native-document-picker/issues"
-  },
-  "dependencies": {},
+  "name": "react-native-document-picker",
+  "version": "2.1.0",
   "description": "A react native interface to access Documents from dropbox google drive, iCloud",
-  "devDependencies": {
-    "react-native": "^0.28.0"
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "gitHead": "813f51c4fc14e2f20d48d191bedef79c8251c6c2",
-  "homepage": "https://github.com/Elyx0/react-native-document-picker#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Elyx0/react-native-document-picker.git"
+  },
   "keywords": [
     "document",
     "picker",
