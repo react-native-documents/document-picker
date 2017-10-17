@@ -120,12 +120,12 @@ namespace RNDocumentPicker
                     }
                     catch (Exception)
                     {
-                        promise.Reject(E_FAILED_TO_SHOW_PICKER);
+                        promise.Reject(E_FAILED_TO_SHOW_PICKER, E_FAILED_TO_SHOW_PICKER);
                     }
                 });
             }
             catch (Exception) {
-                promise.Reject(E_UNEXPECTED_EXCEPTION);
+                promise.Reject(E_UNEXPECTED_EXCEPTION, E_UNEXPECTED_EXCEPTION);
             }
         }
 
@@ -153,7 +153,7 @@ namespace RNDocumentPicker
             }
             else
             {
-                promise.Reject(E_DOCUMENT_PICKER_CANCELED);
+                promise.Reject(E_DOCUMENT_PICKER_CANCELED, E_DOCUMENT_PICKER_CANCELED);
             }
 
             return true;
@@ -169,7 +169,7 @@ namespace RNDocumentPicker
             }
             else
             {
-                promise.Reject(E_DOCUMENT_PICKER_CANCELED);
+                promise.Reject(E_DOCUMENT_PICKER_CANCELED, E_DOCUMENT_PICKER_CANCELED);
             }
 
             return true;
