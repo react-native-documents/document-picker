@@ -14,6 +14,7 @@ using Windows.Storage.Pickers;
 using ZXing;
 using static System.FormattableString;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace RNDocumentPicker
 {
@@ -21,6 +22,17 @@ namespace RNDocumentPicker
     {
         private FileOpenPicker _pendingPicker;
         private bool _isInForeground;
+
+        private static readonly String E_FAILED_TO_SHOW_PICKER = "FAILED_TO_SHOW_PICKER";
+        private static readonly String E_DOCUMENT_PICKER_CANCELED = "No data";
+        private static readonly String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
+
+        private static readonly String OPTION_TYPE = "filetype";
+
+        private static readonly String FIELD_URI = "uri";
+        private static readonly String FIELD_NAME = "fileName";
+        private static readonly String FIELD_TYPE = "type";
+        private static readonly String FIELD_SIZE = "fileSize";
 
         public RCTDocumentPickerModule(ReactContext reactContext)
             : base(reactContext)
@@ -57,64 +69,77 @@ namespace RNDocumentPicker
         [ReactMethod]
         public void show(JObject options, ICallback callback)
         {
-            FileOpenPicker openPicker = new FileOpenPicker();
-            openPicker.ViewMode = PickerViewMode.Thumbnail;
-            openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            // Get file type array options
-            var fileTypeArray = options.Value<JArray>("filetype");
-            // Init file type filter
-            if (fileTypeArray != null && fileTypeArray.Count > 0)
+            try
             {
-                foreach (String typeString in fileTypeArray)
+                FileOpenPicker openPicker = new FileOpenPicker();
+                openPicker.ViewMode = PickerViewMode.Thumbnail;
+                openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+                // Get file type array options
+                var fileTypeArray = options.Value<JArray>(OPTION_TYPE);
+                // Init file type filter
+                if (fileTypeArray != null && fileTypeArray.Count > 0)
                 {
-                    List<String> types = typeString.Split(' ').ToList();
-                    foreach (String type in types)
+                    foreach (String typeString in fileTypeArray)
                     {
-                        if (Regex.Match(type, "(^[.]+[A-Za-z0-9]*$)|(^[*]$)").Success)
+                        List<String> types = typeString.Split(' ').ToList();
+                        foreach (String type in types)
                         {
-                            openPicker.FileTypeFilter.Add(type);
+                            if (Regex.Match(type, "(^[.]+[A-Za-z0-9]*$)|(^[*]$)").Success)
+                            {
+                                openPicker.FileTypeFilter.Add(type);
+                            }
                         }
                     }
                 }
-            }
-            else
-            {
-                openPicker.FileTypeFilter.Add("*");
-            }
-
-            RunOnDispatcher(async () =>
-            {
-                try
+                else
                 {
-                    if (_isInForeground)
-                    {
+                    openPicker.FileTypeFilter.Add("*");
+                }
 
-                        var file = await openPicker.PickSingleFileAsync().AsTask().ConfigureAwait(false);
-                        if (file != null)
+                RunOnDispatcher(async () =>
+                {
+                    try
+                    {
+                        if (_isInForeground)
                         {
-                            OnInvoked(null, new JObject
-                        {
-                            { "uri", file.Path },
-                            { "type", file.ContentType },
-                            { "fileName", file.Name }
-                        }, callback);
+
+                            var file = await openPicker.PickSingleFileAsync().AsTask().ConfigureAwait(false);
+                            if (file != null)
+                            {
+                                OnInvoked(null, PrepareFile(file).Result, callback);
+                            }
+                            else
+                            {
+                                OnInvoked(E_DOCUMENT_PICKER_CANCELED, null, callback);
+                            }
                         }
                         else
                         {
-                            OnInvoked("No data", null, callback);
+                            _pendingPicker = openPicker;
                         }
                     }
-                    else
+                    catch (Exception)
                     {
-                        _pendingPicker = openPicker;
+                        OnInvoked(E_FAILED_TO_SHOW_PICKER, null, callback);
                     }
-                }
-                catch (Exception ex)
-                {
-                    OnInvoked(ex, null, callback);
-                }
-            });
+                });
+            }
+            catch (Exception) {
+                OnInvoked(E_UNEXPECTED_EXCEPTION, null, callback);
+            }
 
+        }
+
+        private async Task<JObject> PrepareFile(StorageFile file)
+        {
+            var basicProperties = await file.GetBasicPropertiesAsync();
+
+            return new JObject {
+                    { FIELD_URI, file.Path },
+                    { FIELD_TYPE, file.ContentType },
+                    { FIELD_NAME, file.Name },
+                    { FIELD_SIZE, basicProperties.Size}
+                };
         }
 
         private void OnInvoked(Object error, Object success, ICallback callback)
