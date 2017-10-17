@@ -24,7 +24,7 @@ namespace RNDocumentPicker
         {
             return new List<INativeModule>
             {
-                new RNDocumentPickerModule(reactContext),
+                new RCTDocumentPickerModule(reactContext),
             };
         }
 

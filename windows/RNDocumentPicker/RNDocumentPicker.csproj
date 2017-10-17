@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{GF11038F0-88E5-11E7-BA7C-E36C7490591B}</ProjectGuid>
+    <ProjectGuid>{811E4A06-ADAF-B342-8F02-43713D65B1B0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RNDocumentPicker</RootNamespace>
@@ -130,7 +130,9 @@
   <ItemGroup>
     <Compile Include="RCTDocumentPickerModule.cs" />
     <Compile Include="RNDocumentPickerPackage.cs" />
-    <EmbeddedResource Include="Properties\RNDocumentPicker.rd.xml" />
+    <EmbeddedResource Include="Properties\RNDocumentPicker.rd.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\react-native-windows\ReactWindows\ReactNative\ReactNative.csproj">
