@@ -2,7 +2,10 @@
 
 ## WARNING: Experimental branch of v3 /!\
 
-A React Native wrapper for Apple's ``UIDocumentPickerViewController`` and for Android's ``Intent.ACTION_GET_CONTENT`` and for Windows ``Windows.Storage.Pickers``.
+A React Native wrapper for:
+ * Apple's ``UIDocumentMenuViewController``
+ * Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK`` 
+ * Windows ``Windows.Storage.Pickers``
 
 ### Installation
 
@@ -32,10 +35,6 @@ Add the following to your podfile:
 ```
 pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker`
 ```
-
-### Windows
-
-Follow the instructions in the ['Linking Libraries'](https://github.com/Microsoft/react-native-windows/blob/master/docs/LinkingLibrariesWindows.md) documentation on the react-native-windows GitHub repo. For the first step of adding the project to the Visual Studio solution file, the path to the project should be `../node_modules/react-native-document-picker/windows/RNDocumentPicker/RNDocumentPicker.csproj`.
 
 ### Android
 
@@ -79,6 +78,10 @@ public class MainApplication extends Application implements ReactApplication {
 ...
 }
 ```
+
+### Windows
+
+Follow the instructions in the ['Linking Libraries'](https://github.com/Microsoft/react-native-windows/blob/master/docs/LinkingLibrariesWindows.md) documentation on the react-native-windows GitHub repo. For the first step of adding the project to the Visual Studio solution file, the path to the project should be `../node_modules/react-native-document-picker/windows/RNDocumentPicker/RNDocumentPicker.csproj`.
 
 ## API
 
