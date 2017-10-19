@@ -127,7 +127,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.promise.reject(E_FAILED_TO_SHOW_PICKER, e.getMessage());
+			this.promise.reject(E_FAILED_TO_SHOW_PICKER, e.getLocalizedMessage());
 			this.promise = null;
 		}
 	}
@@ -162,7 +162,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 				promise.resolve(results);
 			} catch (Exception e) {
-				promise.reject(E_UNEXPECTED_EXCEPTION, e.getMessage(), e);
+				promise.reject(E_UNEXPECTED_EXCEPTION, e.getLocalizedMessage(), e);
 			}
 		} else {
 			promise.reject(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
