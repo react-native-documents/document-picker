@@ -61,7 +61,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private String[] readableArrayToStringArray(ReadableArray readableArray) {
 		int l = readableArray.size();
 		String[] array = new String[l];
-		for(int i = 0; i < l; ++i) {
+		for (int i = 0; i < l; ++i) {
 			array[i] = readableArray.getString(i);
 		}
 		return array;
