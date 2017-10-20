@@ -76,19 +76,16 @@ namespace RNDocumentPicker
                 openPicker.ViewMode = PickerViewMode.Thumbnail;
                 openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
                 // Get file type array options
-                var fileTypeArray = options.Value<JArray>(OPTION_TYPE);
+                var mimeTypes = options.Value<JArray>(OPTION_TYPE);
                 // Init file type filter
-                if (fileTypeArray != null && fileTypeArray.Count > 0)
+                if (mimeTypes != null && mimeTypes.Count > 0)
                 {
-                    foreach (String typeString in fileTypeArray)
+                    List<String> types = NginxMimeTypes.GetExtensions(mimeTypes.ToObject<List<string>>());
+                    foreach (String type in types)
                     {
-                        List<String> types = typeString.Split(' ').ToList();
-                        foreach (String type in types)
+                        if (Regex.Match(type, "(^[.]+[A-Za-z0-9]*$)|(^[*]$)").Success)
                         {
-                            if (Regex.Match(type, "(^[.]+[A-Za-z0-9]*$)|(^[*]$)").Success)
-                            {
-                                openPicker.FileTypeFilter.Add(type);
-                            }
+                            openPicker.FileTypeFilter.Add(type);
                         }
                     }
                 }
@@ -118,14 +115,14 @@ namespace RNDocumentPicker
                             _pendingPicker = openPicker;
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        promise.Reject(E_FAILED_TO_SHOW_PICKER, E_FAILED_TO_SHOW_PICKER);
+                        promise.Reject(E_FAILED_TO_SHOW_PICKER, ex.Message);
                     }
                 });
             }
-            catch (Exception) {
-                promise.Reject(E_UNEXPECTED_EXCEPTION, E_UNEXPECTED_EXCEPTION);
+            catch (Exception ex) {
+                promise.Reject(E_UNEXPECTED_EXCEPTION, ex.Message);
             }
         }
 
@@ -153,7 +150,7 @@ namespace RNDocumentPicker
             }
             else
             {
-                promise.Reject(E_DOCUMENT_PICKER_CANCELED, E_DOCUMENT_PICKER_CANCELED);
+                promise.Reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
             }
 
             return true;
@@ -169,7 +166,7 @@ namespace RNDocumentPicker
             }
             else
             {
-                promise.Reject(E_DOCUMENT_PICKER_CANCELED, E_DOCUMENT_PICKER_CANCELED);
+                promise.Reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
             }
 
             return true;
