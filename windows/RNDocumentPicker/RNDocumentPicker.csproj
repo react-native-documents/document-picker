@@ -128,7 +128,6 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NginxMimeTypes.cs" />
     <Compile Include="RCTDocumentPickerModule.cs" />
     <Compile Include="RNDocumentPickerPackage.cs" />
     <EmbeddedResource Include="Properties\RNDocumentPicker.rd.xml">

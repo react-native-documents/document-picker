@@ -76,16 +76,19 @@ namespace RNDocumentPicker
                 openPicker.ViewMode = PickerViewMode.Thumbnail;
                 openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
                 // Get file type array options
-                var mimeTypes = options.Value<JArray>(OPTION_TYPE);
+                var fileTypeArray = options.Value<JArray>(OPTION_TYPE);
                 // Init file type filter
-                if (mimeTypes != null && mimeTypes.Count > 0)
+                if (fileTypeArray != null && fileTypeArray.Count > 0)
                 {
-                    List<String> types = NginxMimeTypes.GetExtensions(mimeTypes.ToObject<List<string>>());
-                    foreach (String type in types)
+                    foreach (String typeString in fileTypeArray)
                     {
-                        if (Regex.Match(type, "(^[.]+[A-Za-z0-9]*$)|(^[*]$)").Success)
+                        List<String> types = typeString.Split(' ').ToList();
+                        foreach (String type in types)
                         {
-                            openPicker.FileTypeFilter.Add(type);
+                            if (Regex.Match(type, "(^[.]+[A-Za-z0-9]*$)|(^[*]$)").Success)
+                            {
+                                openPicker.FileTypeFilter.Add(type);
+                            }
                         }
                     }
                 }
