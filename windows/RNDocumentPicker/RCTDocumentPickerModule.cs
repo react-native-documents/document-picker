@@ -131,12 +131,13 @@ namespace RNDocumentPicker
 
         private async Task<JObject> PrepareFile(StorageFile file)
         {
-            var basicProperties = await file.GetBasicPropertiesAsync();
+            var fileInCache = await file.CopyAsync(ApplicationData.Current.LocalCacheFolder);
+            var basicProperties = await fileInCache.GetBasicPropertiesAsync();
 
             return new JObject {
-                    { FIELD_URI, file.Path },
-                    { FIELD_TYPE, file.ContentType },
-                    { FIELD_NAME, file.Name },
+                    { FIELD_URI, fileInCache.Path },
+                    { FIELD_TYPE, fileInCache.ContentType },
+                    { FIELD_NAME, fileInCache.Name },
                     { FIELD_SIZE, basicProperties.Size}
                 };
         }
