@@ -28,7 +28,8 @@ namespace RNDocumentPicker
 	private static readonly String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
 
 	private static readonly String OPTION_TYPE = "type";
-	private static readonly String OPTION_MULIPLE = "multiple";
+        private static readonly String CACHE_TYPE = "cache";
+    private static readonly String OPTION_MULIPLE = "multiple";
 
 	private static readonly String FIELD_URI = "uri";
 	private static readonly String FIELD_NAME = "name";
@@ -77,6 +78,7 @@ namespace RNDocumentPicker
                 openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
                 // Get file type array options
                 var fileTypeArray = options.Value<JArray>(OPTION_TYPE);
+                var cache = options.Value<Boolean>(CACHE_TYPE);
                 // Init file type filter
                 if (fileTypeArray != null && fileTypeArray.Count > 0)
                 {
@@ -106,11 +108,11 @@ namespace RNDocumentPicker
                             var isMultiple = options.Value<bool>(OPTION_MULIPLE);
                             if (isMultiple)
                             {
-                                await PickMultipleFileAsync(openPicker, promise);
+                                await PickMultipleFileAsync(openPicker, cache, promise);
                             }
                             else
                             {
-                                await PickSingleFileAsync(openPicker, promise);
+                                await PickSingleFileAsync(openPicker, cache, promise);
                             }
                         }
                         else
@@ -129,26 +131,39 @@ namespace RNDocumentPicker
             }
         }
 
-        private async Task<JObject> PrepareFile(StorageFile file)
+        private async Task<JObject> PrepareFile(StorageFile file, Boolean cache)
         {
-            var fileInCache = await file.CopyAsync(ApplicationData.Current.LocalCacheFolder);
-            var basicProperties = await fileInCache.GetBasicPropertiesAsync();
+            if (cache == true)
+            {
+                var fileInCache = await file.CopyAsync(ApplicationData.Current.TemporaryFolder, file.Name.ToString(), NameCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
+                var basicProperties = await fileInCache.GetBasicPropertiesAsync();
 
-            return new JObject {
+                return new JObject {
                     { FIELD_URI, fileInCache.Path },
                     { FIELD_TYPE, fileInCache.ContentType },
                     { FIELD_NAME, fileInCache.Name },
                     { FIELD_SIZE, basicProperties.Size}
                 };
+            }
+            else {
+                var basicProperties = await file.GetBasicPropertiesAsync();
+
+                return new JObject {
+                    { FIELD_URI, file.Path },
+                    { FIELD_TYPE, file.ContentType },
+                    { FIELD_NAME, file.Name },
+                    { FIELD_SIZE, basicProperties.Size}
+                };
+            }
         }
 
-        private async Task<bool> PickMultipleFileAsync(FileOpenPicker picker, IPromise promise) {
+        private async Task<bool> PickMultipleFileAsync(FileOpenPicker picker, Boolean cache, IPromise promise) {
             IReadOnlyList<StorageFile> files = await picker.PickMultipleFilesAsync().AsTask().ConfigureAwait(false);
             if (files.Count > 0)
             {
                 JArray jarrayObj = new JArray();
                 foreach (var file in files) {
-                    jarrayObj.Add(PrepareFile(file).Result);
+                    jarrayObj.Add(PrepareFile(file, cache).Result);
                 }
                 promise.Resolve(jarrayObj);
             }
@@ -160,12 +175,12 @@ namespace RNDocumentPicker
             return true;
         }
 
-        private async Task<bool> PickSingleFileAsync(FileOpenPicker picker, IPromise promise) {
+        private async Task<bool> PickSingleFileAsync(FileOpenPicker picker, Boolean cache, IPromise promise) {
             var file = await picker.PickSingleFileAsync().AsTask().ConfigureAwait(false);
             if (file != null)
             {
                 JArray jarrayObj = new JArray();
-                jarrayObj.Add(PrepareFile(file).Result);
+                jarrayObj.Add(PrepareFile(file, cache).Result);
                 promise.Resolve(jarrayObj);
             }
             else
