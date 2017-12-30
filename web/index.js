@@ -1,7 +1,14 @@
+/**
+ * Trick for getting file selector cancel using `body.onfocus` event found at
+ * http://trishulgoel.com/handle-cancel-click-on-file-input/
+ */
+
 const E_DOCUMENT_PICKER_CANCELED = "DOCUMENT_PICKER_CANCELED";
 
 
-const input = document.createElement('input');
+const {body, createElement} = document
+
+const input = createElement('input');
       input.type = 'file';
 
 
@@ -30,12 +37,11 @@ function pick({multiple, type})
 
   const promise = new Promise(function(resolve, reject)
   {
-    function onchange()
+    function onfocus()
     {
-      input.removeEventListener('change', onchange);
+      body.removeEventListener('focus', onfocus);
 
-      const {files} = this;
-      // TODO Not working, there's no easy way to detect `cancel` button
+      const {files} = input;
       if ( !files.length ) {
         return reject(E_DOCUMENT_PICKER_CANCELED);
       }
@@ -43,7 +49,7 @@ function pick({multiple, type})
       resolve(Array.prototype.map.call(files, addUri));
     }
 
-    input.addEventListener('change', onchange);
+    body.addEventListener('focus', onfocus);
   });
 
   input.accept = type.join(',');
