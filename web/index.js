@@ -1,9 +1,15 @@
 const E_DOCUMENT_PICKER_CANCELED = "DOCUMENT_PICKER_CANCELED";
 
 
+const objectUrls = []  // Collection of ObjectUrl so they can be revoked later
+
+
 function mapFiles(file)
 {
-  file.uri = URL.createObjectURL(file);
+  const url = URL.createObjectURL(file);
+  objectUrls.push(url);
+
+  file.uri = url;
 
   return file;
 }
@@ -18,6 +24,11 @@ function pick({multiple, type})
     function onchange()
     {
       input.removeEventListener('change', onchange);
+
+      // Revoke previous objectUrls
+      while( objectUrls.length ) {
+        URL.revokeObjectURL(objectUrls.shift());
+      }
 
       const {files} = this;
       // TODO Not working, there's no easy way to detect `cancel` button
