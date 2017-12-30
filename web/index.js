@@ -1,23 +1,32 @@
 const E_DOCUMENT_PICKER_CANCELED = "DOCUMENT_PICKER_CANCELED";
 
 
-const objectUrls = []  // Collection of ObjectUrl so they can be revoked later
+const input = document.createElement('input');
+      input.type = 'file';
 
 
-function mapFiles(file)
+function addUri(file)
 {
-  const url = URL.createObjectURL(file);
-  objectUrls.push(url);
-
-  file.uri = url;
+  file.uri = URL.createObjectURL(file);
 
   return file;
+}
+
+function removeUri(file)
+{
+  URL.revokeObjectURL(file.uri);
+
+  delete file.uri;
 }
 
 
 function pick({multiple, type})
 {
-  const input = document.createElement('input');
+  // Revoke previous objectUrls
+  const {files} = input;
+  if( files ) {
+    Array.prototype.map.forEach(files, removeUri);
+  }
 
   const promise = new Promise(function(resolve, reject)
   {
@@ -25,18 +34,13 @@ function pick({multiple, type})
     {
       input.removeEventListener('change', onchange);
 
-      // Revoke previous objectUrls
-      while( objectUrls.length ) {
-        URL.revokeObjectURL(objectUrls.shift());
-      }
-
       const {files} = this;
       // TODO Not working, there's no easy way to detect `cancel` button
       if ( !files.length ) {
         return reject(E_DOCUMENT_PICKER_CANCELED);
       }
 
-      resolve(Array.prototype.map.call(files, mapFiles));
+      resolve(Array.prototype.map.call(files, addUri));
     }
 
     input.addEventListener('change', onchange);
@@ -44,7 +48,6 @@ function pick({multiple, type})
 
   input.accept = type.join(',');
   input.multiple = multiple;
-  input.type = 'file';
 
   input.click();
 
