@@ -6,9 +6,9 @@
 const E_DOCUMENT_PICKER_CANCELED = "DOCUMENT_PICKER_CANCELED";
 
 
-const {body, createElement} = document
+const {body} = document;
 
-const input = createElement('input');
+const input = document.createElement('input');
       input.type = 'file';
 
 
