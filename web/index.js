@@ -39,7 +39,7 @@ function pick({multiple, type})
   {
     function onfocus()
     {
-      body.removeEventListener('focus', onfocus);
+      body.removeEventListener('focus', onfocus, true);
 
       const {files} = input;
       if ( !files.length ) {
@@ -49,7 +49,7 @@ function pick({multiple, type})
       resolve(Array.prototype.map.call(files, addUri));
     }
 
-    body.addEventListener('focus', onfocus);
+    body.addEventListener('focus', onfocus, true);
   });
 
   input.accept = type.join(',');
