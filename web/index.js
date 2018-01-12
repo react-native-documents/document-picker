@@ -32,7 +32,7 @@ function pick({multiple, type})
   // Revoke previous objectUrls
   const {files} = input;
   if( files ) {
-    Array.prototype.map.forEach(files, removeUri);
+    Array.prototype.forEach.call(files, removeUri);
   }
 
   const promise = new Promise(function(resolve, reject)
