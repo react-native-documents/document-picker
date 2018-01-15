@@ -15,6 +15,7 @@ static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
 
 static NSString *const OPTION_TYPE = @"type";
 static NSString *const OPTION_MULIPLE = @"multiple";
+static NSString *const OPTION_FOR_OPEN = @"forOpen";
 
 static NSString *const FIELD_URI = @"uri";
 static NSString *const FIELD_NAME = @"name";
@@ -53,8 +54,9 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
+    UIDocumentPickerMode mode = options[OPTION_FOR_OPEN] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
     NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
-    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
+    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:mode];
     
     [composeResolvers addObject:resolve];
     [composeRejecters addObject:reject];
@@ -74,6 +76,30 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     }
     
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
+}
+
+RCT_EXPORT_METHOD((NSString)openForWrite:(NSString)uri)
+{
+    NSURL *url = [NSURL fileURLWithPath:uri];
+
+    NSError *bookmarkError = nil;
+    NSData *bookmark = [url bookmarkDataWithOptions: NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:@[url] relativeToURL:url.absoluteString error:&bookmarkError];
+
+    if (!bookmarkError) {
+        NSError *resolveError = nil;
+        NSURL *writeURL = [NSURL URLByResolvingBookmarkData:url options:NSURLBookmarkResolutionWithSecurityScope          relativeToURL:url.absoluteString bookmarkDataIsStale:false error:resolveError]
+
+        if (!resolveError) {
+            [writeURL startAccessingSecurityScopedResource];
+            return writeURL.absoluteString;
+        }
+    }
+}
+
+RCT_EXPORT_METHOD(closeForWrite:(NSString)uri)
+{
+    NSURL *url = [NSURL fileURLWithPath:uri];
+    [url stopAccessingSecurityScopedResource];
 }
 
 - (NSMutableDictionary *)getMetadataForUrl:(NSURL *)url error:(NSError **)error

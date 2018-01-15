@@ -4,7 +4,7 @@
 
 A React Native wrapper for:
  * Apple's ``UIDocumentMenuViewController``
- * Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK`` 
+ * Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK``
  * Windows ``Windows.Storage.Pickers``
 
 ### Installation
@@ -96,6 +96,8 @@ Use `pick` or `pickMultiple` to open a document picker for the user to select fi
   * On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
   * If `type` is omitted it will be treated as `*/*` or `public.content`.
   * Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
+* **`forOpen`**: `boolean`: open the document for writing (persistent open mode)
+  * iOS only (for now)
 
 **Result:**
 
@@ -171,7 +173,21 @@ try {
 
 ## How to send it back ?
 
-I recommend using [https://github.com/johanneslumpe/react-native-fs](https://github.com/johanneslumpe/react-native-fs)
+If you are on iOS and have opened the file with the *forOpen* option, then use the following example to write to the file.
+
+(you must set the *com.apple.security.files.bookmarks.document-scope* entitlement to true)
+
+```javascript
+
+// use the above example to get a uri (res.uri is the result from the document picker)
+var writeURL = DocumentPicker.openForWrite(res.uri)
+
+// now use [RNFS.writeFile](https://github.com/itinance/react-native-fs#writefilefilepath-string-contents-string-encoding-string-promisevoid)
+
+DocumentPicker.closeForWrite(writeURL)
+```
+
+Otherwise, I recommend using [https://github.com/johanneslumpe/react-native-fs](https://github.com/johanneslumpe/react-native-fs)
 I had to modify [Uploader.m](https://gist.github.com/Elyx0/5dc53bef294b42c847f1baea7cc5e911) so it would use `NSFileCoordinator` with `NSFileCoordinatorReadingForUploading` option.
 
 I added a check for file length that would be thrown into RNFS catch block.
