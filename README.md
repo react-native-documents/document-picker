@@ -180,11 +180,15 @@ If you are on iOS and have opened the file with the *forOpen* option, then use t
 ```javascript
 
 // use the above example to get a uri (res.uri is the result from the document picker)
-var writeURL = DocumentPicker.openForWrite(res.uri)
+DocumentPicker.openForWrite(res.uri, function(error, writeUrl) {
+    if (error) {
 
-// now use [RNFS.writeFile](https://github.com/itinance/react-native-fs#writefilefilepath-string-contents-string-encoding-string-promisevoid)
+    } else {
+        // now use [RNFS.writeFile](https://github.com/itinance/react-native-fs#writefilefilepath-string-contents-string-encoding-string-promisevoid)
 
-DocumentPicker.closeForWrite(writeURL)
+        DocumentPicker.closeForWrite(writeURL)
+    }
+})
 ```
 
 Otherwise, I recommend using [https://github.com/johanneslumpe/react-native-fs](https://github.com/johanneslumpe/react-native-fs)

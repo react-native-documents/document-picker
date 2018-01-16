@@ -78,25 +78,25 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
 
-RCT_EXPORT_METHOD((NSString)openForWrite:(NSString)uri)
+RCT_EXPORT_METHOD(openForWrite:(NSString *)uri responder:(RCTResponseSenderBlock)respond)
 {
     NSURL *url = [NSURL fileURLWithPath:uri];
 
     NSError *bookmarkError = nil;
-    NSData *bookmark = [url bookmarkDataWithOptions: NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:@[url] relativeToURL:url.absoluteString error:&bookmarkError];
+    NSData *bookmark = [url bookmarkDataWithOptions: NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:@[url] relativeToURL:url error:&bookmarkError];
 
     if (!bookmarkError) {
         NSError *resolveError = nil;
-        NSURL *writeURL = [NSURL URLByResolvingBookmarkData:url options:NSURLBookmarkResolutionWithSecurityScope          relativeToURL:url.absoluteString bookmarkDataIsStale:false error:resolveError]
+        NSURL *writeURL = [NSURL URLByResolvingBookmarkData:bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:url bookmarkDataIsStale:false error:&resolveError];
 
         if (!resolveError) {
             [writeURL startAccessingSecurityScopedResource];
-            return writeURL.absoluteString;
-        }
-    }
+            responder(@[[NSNull null], writeURL.absoluteString]);
+        } else { responder(@[resolveError]); }
+    } else { responder(@[bookmarkError]); }
 }
 
-RCT_EXPORT_METHOD(closeForWrite:(NSString)uri)
+RCT_EXPORT_METHOD(closeForWrite:(NSString *)uri)
 {
     NSURL *url = [NSURL fileURLWithPath:uri];
     [url stopAccessingSecurityScopedResource];
