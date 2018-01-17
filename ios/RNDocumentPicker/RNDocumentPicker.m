@@ -78,28 +78,25 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
 
-RCT_EXPORT_METHOD(openForWrite:(NSString *)uri responder:(RCTResponseSenderBlock)respond)
+RCT_EXPORT_METHOD(saveToFile:(NSString *)uri data:(NSString *)strData callback:(RCTResponseSenderBlock)respond)
 {
-    NSURL *url = [NSURL fileURLWithPath:uri];
+  [url startAccessingSecurityScopedResource];
 
-    NSError *bookmarkError = nil;
-    NSData *bookmark = [url bookmarkDataWithOptions: NSURLBookmarkCreationWithSecurityScope includingResourceValuesForKeys:@[url] relativeToURL:url error:&bookmarkError];
+  NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
+  __block NSError *fileError;
 
-    if (!bookmarkError) {
-        NSError *resolveError = nil;
-        NSURL *writeURL = [NSURL URLByResolvingBookmarkData:bookmark options:NSURLBookmarkResolutionWithSecurityScope relativeToURL:url bookmarkDataIsStale:false error:&resolveError];
+  [coordinator coordinateWritingItemAtURL:url options:NSFileCoordinatorWritingForReplacing error:&fileError byAccessor:^(NSURL *newURL) {
 
-        if (!resolveError) {
-            [writeURL startAccessingSecurityScopedResource];
-            responder(@[[NSNull null], writeURL.absoluteString]);
-        } else { responder(@[resolveError]); }
-    } else { responder(@[bookmarkError]); }
-}
+    if(!fileError) {
+      NSError *writeError = nil;
+      [strData writeToFile:newURL atomically:YES encoding:NSUTF8StringEncoding error:writeError];
+      respond(@[writeError]);
+    } else { respond(@[fileError]); }
 
-RCT_EXPORT_METHOD(closeForWrite:(NSString *)uri)
-{
-    NSURL *url = [NSURL fileURLWithPath:uri];
-    [url stopAccessingSecurityScopedResource];
+  }];
+
+  [url stopAccessingSecurityScopedResource];
+  respond(@[[NSNull null]])
 }
 
 - (NSMutableDictionary *)getMetadataForUrl:(NSURL *)url error:(NSError **)error

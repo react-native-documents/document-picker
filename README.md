@@ -175,18 +175,13 @@ try {
 
 If you are on iOS and have opened the file with the *forOpen* option, then use the following example to write to the file.
 
-(you must set the *com.apple.security.files.bookmarks.document-scope* entitlement to true)
-
 ```javascript
 
 // use the above example to get a uri (res.uri is the result from the document picker)
-DocumentPicker.openForWrite(res.uri, function(error, writeUrl) {
+var stringData = 'my awesome string'
+DocumentPicker.saveToFile(res.uri, stringData, function(error) {
     if (error) {
 
-    } else {
-        // now use [RNFS.writeFile](https://github.com/itinance/react-native-fs#writefilefilepath-string-contents-string-encoding-string-promisevoid)
-
-        DocumentPicker.closeForWrite(writeURL)
     }
 })
 ```
