@@ -23,6 +23,8 @@ import com.facebook.react.bridge.WritableMap;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -113,7 +115,9 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
             map = metaDataFromContentResolver(uri);
         }
 
-        map.putString("uri", uri.toString());
+        if (!map.hasKey("uri")) {
+            map.putString("uri", uri.toString());
+        }
 
         return map;
     }
@@ -172,6 +176,44 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         } finally {
             if (cursor != null) {
                 cursor.close();
+            }
+        }
+
+        InputStream in = null;
+        OutputStream out = null;
+
+        String filepath = getReactApplicationContext().getCacheDir().getAbsolutePath() + "/" + map.getString(Fields.FILE_NAME);
+
+        // try to copy the file to the app cache dir
+        // to have ability to manipulate the file later
+        try {
+            in = contentResolver.openInputStream(uri);
+            out = new FileOutputStream(new File(filepath));
+
+            // copy the file
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                out.write(buffer, 0, len);
+            }
+
+            // Contents are copied!
+            map.putString("uri", "file://" + filepath);
+        }
+        catch (Exception e) {
+            Log.e("DocumentPicker", "Failed to copy file", e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {
+                }
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException ignored) {
+                }
             }
         }
 
