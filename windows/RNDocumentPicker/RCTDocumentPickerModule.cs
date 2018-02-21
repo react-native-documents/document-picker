@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Linq;
 using ReactNative.Bridge;
 using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ReactNative.Bridge;
 using ReactNative.Collections;
@@ -16,6 +17,7 @@ using ZXing;
 using static System.FormattableString;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace RNDocumentPicker
 {
@@ -29,11 +31,11 @@ namespace RNDocumentPicker
 	private static readonly String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
 
 	private static readonly String OPTION_TYPE = "type";
-        private static readonly String CACHE_TYPE = "cache";
-    private static readonly String OPTION_MULIPLE = "multiple";
+	private static readonly String CACHE_TYPE = "cache";
+	private static readonly String OPTION_MULIPLE = "multiple";
 
 	private static readonly String FIELD_URI = "uri";
-    private static readonly String FIELD_NAME = "name";
+	private static readonly String FIELD_NAME = "name";
 	private static readonly String FIELD_TYPE = "type";
 	private static readonly String FIELD_SIZE = "size";
 	private static readonly String FIELD_CONTENT = "content";
@@ -148,25 +150,29 @@ namespace RNDocumentPicker
                 };
             }
             else {
-                string base64String = "";
                 var basicProperties = await file.GetBasicPropertiesAsync();
-                IRandomAccessStream fileStream = await file.OpenAsync(FileAccessMode.Read);
-                var reader = new DataReader(fileStream.GetInputStreamAt(0));
-                await reader.LoadAsync((uint)fileStream.Size);
-                byte[] byteArray = new byte[fileStream.Size];
-                reader.ReadBytes(byteArray);
-                base64String = Convert.ToBase64String(byteArray);
+
+                var bytes = default(byte[]);
+                var stream = await file.OpenReadAsync();
+                using (StreamReader reader = new StreamReader(stream.AsStream()))
+                {
+                    using (var memstream = new MemoryStream())
+                    {
+                        reader.BaseStream.CopyTo(memstream);
+                        bytes = memstream.ToArray();
+                    }
+                }
 
                 return new JObject {
                     { FIELD_URI, file.Path },
                     { FIELD_TYPE, file.ContentType },
                     { FIELD_NAME, file.Name },
-                    { FIELD_SIZE, basicProperties.Size},
-                    { FIELD_CONTENT, base64String}
+                    { FIELD_SIZE, basicProperties.Size },
+                    { FIELD_CONTENT, bytes }
                 };
             }
         }
-
+        
         private async Task<bool> PickMultipleFileAsync(FileOpenPicker picker, Boolean cache, IPromise promise) {
             IReadOnlyList<StorageFile> files = await picker.PickMultipleFilesAsync().AsTask().ConfigureAwait(false);
             if (files.Count > 0)
