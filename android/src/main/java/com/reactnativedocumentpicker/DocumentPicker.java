@@ -64,8 +64,16 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
         if (!args.isNull("filetype")) {
             ReadableArray filetypes = args.getArray("filetype");
-            if (filetypes.size() > 0) {
+            if (filetypes.size() == 1) {
                 intent.setType(filetypes.getString(0));
+            } else if (filetypes.size() > 1) {
+                intent.setType("*/*");
+
+                String[] extratypes = new String[filetypes.size()];
+                for (int i = 0; i < filetypes.size(); i++) {
+                  extratypes[i] = filetypes.getString(i);
+                }
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, extratypes);
             }
         }
 
