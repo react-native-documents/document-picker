@@ -1,27 +1,30 @@
 # react-native-document-picker
 
-## WARNING: Experimental branch of v3 /!\
+**WARNING: Experimental branch of v3 /!\**
 
 A React Native wrapper for:
- * Apple's ``UIDocumentMenuViewController``
- * Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK`` 
- * Windows ``Windows.Storage.Pickers``
+ * *Android*: ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK``
+ * *Apple*: ``UIDocumentMenuViewController``
+ * *Web*: ``<input type="file"/>``
+ * *Windows*: ``Windows.Storage.Pickers``
 
-### Installation
+## Installation
 
-```bash
+```sh
 npm i --save react-native-document-picker
 ```
 
-**Automatically Link Native Modules**
+### Automatically Link Native Modules
 
 Link native packages via the following command:
 
-```
+```sh
 react-native link
 ```
 
-**Manually Link Native Modules**
+### iOS
+
+#### Manually Link Native Modules
 
 1. Run `npm install react-native-document-picker --save`
 2. Open your project in XCode, right click on `Libraries` and click `Add
@@ -29,7 +32,7 @@ react-native link
 3. Add `libRNDocumentPicker.a` to `Build Phases -> Link Binary With Libraries`
    [(Screenshot)](http://url.brentvatne.ca/17Xfe).
 
-**CocoaPods**
+#### CocoaPods
 
 Add the following to your podfile:
 ```
@@ -89,7 +92,7 @@ Follow the instructions in the ['Linking Libraries'](https://github.com/Microsof
 
 Use `pick` or `pickMultiple` to open a document picker for the user to select file(s). Both methods return a Promise. `pick` will only allow a single selection and the Promise will resolve to that single result. `pickMultiple` will allow multiple selection and the Promise returned will always resolve to an array of results.
 
-**Options:**
+#### Options
 
 * **`type`**:`string|Array<string>`: The type or types of documents to allow selection of. May be an array of types as single type string.
   * On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`.
@@ -97,7 +100,7 @@ Use `pick` or `pickMultiple` to open a document picker for the user to select fi
   * If `type` is omitted it will be treated as `*/*` or `public.content`.
   * Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
 
-**Result:**
+#### Result
 
 The object a `pick` Promise resolves to or the objects in the array a `pickMultiple` Promise resolves to will contain the following keys.
 
@@ -165,11 +168,11 @@ try {
 }
 ```
 
-## Here is how it looks:
+## How it looks (iOS)
 ![screenshot](http://i.stack.imgur.com/dv0iQ.png)
 
 
-## How to send it back ?
+## How to send it back?
 
 I recommend using [https://github.com/johanneslumpe/react-native-fs](https://github.com/johanneslumpe/react-native-fs)
 I had to modify [Uploader.m](https://gist.github.com/Elyx0/5dc53bef294b42c847f1baea7cc5e911) so it would use `NSFileCoordinator` with `NSFileCoordinatorReadingForUploading` option.
@@ -182,7 +185,6 @@ if ([fileData length] == 0) {
     return;
 }
 ```
-
 
 ```javascript
 let url = "file://whatever/com.bla.bla/file.ext"; //The url you received from the DocumentPicker
