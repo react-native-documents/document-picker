@@ -43,7 +43,10 @@ function pick({multiple, type})
 
       const {files} = input;
       if ( !files.length ) {
-        return reject(E_DOCUMENT_PICKER_CANCELED);
+        const error = new Error('User canceled document picker');
+              error.code = E_DOCUMENT_PICKER_CANCELED;
+
+        return reject(error);
       }
 
       resolve(Array.prototype.map.call(files, addUri));
