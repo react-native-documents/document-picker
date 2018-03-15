@@ -135,12 +135,21 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
 			}
 
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-				intent = Intent.createChooser(intent, null);
+			List<Intent> allIntents = getAllIntentsForIntent(intent, null);
+
+			// the main intent is the last in the list (fucking android) so pickup the useless one
+			Intent mainIntent = allIntents.get(allIntents.size() - 1);
+			for (Intent intent2 : allIntents) {
+				ComponentName componentName = intent.getComponent();
+				if (componentName != null
+				&& componentName.getClassName().equals("com.android.documentsui.DocumentsActivity")) {
+					mainIntent = intent2;
+					break;
+				}
 			}
+			allIntents.remove(mainIntent);
 
 			// Add intents to capture media instead of pick files from filesystem
-			List<Intent> allIntents = new ArrayList<>();
 			PackageManager packageManager = currentActivity.getPackageManager();
 
 			if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
@@ -166,10 +175,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			//     new Intent(MediaStore.ACTION_AUDIO_CAPTURE), null));
 			// }
 
-			intent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
+			// if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+				mainIntent = Intent.createChooser(mainIntent, null);
+			// }
+
+			mainIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
 
 			// Show picker
-			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
+			currentActivity.startActivityForResult(mainIntent, READ_REQUEST_CODE, Bundle.EMPTY);
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.promise.reject(E_FAILED_TO_SHOW_PICKER, e.getLocalizedMessage());
