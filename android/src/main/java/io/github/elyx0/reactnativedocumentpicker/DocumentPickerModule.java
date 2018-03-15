@@ -2,15 +2,28 @@ package io.github.elyx0.reactnativedocumentpicker;
 
 import android.app.Activity;
 import android.content.ClipData;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -40,6 +53,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private static final String OPTION_TYPE = "type";
 	private static final String OPTION_MULIPLE = "multiple";
+	private static final String OPTION_PRIVATE = "private";
 
 	private static final String FIELD_URI = "uri";
 	private static final String FIELD_NAME = "name";
@@ -97,6 +111,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		this.promise = promise;
 
 		try {
+			// Create document selection intent
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 
@@ -120,11 +135,54 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
 			}
 
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-				intent = Intent.createChooser(intent, null);
+			List<Intent> allIntents = getAllIntentsForIntent(intent, null);
+
+			// the main intent is the last in the list (fucking android) so pickup the useless one
+			Intent mainIntent = allIntents.get(allIntents.size() - 1);
+			for (Intent intent2 : allIntents) {
+				ComponentName componentName = intent.getComponent();
+				if (componentName != null
+				&& componentName.getClassName().equals("com.android.documentsui.DocumentsActivity")) {
+					mainIntent = intent2;
+					break;
+				}
+			}
+			allIntents.remove(mainIntent);
+
+			// Add intents to capture media instead of pick files from filesystem
+			PackageManager packageManager = currentActivity.getPackageManager();
+
+			if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+				// collect all image capture intents
+				if (hasMimeType(args, "image")) {
+					boolean isPrivate = !args.isNull(OPTION_PRIVATE) && args.getBoolean(OPTION_PRIVATE);
+					Uri outputFileUri = Uri.fromFile(createImageFile(isPrivate));
+
+					allIntents.addAll(getAllIntentsForIntent(
+						new Intent(MediaStore.ACTION_IMAGE_CAPTURE), outputFileUri));
+				}
+
+				// // Add video capture intent
+				// if (hasMimeType(args, "video"))
+				//   allIntents.addAll(getAllIntentsForIntent(
+				//     new Intent(MediaStore.ACTION_VIDEO_CAPTURE), null));
 			}
 
-			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
+			// if (packageManager.hasSystemFeature(PackageManager.FEATURE_RECORD_AUDIO)) {
+			//  // Add audio capture intent
+			// 	if (hasMimeType(args, "audio"))
+			//   allIntents.addAll(getAllIntentsForIntent(
+			//     new Intent(MediaStore.ACTION_AUDIO_CAPTURE), null));
+			// }
+
+			// if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+				mainIntent = Intent.createChooser(mainIntent, null);
+			// }
+
+			mainIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
+
+			// Show picker
+			currentActivity.startActivityForResult(mainIntent, READ_REQUEST_CODE, Bundle.EMPTY);
 		} catch (Exception e) {
 			e.printStackTrace();
 			this.promise.reject(E_FAILED_TO_SHOW_PICKER, e.getLocalizedMessage());
@@ -206,5 +264,70 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 
 		return map;
+	}
+
+	private File createImageFile(boolean isPrivate) throws IOException {
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String imageFileName = "PNG_" + timeStamp + "_";
+
+		File storageDir = getCurrentActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+		if (!isPrivate) {
+			storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+			// Public dirs need to be created by hand if they don't exits, only
+			// private ones are created automatically by Android APIs.
+			storageDir.mkdirs();
+		}
+
+		File image = File.createTempFile(
+				imageFileName,  /* prefix */
+				".png",         /* suffix */
+				storageDir      /* directory */
+		);
+
+		return image;
+	}
+
+	private boolean hasMimeType(ReadableMap args, String type) {
+		if (args.isNull(OPTION_TYPE)) return true;
+
+		ReadableArray types = args.getArray(OPTION_TYPE);
+		int l = types.size();
+
+		if (l == 0) return true;
+
+		for (int i = 0; i < l; ++i)
+			if (types.getString(i).split("/")[0] == type) return true;
+
+		return false;
+	}
+
+	/**
+	 * Get intents for all the activities that can process a specified one
+	 *
+	 * For example, if the intent is related to image capture, return a list of
+	 * intents to call to all the activities (applications) that can do image
+	 * capturing instead of the user defined default, usually the `Camera` app.
+	 */
+	private List<Intent> getAllIntentsForIntent(Intent intent, Uri outputFileUri) {
+		List<Intent> result = new ArrayList<>();
+
+		List<ResolveInfo> activities = getCurrentActivity().getPackageManager()
+			.queryIntentActivities(intent, 0);
+		for (ResolveInfo res : activities) {
+				Intent intent2 = new Intent(intent);
+				intent2.setComponent(new ComponentName(res.activityInfo.packageName,
+																							 res.activityInfo.name));
+				intent2.setPackage(res.activityInfo.packageName);
+
+				if (outputFileUri != null)
+					intent2.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+				result.add(intent2);
+		}
+
+		return result;
 	}
 }

@@ -1,6 +1,8 @@
 'use strict';
 import {Platform, NativeModules} from 'react-native';
-const {RNDocumentPicker} = NativeModules;
+const RNDocumentPicker = Platform.OS === 'web'
+                       ? require('./web')
+                       : NativeModules.RNDocumentPicker;
 
 if ( !RNDocumentPicker ) {
   // Use a timeout to ensure the warning is displayed in the YellowBox
