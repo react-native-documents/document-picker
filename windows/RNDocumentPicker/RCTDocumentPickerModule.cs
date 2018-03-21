@@ -137,32 +137,30 @@ namespace RNDocumentPicker
 
         private async Task<JObject> PrepareFile(StorageFile file, Boolean cache)
         {
+            var basicProperties = await file.GetBasicPropertiesAsync();
+
+            var bytes = default(byte[]);
+            var stream = await file.OpenReadAsync();
+            using (StreamReader reader = new StreamReader(stream.AsStream()))
+            {
+                using (var memstream = new MemoryStream())
+                {
+                    reader.BaseStream.CopyTo(memstream);
+                    bytes = memstream.ToArray();
+                }
+            }
             if (cache == true)
             {
                 var fileInCache = await file.CopyAsync(ApplicationData.Current.TemporaryFolder, file.Name.ToString(), NameCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
-                var basicProperties = await fileInCache.GetBasicPropertiesAsync();
-
                 return new JObject {
                     { FIELD_URI, fileInCache.Path },
                     { FIELD_TYPE, fileInCache.ContentType },
                     { FIELD_NAME, fileInCache.Name },
-                    { FIELD_SIZE, basicProperties.Size}
+                    { FIELD_SIZE, basicProperties.Size},
+                    { FIELD_CONTENT, bytes }
                 };
             }
             else {
-                var basicProperties = await file.GetBasicPropertiesAsync();
-
-                var bytes = default(byte[]);
-                var stream = await file.OpenReadAsync();
-                using (StreamReader reader = new StreamReader(stream.AsStream()))
-                {
-                    using (var memstream = new MemoryStream())
-                    {
-                        reader.BaseStream.CopyTo(memstream);
-                        bytes = memstream.ToArray();
-                    }
-                }
-
                 return new JObject {
                     { FIELD_URI, file.Path },
                     { FIELD_TYPE, file.ContentType },
