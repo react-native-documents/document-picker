@@ -20,7 +20,7 @@
     "icloud"
   ],
   "author": "Elyx0 <elyx00@gmail.com> (@Elyx0)",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Elyx0/react-native-document-picker/issues"
   },
