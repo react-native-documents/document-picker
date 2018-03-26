@@ -298,8 +298,11 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 		if (l == 0) return true;
 
-		for (int i = 0; i < l; ++i)
-			if (types.getString(i).split("/")[0] == type) return true;
+		for (int i = 0; i < l; ++i) {
+			String mime = types.getString(i);
+
+			if (mime.equals("*/*") || mime.split("/")[0].equals(type)) return true;
+		}
 
 		return false;
 	}
