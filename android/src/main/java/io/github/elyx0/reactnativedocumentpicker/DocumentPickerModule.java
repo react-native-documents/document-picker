@@ -82,6 +82,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	}
 
 	private Promise promise;
+	private Uri outputFileUri;
 
 	public DocumentPickerModule(ReactApplicationContext reactContext) {
 		super(reactContext);
@@ -137,6 +138,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 			List<Intent> allIntents = getAllIntentsForIntent(intent, null);
 
+			outputFileUri = null;
 			// the main intent is the last in the list (fucking android) so pickup the useless one
 			Intent mainIntent = allIntents.get(allIntents.size() - 1);
 			for (Intent intent2 : allIntents) {
@@ -156,7 +158,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				// collect all image capture intents
 				if (hasMimeType(args, "image")) {
 					boolean isPrivate = !args.isNull(OPTION_PRIVATE) && args.getBoolean(OPTION_PRIVATE);
-					Uri outputFileUri = Uri.fromFile(createImageFile(isPrivate));
+					outputFileUri = Uri.fromFile(createImageFile(isPrivate));
 
 					allIntents.addAll(getAllIntentsForIntent(
 						new Intent(MediaStore.ACTION_IMAGE_CAPTURE), outputFileUri));
@@ -201,6 +203,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				uri = data.getData();
 				clipData = data.getClipData();
 			}
+
+			// Check if intent is from camera and set the uri to its file
+			boolean isCamera = true;
+			if (uri != null) {
+				String action = data.getAction();
+				isCamera = action != null && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
+			}
+			if (isCamera) uri = outputFileUri;
 
 			try {
 				WritableArray results = Arguments.createArray();
