@@ -234,6 +234,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 
+		map.putString(FIELD_NAME, uri.getLastPathSegment());
 		map.putString(FIELD_TYPE, contentResolver.getType(uri));
 
 		Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
