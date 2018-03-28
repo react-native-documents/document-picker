@@ -270,7 +270,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private File createImageFile(boolean isPrivate) throws IOException {
 		// Create an image file name
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-		String imageFileName = "PNG_" + timeStamp + "_";
 
 		File storageDir = getCurrentActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
@@ -283,9 +282,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 
 		File image = File.createTempFile(
-				imageFileName,  /* prefix */
-				".png",         /* suffix */
-				storageDir      /* directory */
+				timeStamp,  /* prefix */
+				".png",     /* suffix */
+				storageDir  /* directory */
 		);
 
 		return image;
