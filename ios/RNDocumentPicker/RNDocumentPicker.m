@@ -1,6 +1,8 @@
 #import "RNDocumentPicker.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <Photos/Photos.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 
 #if __has_include(<React/RCTConvert.h>)
 #import <React/RCTConvert.h>
@@ -9,6 +11,9 @@
 #import "RCTConvert.h"
 #import "RCTBridge.h"
 #endif
+
+#define IDIOM    UI_USER_INTERFACE_IDIOM()
+#define IPAD     UIUserInterfaceIdiomPad
 
 static NSString *const E_DOCUMENT_PICKER_CANCELED = @"DOCUMENT_PICKER_CANCELED";
 static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
@@ -21,7 +26,7 @@ static NSString *const FIELD_NAME = @"name";
 static NSString *const FIELD_TYPE = @"type";
 static NSString *const FIELD_SIZE = @"size";
 
-@interface RNDocumentPicker () <UIDocumentPickerDelegate>
+@interface RNDocumentPicker () <UIDocumentMenuDelegate,UIDocumentPickerDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 @end
 
 @implementation RNDocumentPicker {
@@ -54,7 +59,10 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
-    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
+    
+    UIDocumentMenuViewController *documentPicker = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
+    
+    
     
     [composeResolvers addObject:resolve];
     [composeRejecters addObject:reject];
@@ -62,16 +70,59 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     documentPicker.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
     
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
-    if (@available(iOS 11, *)) {
-        documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULIPLE]];
-    }
-#endif
+    // #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+    //     if (@available(iOS 11, *)) {
+    //         documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULIPLE]];
+    //     }
+    // #endif
     
     UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
     while (rootViewController.presentedViewController) {
         rootViewController = rootViewController.presentedViewController;
     }
+    
+    if ( IDIOM == IPAD ) {
+        [documentPicker.popoverPresentationController setSourceRect: CGRectMake(rootViewController.view.frame.size.width/2, rootViewController.view.frame.size.height - rootViewController.view.frame.size.height / 6, 0, 0)];
+        [documentPicker.popoverPresentationController setSourceView: rootViewController.view];
+    }
+    
+    [documentPicker addOptionWithTitle:@"Photos" image:nil order:UIDocumentMenuOrderFirst handler:^{
+        
+        UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+        
+        imagePickerController.delegate = self;
+        [rootViewController presentViewController:imagePickerController animated:YES completion:nil];
+    }];
+    
+    [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
+        switch (status) {
+            case PHAuthorizationStatusAuthorized:
+                NSLog(@"PHAuthorizationStatusAuthorized");
+                break;
+            case PHAuthorizationStatusDenied:
+                NSLog(@"PHAuthorizationStatusDenied");
+                break;
+            case PHAuthorizationStatusNotDetermined:
+                NSLog(@"PHAuthorizationStatusNotDetermined");
+                break;
+            case PHAuthorizationStatusRestricted:
+                NSLog(@"PHAuthorizationStatusRestricted");
+                break;
+        }
+    }];
+    
+    [documentPicker addOptionWithTitle:@"Camera" image:nil order:UIDocumentMenuOrderFirst handler:^{
+        if (([UIImagePickerController isSourceTypeAvailable:
+              UIImagePickerControllerSourceTypeCamera] == NO))
+            return;
+        
+        UIImagePickerController *cameraUI = [[UIImagePickerController alloc] init];
+        
+        cameraUI.sourceType = UIImagePickerControllerSourceTypeCamera;
+        
+        cameraUI.delegate = self;
+        [rootViewController presentViewController:cameraUI animated:YES completion:nil];
+    }];
     
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
@@ -121,6 +172,23 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     }
 }
 
+- (void)documentMenu:(UIDocumentMenuViewController *)documentMenu didPickDocumentPicker:(UIDocumentPickerViewController *)documentPicker {
+    documentPicker.delegate = self;
+    documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
+    
+    UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
+    
+    while (rootViewController.presentedViewController) {
+        rootViewController = rootViewController.presentedViewController;
+    }
+    if ( IDIOM == IPAD ) {
+        [documentPicker.popoverPresentationController setSourceRect: CGRectMake(rootViewController.view.frame.size.width/2, rootViewController.view.frame.size.height - rootViewController.view.frame.size.height / 6, 0, 0)];
+        [documentPicker.popoverPresentationController setSourceView: rootViewController.view];
+    }
+    
+    [rootViewController presentViewController:documentPicker animated:YES completion:nil];
+}
+
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url
 {
     if (controller.documentPickerMode == UIDocumentPickerModeImport) {
@@ -164,6 +232,52 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     }
 }
 
+- (UIImage*)resizeImage:(UIImage*)aImage reSize:(CGSize)newSize;
+{
+    UIGraphicsBeginImageContextWithOptions(newSize, YES, [UIScreen mainScreen].scale);
+    [aImage drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<NSString *,id> *)info;
+{
+    RCTPromiseResolveBlock resolve = [composeResolvers lastObject];
+    RCTPromiseRejectBlock reject = [composeRejecters lastObject];
+    [composeResolvers removeLastObject];
+    [composeRejecters removeLastObject];
+    
+    NSURL *refURL = info[@"UIImagePickerControllerReferenceURL"];
+    NSString *fileName = [[refURL path] lastPathComponent];
+    if( fileName == nil ){
+        fileName = @"camera_photo.jpeg";
+    };
+    NSString *directoryPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *localPath = [directoryPath stringByAppendingPathComponent:fileName];
+    
+    UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];
+    
+    UIImage *resizedImage = [self resizeImage:image reSize:CGSizeMake(500, 500)];
+    
+    NSData *contentData = UIImagePNGRepresentation(resizedImage);
+    [contentData writeToFile:localPath atomically:true];
+    
+    NSURL *imageURL = [NSURL fileURLWithPath:localPath];
+    
+    NSError *error;
+    NSMutableDictionary* result = [self getMetadataForUrl:imageURL error:&error];
+    
+    [picker.presentingViewController dismissViewControllerAnimated:YES completion:^{
+        if (result) {
+            NSArray *results = @[result];
+            resolve(results);
+        } else {
+            reject(E_INVALID_DATA_RETURNED, error.localizedDescription, error);
+        }
+    }];
+}
+
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
 {
     if (controller.documentPickerMode == UIDocumentPickerModeImport) {
@@ -175,4 +289,28 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     }
 }
 
+- (void)documentMenuWasCancelled:(UIDocumentMenuViewController *)controller
+{
+    RCTPromiseRejectBlock reject = [composeRejecters lastObject];
+    [composeResolvers removeLastObject];
+    [composeRejecters removeLastObject];
+    
+    reject(E_DOCUMENT_PICKER_CANCELED, @"User canceled document picker", nil);
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)controller
+{
+    RCTPromiseRejectBlock reject = [composeRejecters lastObject];
+    [composeResolvers removeLastObject];
+    [composeRejecters removeLastObject];
+    
+    
+    [controller.presentingViewController dismissViewControllerAnimated:YES completion:^{
+        reject(E_DOCUMENT_PICKER_CANCELED, @"User canceled document picker", nil);
+    }];
+    
+    return;
+}
+
 @end
+
