@@ -249,9 +249,17 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     [composeRejecters removeLastObject];
     
     NSURL *refURL = info[@"UIImagePickerControllerReferenceURL"];
-    NSString *fileName = [[refURL path] lastPathComponent];
-    if( fileName == nil ){
-        fileName = @"camera_photo.jpeg";
+    NSString *fileExt= @"";
+    NSString *filePartialName= @"";
+    NSString *fileName = @"";
+    if( refURL == nil ){
+        fileName = @"camera_photo.png";
+    } else {
+        NSString *fullName = [refURL absoluteString];
+        NSString *lastParameters= [fullName componentsSeparatedByString:@"id="][1];
+        filePartialName = [lastParameters componentsSeparatedByString:@"&"][0];
+        fileExt = [lastParameters componentsSeparatedByString:@"ext="][1];
+        fileName = [[filePartialName stringByAppendingString:@"."] stringByAppendingString:fileExt];
     };
     NSString *directoryPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     NSString *localPath = [directoryPath stringByAppendingPathComponent:fileName];
@@ -260,6 +268,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     
     UIImage *resizedImage = [self resizeImage:image reSize:CGSizeMake(500, 500)];
     
+    // Resize for avoiding out of memory error
     NSData *contentData = UIImagePNGRepresentation(resizedImage);
     [contentData writeToFile:localPath atomically:true];
     
