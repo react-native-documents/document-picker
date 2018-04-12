@@ -56,7 +56,7 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
     public void show(ReadableMap args, Callback callback) {
         Intent intent;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
         } else {
             intent = new Intent(Intent.ACTION_PICK);
         }
