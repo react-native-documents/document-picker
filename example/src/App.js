@@ -12,6 +12,9 @@ import {
   View
 } from 'react-native';
 
+import DocumentPicker from 'react-native-document-picker'
+
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
     'Cmd+D or shake for dev menu',
