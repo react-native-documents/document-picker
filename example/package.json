@@ -1,0 +1,43 @@
+{
+  "name": "example",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest",
+    "android": "react-native run-android",
+    "android:dev_menu": "adb shell input keyevent KEYCODE_MENU",
+    "android:kill_server": "fuser -k 8081/tcp || true",
+    "android:log": "react-native log-android",
+    "android:release": "cd android && ./gradlew assembleRelease",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "ios": "react-native run-ios",
+    "preelectron": "PUBLIC_URL=. npm run web:release",
+    "release": "npm run android:release && npm run web:release",
+    "test:web": "react-scripts test --env=jsdom",
+    "web": "react-scripts start",
+    "web:release": "react-scripts build",
+    "windows": "react-native run-windows"
+  },
+  "dependencies": {
+    "babel-plugin-transform-react-remove-prop-types": "^0.4.13",
+    "electron": "^1.8.4",
+    "react": "16.3.1",
+    "react-dom": "16.3.2",
+    "react-native": "0.55.2",
+    "react-native-web": "0.1.16",
+    "react-native-windows": "0.50.0",
+    "react-scripts": "^1.1.4"
+  },
+  "devDependencies": {
+    "babel-jest": "22.4.3",
+    "babel-preset-react-native": "4.0.0",
+    "jest": "22.4.3",
+    "react-test-renderer": "16.3.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "main": "index.electron.js"
+}
