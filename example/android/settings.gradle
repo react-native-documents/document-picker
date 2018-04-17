@@ -3,4 +3,4 @@ rootProject.name = 'example'
 include ':app'
 
 include ':react-native-document-picker'
-project(':react-native-document-picker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-document-picker/android')
+project(':react-native-document-picker').projectDir = new File(rootProject.projectDir, '../../android')
