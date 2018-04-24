@@ -16,6 +16,7 @@ import android.os.Parcelable;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import java.io.File;
@@ -158,7 +159,12 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				// collect all image capture intents
 				if (hasMimeType(args, "image")) {
 					boolean isPrivate = !args.isNull(OPTION_PRIVATE) && args.getBoolean(OPTION_PRIVATE);
-					outputFileUri = Uri.fromFile(createImageFile(isPrivate));
+					if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+						outputFileUri = Uri.fromFile(createImageFile(isPrivate));
+			    } else {
+						outputFileUri = FileProvider.getUriForFile(currentActivity,
+							currentActivity.getPackageName(), createImageFile(isPrivate));
+					}
 
 					allIntents.addAll(getAllIntentsForIntent(
 						new Intent(MediaStore.ACTION_IMAGE_CAPTURE), outputFileUri));
