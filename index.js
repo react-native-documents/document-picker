@@ -37,6 +37,10 @@ function pick(opts) {
   if ( Array.isArray(opts.type) && opts.type.length < 1 ) {
     throw new TypeError('`type` option should not be an empty array, at least one type must be passed if the `type` option is not omitted');
   }
+  
+  static video() {
+    return (Platform.OS === 'android') ? "video/*" : "public.video";
+  }
 
   opts.type.forEach((type) => {
     if ( typeof type !== 'string' ) {
@@ -50,7 +54,6 @@ function pick(opts) {
 
   return RNDocumentPicker.pick(opts);
 }
-
 
 const Types = {
   mimeTypes: {
