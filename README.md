@@ -2,13 +2,13 @@
 
 A React Native wrapper for Apple's ``UIDocumentMenuViewController`` and for Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK``.
 
-### Installation
+## Installation
 
 ```bash
 npm i --save react-native-document-picker
 ```
 
-## Automatically Link Native Modules
+### Automatically Link Native Modules
 
 For 0.29.2+ projects, simply link native packages via the following command (note: rnpm has been merged into react-native)
 
@@ -22,7 +22,7 @@ As for projects < 0.29 you need `rnpm` to link native packages
 rnpm link
 ```
 
-## Manually Link Native Modules
+### Manually Link Native Modules
 
 **iOS**
 1. Open your project in XCode, right click on `Libraries` and click `Add
