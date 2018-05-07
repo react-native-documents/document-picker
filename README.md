@@ -8,7 +8,7 @@ A React Native wrapper for Apple's ``UIDocumentMenuViewController`` and for Andr
 npm i --save react-native-document-picker
 ```
 
-**Automatically Link Native Modules**
+## Automatically Link Native Modules
 
 For 0.29.2+ projects, simply link native packages via the following command (note: rnpm has been merged into react-native)
 
@@ -22,22 +22,22 @@ As for projects < 0.29 you need `rnpm` to link native packages
 rnpm link
 ```
 
-**Manually Link Native Modules**
+## Manually Link Native Modules
 
-### iOS
+**iOS**
 1. Open your project in XCode, right click on `Libraries` and click `Add
    Files to "Your Project Name"` [(Screenshot)](http://url.brentvatne.ca/jQp8) then [(Screenshot)](http://url.brentvatne.ca/1gqUD).
 2. Add `libRNDocumentPicker.a` to `Build Phases -> Link Binary With Libraries`
    [(Screenshot)](http://url.brentvatne.ca/17Xfe).
 
-**CocoaPods**
+*... or with CocoaPods*
 
 Add the following to your podfile:
 ```
 pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker`
 ```
 
-### Android
+**Android**
 
 ```gradle
 // file: android/settings.gradle
