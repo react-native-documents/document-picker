@@ -1,6 +1,11 @@
 # react-native-document-picker
 
-A React Native wrapper for Apple's ``UIDocumentMenuViewController`` and for Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK``.
+## WARNING: Experimental branch of v3 /!\
+
+A React Native wrapper for:
+ * Apple's ``UIDocumentMenuViewController``
+ * Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK`` 
+ * Windows ``Windows.Storage.Pickers``
 
 ## Installation
 
@@ -10,16 +15,10 @@ npm i --save react-native-document-picker
 
 ### Automatically Link Native Modules
 
-For 0.29.2+ projects, simply link native packages via the following command (note: rnpm has been merged into react-native)
+Link native packages via the following command:
 
 ```
 react-native link
-```
-
-As for projects < 0.29 you need `rnpm` to link native packages
-
-```sh
-rnpm link
 ```
 
 ### Manually Link Native Modules
@@ -61,7 +60,7 @@ dependencies {
 // file: MainApplication.java
 ...
 
-import com.reactnativedocumentpicker.ReactNativeDocumentPicker;; // Import package
+import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage; // Import package
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -73,47 +72,98 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ReactNativeDocumentPicker() // Add package
+            new DocumentPickerPackage() // Add package
       );
     }
 ...
 }
 ```
 
+### Windows
+
+Follow the instructions in the ['Linking Libraries'](https://github.com/Microsoft/react-native-windows/blob/master/docs/LinkingLibrariesWindows.md) documentation on the react-native-windows GitHub repo. For the first step of adding the project to the Visual Studio solution file, the path to the project should be `../node_modules/react-native-document-picker/windows/RNDocumentPicker/RNDocumentPicker.csproj`.
+
+## API
+
+### `DocumentPicker.pick(opts)` and `DocumentPicker.pickMultiple(opts)`
+
+Use `pick` or `pickMultiple` to open a document picker for the user to select file(s). Both methods return a Promise. `pick` will only allow a single selection and the Promise will resolve to that single result. `pickMultiple` will allow multiple selection and the Promise returned will always resolve to an array of results.
+
+**Options:**
+
+* **`type`**:`string|Array<string>`: The type or types of documents to allow selection of. May be an array of types as single type string.
+  * On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`.
+  * On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
+  * If `type` is omitted it will be treated as `*/*` or `public.content`.
+  * Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
+
+**Result:**
+
+The object a `pick` Promise resolves to or the objects in the array a `pickMultiple` Promise resolves to will contain the following keys.
+
+* **`uri`**: The URI representing the document picked by the user. *On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver.*
+* **`type`**: The MIME type of the file. *On Android some DocumentProviders may not provide MIME types for their documents. On iOS this MIME type is based on the best MIME type for the file extension according to Apple's internal "Uniform Type Identifiers" database.*
+* **`name`**: The display name of the file. *This is normally the filename of the file, but Android does not guarantee that this will be a filename from all DocumentProviders.*
+* **`size`**: The file size of the document. *On Android some DocumentProviders may not provide this information for a document.*
+
+### `DocumentPicker.types.*`
+
+`DocumentPicker.types.*` provides a few common types for use as `type` values, these types will use the correct format for each platform (MIME types on Android, UTIs on iOS).
+
+* `DocumentPicker.types.allFiles`: All document types, on Android this is `*/*`, on iOS is is `public.content` (note that some binary and archive types do not inherit from `public.content`)
+* `DocumentPicker.types.images`: All image types (`image/*` or  `public.image`)
+* `DocumentPicker.types.plainText`: Plain text files ie: `.txt` (`text/plain` or  `public.plain-text`)
+* `DocumentPicker.types.audio`: All audio types (`audio/*` or  `public.audio`)
+* `DocumentPicker.types.pdf`: PDF documents (`application/pdf` or  `com.adobe.pdf`)
+
+### `DocumentPicker.isCancel(err)`
+
+If the user cancels the document picker without choosing a file (by pressing the system back button on Android or the Cancel button on iOS) the Promise will be rejected with a cancellation error. You can check for this error using `DocumentPicker.isCancel(err)` allowing you to ignore it and cleanup any parts of your interface that may not be needed anymore.
+
 ## Example
 ```javascript
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+import DocumentPicker from 'react-native-document-picker';
 
-// iPhone/Android
-DocumentPicker.show({
-      filetype: [DocumentPickerUtil.images()],
-    },(error,res) => {
-      // Android
-      console.log(
-         res.uri,
-         res.type, // mime type
-         res.fileName,
-         res.fileSize
-      );
-    });
+// Pick a single file
+try {
+  const res = await DocumentPicker.pick({
+    type: [DocumentPicker.types.images],
+  });
+  console.log(
+     res.uri,
+     res.type, // mime type
+     res.name,
+     res.size
+  );
+} catch ( err ) {
+  if ( DocumentPicker.isCancel(err) ) {
+    // User cancelled the picker, exit any dialogs or menus and move on
+  } else {
+    throw err;
+  }
+}
 
-// iPad
-const {pageX, pageY} = event.nativeEvent;
-
-DocumentPicker.show({
-  top: pageY,
-  left: pageX,
-  filetype: ['public.image'],
-}, (error, url) => {
-  alert(url);
-});
-
+// Pick multiple files
+try {
+  const results = await DocumentPicker.pickMultiple({
+    type: [DocumentPicker.types.images],
+  });
+  for ( const res of results ) {
+    console.log(
+       res.uri,
+       res.type, // mime type
+       res.name,
+       res.size
+    );
+  }
+} catch ( err ) {
+  if ( DocumentPicker.isCancel(err) ) {
+    // User cancelled the picker, exit any dialogs or menus and move on
+  } else {
+    throw err;
+  }
+}
 ```
-
-### Note
-The full list of UTI is available here:
-[(https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)](https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html
-)]
 
 ## Here is how it looks:
 ![screenshot](http://i.stack.imgur.com/dv0iQ.png)
@@ -194,11 +244,6 @@ RNFS.uploadFiles({
        console.log(err);
     });
 ```
-## File Type 
-***All type of Files*** ``` 'public.allFiles' or DocumentPickerUtil.allFiles()```<br/> 
-***Only PDF*** ``` 'public.pdf' or DocumentPickerUtil.pdf() ``` <br/> 
-***Audio*** ``` 'public.audio' or DocumentPickerUtil.audio()``` <br/> 
-***Plain Text*** ``` 'public.plainText' or DocumentPickerUtil.plainText() ``` <br/> 
 
 ## Reminder
 
@@ -209,5 +254,5 @@ You need to enable iCloud Documents to access iCloud
 ## Halp wanted: Improvements
 
 - Fix Xcode warning about constraints
-- support options for the [UIDocumentMenuViewController](https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/DocumentPickerProgrammingGuide/AccessingDocuments/AccessingDocuments.html#//apple_ref/doc/uid/TP40014451-CH2-SW5)
+- support options for the [UIDocumentPickerViewController](https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/DocumentPickerProgrammingGuide/AccessingDocuments/AccessingDocuments.html#//apple_ref/doc/uid/TP40014451-CH2-SW5)
 - Handle Upload by itself ?
