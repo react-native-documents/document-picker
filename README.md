@@ -23,7 +23,7 @@ react-native link
 
 ### Manually Link Native Modules
 
-**iOS**
+#### iOS
 1. Open your project in XCode, right click on `Libraries` and click `Add
    Files to "Your Project Name"` [(Screenshot)](http://url.brentvatne.ca/jQp8) then [(Screenshot)](http://url.brentvatne.ca/1gqUD).
 2. Add `libRNDocumentPicker.a` to `Build Phases -> Link Binary With Libraries`
@@ -36,7 +36,7 @@ Add the following to your podfile:
 pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker`
 ```
 
-**Android**
+#### Android
 
 ```gradle
 // file: android/settings.gradle
