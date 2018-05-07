@@ -24,8 +24,6 @@ rnpm link
 
 **Manually Link Native Modules**
 
-1. Run `npm install react-native-document-picker --save`
-
 ### iOS
 1. Open your project in XCode, right click on `Libraries` and click `Add
    Files to "Your Project Name"` [(Screenshot)](http://url.brentvatne.ca/jQp8) then [(Screenshot)](http://url.brentvatne.ca/1gqUD).
