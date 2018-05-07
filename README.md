@@ -25,9 +25,11 @@ rnpm link
 **Manually Link Native Modules**
 
 1. Run `npm install react-native-document-picker --save`
-2. Open your project in XCode, right click on `Libraries` and click `Add
+
+### iOS
+1. Open your project in XCode, right click on `Libraries` and click `Add
    Files to "Your Project Name"` [(Screenshot)](http://url.brentvatne.ca/jQp8) then [(Screenshot)](http://url.brentvatne.ca/1gqUD).
-3. Add `libRNDocumentPicker.a` to `Build Phases -> Link Binary With Libraries`
+2. Add `libRNDocumentPicker.a` to `Build Phases -> Link Binary With Libraries`
    [(Screenshot)](http://url.brentvatne.ca/17Xfe).
 
 **CocoaPods**
