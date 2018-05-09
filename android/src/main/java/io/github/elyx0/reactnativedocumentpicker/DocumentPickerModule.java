@@ -23,6 +23,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import static android.provider.MediaStore.MediaColumns.DATA;
 
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
@@ -45,6 +46,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
+	private static final String FIELD_FILE_PATH = "filepath";
 
 	private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
 		@Override
@@ -182,6 +184,11 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 		try {
 			if (cursor != null && cursor.moveToFirst()) {
+				int filePathIndex = cursor.getColumnIndex(DATA);
+				if (!cursor.isNull(filePathIndex)) {
+					map.putString(FIELD_FILE_PATH, cursor.getString(filePathIndex));
+				}
+
 				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 				if (!cursor.isNull(displayNameIndex)) {
 					map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
