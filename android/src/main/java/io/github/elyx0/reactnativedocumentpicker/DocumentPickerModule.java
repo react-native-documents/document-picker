@@ -198,7 +198,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				if (!cursor.isNull(filePathIndex)) {
 					map.putString(FIELD_FILE_PATH, cursor.getString(filePathIndex));
 				} else {
-					map.putString(FIELD_CACHE_PATH, downloadFile(uri, cursor));
+					map.putString(FIELD_CACHE_PATH, copyToCacheFolder(uri, cursor));
 				}
 
 				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
@@ -227,7 +227,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		return map;
 	}
 
-	public String downloadFile(Uri uri, Cursor cursor) {
+	public String copyToCacheFolder(Uri uri, Cursor cursor) {
 		InputStream input = null;
 		Context context = getReactApplicationContext();
 		try {
