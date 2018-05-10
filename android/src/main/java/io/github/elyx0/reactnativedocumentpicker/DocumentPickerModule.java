@@ -3,6 +3,7 @@ package io.github.elyx0.reactnativedocumentpicker;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -23,7 +24,16 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import static android.provider.MediaStore.MediaColumns.DATA;
+import static android.provider.MediaStore.MediaColumns.DISPLAY_NAME;
 
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
@@ -46,7 +56,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
-	private static final String FIELD_FILE_PATH = "filepath";
+	private static final String FIELD_FILE_PATH = "filePath";
+	private static final String FIELD_CACHE_PATH = "cachePath";
 
 	private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
 		@Override
@@ -177,7 +188,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		map.putString(FIELD_URI, uri.toString());
 
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
-
 		map.putString(FIELD_TYPE, contentResolver.getType(uri));
 
 		Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
@@ -187,6 +197,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				int filePathIndex = cursor.getColumnIndex(DATA);
 				if (!cursor.isNull(filePathIndex)) {
 					map.putString(FIELD_FILE_PATH, cursor.getString(filePathIndex));
+				} else {
+					map.putString(FIELD_CACHE_PATH, downloadFile(uri, cursor));
 				}
 
 				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
@@ -213,5 +225,55 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 
 		return map;
+	}
+
+	public String downloadFile(Uri uri, Cursor cursor) {
+		InputStream input = null;
+		Context context = getReactApplicationContext();
+		try {
+			final int displayNameIndex = cursor.getColumnIndexOrThrow(DISPLAY_NAME);
+			final String displayName = cursor.getString(displayNameIndex);
+
+			input = context.getContentResolver().openInputStream(uri);
+			/* save stream to temp file */
+			try {
+				File file = new File(context.getCacheDir(), displayName);
+				OutputStream output = new FileOutputStream(file);
+				try {
+					byte[] buffer = new byte[4 * 1024]; // or other buffer size
+					int read;
+
+					while ((read = input.read(buffer)) != -1) {
+						output.write(buffer, 0, read);
+					}
+					output.flush();
+
+					final String outputPath = file.getAbsolutePath();
+					return outputPath;
+
+				} finally {
+					output.close();
+				}
+			} catch (Exception e1a) {
+				//
+			} finally {
+				try {
+					input.close();
+				} catch (IOException e1b) {
+					//
+				}
+			}
+		} catch (FileNotFoundException e2) {
+			//
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e3) {
+					//
+				}
+			}
+		}
+		return null;
 	}
 }
