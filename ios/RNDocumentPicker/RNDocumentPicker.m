@@ -16,6 +16,7 @@ static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
 static NSString *const OPTION_TYPE = @"type";
 static NSString *const OPTION_MULIPLE = @"multiple";
 
+static NSString *const FIELD_PATH = @"path";
 static NSString *const FIELD_URI = @"uri";
 static NSString *const FIELD_NAME = @"name";
 static NSString *const FIELD_TYPE = @"type";
@@ -88,6 +89,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&fileError byAccessor:^(NSURL *newURL) {
         
         if (!fileError) {
+            [result setValue:newURL.path forKey:FIELD_PATH];
             [result setValue:newURL.absoluteString forKey:FIELD_URI];
             [result setValue:[newURL lastPathComponent] forKey:FIELD_NAME];
             
