@@ -44,10 +44,6 @@ function pick(opts) {
     }
   });
 
-  if ( opts.type.length > 1 && Platform.OS === 'android' && Platform.Version < 19 ) {
-    console.warn(`RNDocumentPicker: Android API level ${Platform.Version} does not support multiple types, falling back to */*`);
-  }
-
   return RNDocumentPicker.pick(opts);
 }
 

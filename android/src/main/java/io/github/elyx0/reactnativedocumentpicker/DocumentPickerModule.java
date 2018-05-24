@@ -10,7 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
-import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -23,6 +23,8 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+
+import java.io.File;
 
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
@@ -42,6 +44,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String OPTION_MULIPLE = "multiple";
 
 	private static final String FIELD_URI = "uri";
+	private static final String FIELD_PATH = "path";
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
@@ -65,6 +68,18 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			array[i] = readableArray.getString(i);
 		}
 		return array;
+	}
+
+	private String joinReadableArray(ReadableArray readableArray, String separator) {
+		int l = readableArray.size();
+		StringBuilder joined = new StringBuilder();
+		for (int i = 0; i < l; i++) {
+			if (joined.length() > 0) {
+				joined.append(separator);
+			}
+			joined.append(readableArray.getString(i));
+		}
+		return joined.toString();
 	}
 
 	private Promise promise;
@@ -100,15 +115,15 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 
-			intent.setType("*/*");
 			if (!args.isNull(OPTION_TYPE)) {
 				ReadableArray types = args.getArray(OPTION_TYPE);
 				if (types.size() > 1) {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+						intent.setType("*/*");
 						String[] mimeTypes = readableArrayToStringArray(types);
 						intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 					} else {
-						Log.e(NAME, "Multiple type values not supported below API level 19");
+						intent.setType(joinReadableArray(types, "|"));
 					}
 				} else if (types.size() == 1) {
 					intent.setType(types.getString(0));
@@ -148,12 +163,12 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				WritableArray results = Arguments.createArray();
 
 				if (uri != null) {
-					results.pushMap(getMetadata(uri));
+					results.pushMap(toMapWithMetadata(uri));
 				} else if (clipData != null && clipData.getItemCount() > 0) {
 					final int length = clipData.getItemCount();
 					for (int i = 0; i < length; ++i) {
 						ClipData.Item item = clipData.getItemAt(i);
-						results.pushMap(getMetadata(item.getUri()));
+						results.pushMap(toMapWithMetadata(item.getUri()));
 					}
 				} else {
 					promise.reject(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
@@ -169,10 +184,46 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 	}
 
-	private WritableMap getMetadata(Uri uri) {
+	private WritableMap toMapWithMetadata(Uri uri) {
+		WritableMap map;
+
+		String utiString = uri.toString();
+		String path = uri.getPath();
+		if (utiString.startsWith("/")) {
+			map = metaDataFromFile(new File(utiString));
+		} else if (utiString.startsWith("file://")) {
+			map = metaDataFromFile(new File(path));
+		} else {
+			map = metaDataFromContentResolver(uri);
+		}
+
+		map.putString(FIELD_URI, utiString);
+		map.putString(FIELD_PATH, path);
+
+		return map;
+	}
+
+	private WritableMap metaDataFromFile(File file) {
 		WritableMap map = Arguments.createMap();
 
-		map.putString(FIELD_URI, uri.toString());
+		map.putInt(FIELD_SIZE, (int) file.length());
+		map.putString(FIELD_NAME, file.getName());
+		map.putString(FIELD_TYPE, mimeTypeFromName(file.getAbsolutePath()));
+
+		return map;
+	}
+
+	private static String mimeTypeFromName(String absolutePath) {
+		String extension = MimeTypeMap.getFileExtensionFromUrl(absolutePath);
+		if (extension != null) {
+			return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+		} else {
+			return null;
+		}
+	}
+
+	private WritableMap metaDataFromContentResolver(Uri uri) {
+		WritableMap map = Arguments.createMap();
 
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 
