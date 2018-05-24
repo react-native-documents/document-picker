@@ -112,19 +112,17 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		this.promise = promise;
 
 		try {
-			Intent intent = new Intent();
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 
 			if (!args.isNull(OPTION_TYPE)) {
 				ReadableArray types = args.getArray(OPTION_TYPE);
 				if (types.size() > 1) {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-						intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
 						intent.setType("*/*");
 						String[] mimeTypes = readableArrayToStringArray(types);
 						intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 					} else {
-						intent.setAction(Intent.ACTION_GET_CONTENT);
 						intent.setType(joinReadableArray(types, "|"));
 					}
 				} else if (types.size() == 1) {
