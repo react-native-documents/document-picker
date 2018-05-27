@@ -51,6 +51,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private static final String OPTION_TYPE = "type";
 	private static final String OPTION_MULIPLE = "multiple";
+	private static final String OPTION_CACHE_FILES = "cacheFiles";
 
 	private static final String FIELD_URI = "uri";
 	private static final String FIELD_NAME = "name";
@@ -60,6 +61,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String FIELD_CACHE_PATH = "cachePath";
 
 	private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
+		private Boolean cacheFiles = false;
+	
 		@Override
 		public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
 			if (requestCode == READ_REQUEST_CODE) {
@@ -106,6 +109,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			promise.reject(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");
 			return;
 		}
+
+		cacheFiles = args.getBoolean(OPTION_CACHE_FILES);
 
 		this.promise = promise;
 
@@ -197,7 +202,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				int filePathIndex = cursor.getColumnIndex(DATA);
 				if (!cursor.isNull(filePathIndex)) {
 					map.putString(FIELD_FILE_PATH, cursor.getString(filePathIndex));
-				} else {
+				}
+
+				if (cacheFiles) {
 					map.putString(FIELD_CACHE_PATH, copyToCacheFolder(uri, cursor));
 				}
 
@@ -231,46 +238,37 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		InputStream input = null;
 		Context context = getReactApplicationContext();
 		try {
-			final int displayNameIndex = cursor.getColumnIndexOrThrow(DISPLAY_NAME);
+			final int displayNameIndex = cursor.getColumnIndex(DISPLAY_NAME);
+			if (cursor.isNull(displayNameIndex)) {
+				return null;
+			}
 			final String displayName = cursor.getString(displayNameIndex);
 
 			input = context.getContentResolver().openInputStream(uri);
 			/* save stream to temp file */
+			File file = new File(context.getCacheDir(), displayName);
+			OutputStream output = new FileOutputStream(file);
 			try {
-				File file = new File(context.getCacheDir(), displayName);
-				OutputStream output = new FileOutputStream(file);
-				try {
-					byte[] buffer = new byte[4 * 1024]; // or other buffer size
-					int read;
+				byte[] buffer = new byte[4 * 1024]; // or other buffer size
+				int read;
 
-					while ((read = input.read(buffer)) != -1) {
-						output.write(buffer, 0, read);
-					}
-					output.flush();
-
-					final String outputPath = file.getAbsolutePath();
-					return outputPath;
-
-				} finally {
-					output.close();
+				while ((read = input.read(buffer)) != -1) {
+					output.write(buffer, 0, read);
 				}
-			} catch (Exception e1a) {
-				//
+				output.flush();
+
+				final String outputPath = file.getAbsolutePath();
+				return outputPath;
+
 			} finally {
-				try {
-					input.close();
-				} catch (IOException e1b) {
-					//
-				}
+				output.close();
 			}
-		} catch (FileNotFoundException e2) {
-			//
 		} finally {
 			if (input != null) {
 				try {
 					input.close();
 				} catch (IOException e3) {
-					//
+					Log.e(NAME, "Failed to close file input stream");
 				}
 			}
 		}
