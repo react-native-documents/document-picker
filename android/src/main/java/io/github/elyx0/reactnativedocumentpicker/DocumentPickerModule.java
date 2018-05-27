@@ -3,6 +3,7 @@ package io.github.elyx0.reactnativedocumentpicker;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -24,6 +25,16 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import static android.provider.MediaStore.MediaColumns.DATA;
+import static android.provider.MediaStore.MediaColumns.DISPLAY_NAME;
+
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
  */
@@ -40,13 +51,18 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private static final String OPTION_TYPE = "type";
 	private static final String OPTION_MULIPLE = "multiple";
+	private static final String OPTION_CACHE_FILES = "cacheFiles";
 
 	private static final String FIELD_URI = "uri";
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
+	private static final String FIELD_FILE_PATH = "filePath";
+	private static final String FIELD_CACHE_PATH = "cachePath";
 
 	private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
+		private Boolean cacheFiles = false;
+	
 		@Override
 		public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
 			if (requestCode == READ_REQUEST_CODE) {
@@ -93,6 +109,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			promise.reject(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");
 			return;
 		}
+
+		cacheFiles = args.getBoolean(OPTION_CACHE_FILES);
 
 		this.promise = promise;
 
@@ -175,13 +193,21 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		map.putString(FIELD_URI, uri.toString());
 
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
-
 		map.putString(FIELD_TYPE, contentResolver.getType(uri));
 
 		Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
 
 		try {
 			if (cursor != null && cursor.moveToFirst()) {
+				int filePathIndex = cursor.getColumnIndex(DATA);
+				if (!cursor.isNull(filePathIndex)) {
+					map.putString(FIELD_FILE_PATH, cursor.getString(filePathIndex));
+				}
+
+				if (cacheFiles) {
+					map.putString(FIELD_CACHE_PATH, copyToCacheFolder(uri, cursor));
+				}
+
 				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 				if (!cursor.isNull(displayNameIndex)) {
 					map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
@@ -206,5 +232,46 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 
 		return map;
+	}
+
+	public String copyToCacheFolder(Uri uri, Cursor cursor) {
+		InputStream input = null;
+		Context context = getReactApplicationContext();
+		try {
+			final int displayNameIndex = cursor.getColumnIndex(DISPLAY_NAME);
+			if (cursor.isNull(displayNameIndex)) {
+				return null;
+			}
+			final String displayName = cursor.getString(displayNameIndex);
+
+			input = context.getContentResolver().openInputStream(uri);
+			/* save stream to temp file */
+			File file = new File(context.getCacheDir(), displayName);
+			OutputStream output = new FileOutputStream(file);
+			try {
+				byte[] buffer = new byte[4 * 1024]; // or other buffer size
+				int read;
+
+				while ((read = input.read(buffer)) != -1) {
+					output.write(buffer, 0, read);
+				}
+				output.flush();
+
+				final String outputPath = file.getAbsolutePath();
+				return outputPath;
+
+			} finally {
+				output.close();
+			}
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e3) {
+					Log.e(NAME, "Failed to close file input stream");
+				}
+			}
+		}
+		return null;
 	}
 }
