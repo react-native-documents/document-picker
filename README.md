@@ -97,6 +97,8 @@ Use `pick` or `pickMultiple` to open a document picker for the user to select fi
   * If `type` is omitted it will be treated as `*/*` or `public.content`.
   * Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
 
+* **ios_picker_mode**: `string`: This corresponds to the iOS enum `UIDocumentPickerMode`. Currently we only support `UIDocumentPickerModeOpen` (`'open'`) and `UIDocumentPickerModeImport` (`'import'`).
+
 **Result:**
 
 The object a `pick` Promise resolves to or the objects in the array a `pickMultiple` Promise resolves to will contain the following keys.
