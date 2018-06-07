@@ -12,10 +12,11 @@
 
 static NSString *const E_DOCUMENT_PICKER_CANCELED = @"DOCUMENT_PICKER_CANCELED";
 static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
+static NSString *const E_INVALID_PICKER_MODE = @"INVALID_PICKER_MODE";
 
 static NSString *const OPTION_TYPE = @"type";
 static NSString *const OPTION_MULIPLE = @"multiple";
-static NSString *const OPTION_NO_IMPORT = @"ios_no_import";
+static NSString *const OPTION_PICKER_MODE = @"ios_picker_mode";
 
 static NSString *const FIELD_URI = @"uri";
 static NSString *const FIELD_IOS_RAW_URI = @"ios_raw_uri";
@@ -30,6 +31,8 @@ static NSString *const FIELD_SIZE = @"size";
     NSMutableArray *composeViews;
     NSMutableArray *composeResolvers;
     NSMutableArray *composeRejecters;
+    NSDictionary *_PICKER_MODE_TRANSLATION;
+    NSSet *_PICKER_SUPPORTED_MODES;
 }
 
 @synthesize bridge = _bridge;
@@ -40,6 +43,12 @@ static NSString *const FIELD_SIZE = @"size";
         composeResolvers = [[NSMutableArray alloc] init];
         composeRejecters = [[NSMutableArray alloc] init];
         composeViews = [[NSMutableArray alloc] init];
+        _PICKER_MODE_TRANSLATION =
+        @{
+          @("import"): @(UIDocumentPickerModeImport),
+          @("open"): @(UIDocumentPickerModeOpen),
+          };
+        _PICKER_SUPPORTED_MODES = [NSSet setWithObjects: @(UIDocumentPickerModeImport), @(UIDocumentPickerModeOpen), nil];
     }
     return self;
 }
@@ -55,7 +64,16 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    UIDocumentPickerMode mode = [RCTConvert BOOL:options[OPTION_NO_IMPORT]] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
+    NSString* modeName = [RCTConvert NSString:options[OPTION_PICKER_MODE]];
+    UIDocumentPickerMode mode = UIDocumentPickerModeImport;
+    if (modeName) {
+        NSNumber* foundMode = [_PICKER_MODE_TRANSLATION objectForKey:modeName];
+        if(!foundMode) {
+            reject(E_INVALID_PICKER_MODE, [NSString stringWithFormat: @"Invalid value for '%@' option", OPTION_PICKER_MODE], nil);
+            return;
+        }
+        mode = [foundMode intValue];
+    }
     NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
     UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:mode];
     
@@ -127,7 +145,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url
 {
-    if (controller.documentPickerMode == UIDocumentPickerModeImport || controller.documentPickerMode == UIDocumentPickerModeOpen) {
+    if ([_PICKER_SUPPORTED_MODES containsObject: @(controller.documentPickerMode)]) {
         RCTPromiseResolveBlock resolve = [composeResolvers lastObject];
         RCTPromiseRejectBlock reject = [composeRejecters lastObject];
         [composeResolvers removeLastObject];
@@ -146,7 +164,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 {
-    if (controller.documentPickerMode == UIDocumentPickerModeImport || controller.documentPickerMode == UIDocumentPickerModeOpen) {
+    if ([_PICKER_SUPPORTED_MODES containsObject: @(controller.documentPickerMode)]) {
         RCTPromiseResolveBlock resolve = [composeResolvers lastObject];
         RCTPromiseRejectBlock reject = [composeRejecters lastObject];
         [composeResolvers removeLastObject];
@@ -170,7 +188,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
 {
-    if (controller.documentPickerMode == UIDocumentPickerModeImport) {
+    if ([_PICKER_SUPPORTED_MODES containsObject: @(controller.documentPickerMode)]) {
         RCTPromiseRejectBlock reject = [composeRejecters lastObject];
         [composeResolvers removeLastObject];
         [composeRejecters removeLastObject];
