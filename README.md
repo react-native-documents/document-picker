@@ -34,7 +34,7 @@ rnpm link
 
 Add the following to your podfile:
 ```
-pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker`
+pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
 ```
 
 ### Android
