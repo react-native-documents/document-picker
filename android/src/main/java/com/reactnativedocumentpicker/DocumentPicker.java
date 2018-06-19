@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
+import android.content.ActivityNotFoundException;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -71,7 +72,11 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
         this.callback = callback;
 
-        getReactApplicationContext().startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
+        try {
+            getReactApplicationContext().startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
+        } catch (ActivityNotFoundException e) {
+            callback.invoke("No apps to handle this file type", null);
+        }
     }
 
     // removed @Override temporarily just to get it working on RN0.33 and RN0.32 - will remove
