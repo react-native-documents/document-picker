@@ -143,17 +143,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			List<Intent> allIntents = getAllIntentsForIntent(intent, null, onlyDefaults);
 
 			outputFileUri = null;
-			// the main intent is the last in the list (fucking android) so pickup the useless one
-			Intent mainIntent = allIntents.get(allIntents.size() - 1);
-			for (Intent intent2 : allIntents) {
-				ComponentName componentName = intent.getComponent();
-				if (componentName != null
-				&& componentName.getClassName().equals("com.android.documentsui.DocumentsActivity")) {
-					mainIntent = intent2;
-					break;
-				}
-			}
-			allIntents.remove(mainIntent);
 
 			// Add intents to capture media instead of pick files from filesystem
 			PackageManager packageManager = currentActivity.getPackageManager();
@@ -179,6 +168,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				//   allIntents.addAll(getAllIntentsForIntent(
 				//     new Intent(MediaStore.ACTION_VIDEO_CAPTURE), null));
 			}
+
+			if (allIntents.size() == 0) {
+				throw new Exception("No intents available for the requested MIME types");
+			}
+
+			// Pick first intent as main one (usually the files selector)
+			Intent mainIntent = allIntents.get(0);
+			allIntents.remove(mainIntent);
 
 			// if (packageManager.hasSystemFeature(PackageManager.FEATURE_RECORD_AUDIO)) {
 			//  // Add audio capture intent
