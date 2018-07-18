@@ -59,6 +59,7 @@ const Types = {
     'images': 'image/*',
     'plainText': 'text/plain',
     'pdf': 'application/pdf',
+    'video': 'video/*',
   },
   utis: {
     'allFiles': 'public.content',
@@ -66,6 +67,7 @@ const Types = {
     'images': 'public.image',
     'plainText': 'public.plain-text',
     'pdf': 'com.adobe.pdf',
+    'video': 'public.video',
   },
   extensions: {
     'allFiles': '*',
@@ -73,6 +75,7 @@ const Types = {
     'images': '.jpeg .jpg .png',
     'plainText': '.txt',
     'pdf': '.pdf',
+    'video': '.mp4',
   }
 };
 
