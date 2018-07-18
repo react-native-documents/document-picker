@@ -14,6 +14,7 @@
     "electron": "electron .",
     "ios": "react-native run-ios",
     "preelectron": "PUBLIC_URL=. npm run web:release",
+    "postinstall": "cd node_modules && ln -s ../.. react-native-document-picker",
     "release": "npm run android:release && npm run web:release",
     "test:web": "react-scripts test --env=jsdom",
     "web": "react-scripts start",
