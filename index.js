@@ -55,23 +55,23 @@ function pick(opts) {
 const Types = {
   mimeTypes: {
     'allFiles': '*/*',
+    'audio': 'audio/*',
     'images': 'image/*',
     'plainText': 'text/plain',
-    'audio': 'audio/*',
     'pdf': 'application/pdf',
   },
   utis: {
     'allFiles': 'public.content',
+    'audio': 'public.audio',
     'images': 'public.image',
     'plainText': 'public.plain-text',
-    'audio': 'public.audio',
     'pdf': 'com.adobe.pdf',
   },
   extensions: {
     'allFiles': '*',
-    'images': '.png .jpg .jpeg',
+    'audio': '.3g2 .3gp .aac .adt .adts .aif .aifc .aiff .asf .au .m3u .m4a .m4b .mid .midi .mp2 .mp3 .mp4 .rmi .snd .wav .wax .wma',
+    'images': '.jpeg .jpg .png',
     'plainText': '.txt',
-    'audio': '.adts .adt .aac .aif .aifc .aiff .au .snd .mid .midi .rmi .mp3 .mp2 .m3u .m4a .wav .wma .wax .asf .3g2 .3gp .m4b .mp4',
     'pdf': '.pdf',
   }
 };
