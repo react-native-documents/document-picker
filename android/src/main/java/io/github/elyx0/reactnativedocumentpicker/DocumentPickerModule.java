@@ -54,6 +54,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private static final String OPTION_TYPE = "type";
 	private static final String OPTION_MULIPLE = "multiple";
+	private static final String OPTION_ONLY_DEFAULTS = "onlyDefaults";
 	private static final String OPTION_PRIVATE = "private";
 
 	private static final String FIELD_URI = "uri";
@@ -137,7 +138,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
 			}
 
-			List<Intent> allIntents = getAllIntentsForIntent(intent, null);
+			boolean onlyDefaults = !args.isNull(OPTION_ONLY_DEFAULTS) && args.getBoolean(OPTION_ONLY_DEFAULTS);
+
+			List<Intent> allIntents = getAllIntentsForIntent(intent, null, onlyDefaults);
 
 			outputFileUri = null;
 			// the main intent is the last in the list (fucking android) so pickup the useless one
@@ -167,7 +170,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 					}
 
 					allIntents.addAll(getAllIntentsForIntent(
-						new Intent(MediaStore.ACTION_IMAGE_CAPTURE), outputFileUri));
+						new Intent(MediaStore.ACTION_IMAGE_CAPTURE), outputFileUri,
+						onlyDefaults));
 				}
 
 				// // Add video capture intent
@@ -330,8 +334,18 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	 * intents to call to all the activities (applications) that can do image
 	 * capturing instead of the user defined default, usually the `Camera` app.
 	 */
-	private List<Intent> getAllIntentsForIntent(Intent intent, Uri outputFileUri) {
+	private List<Intent> getAllIntentsForIntent(Intent intent, Uri outputFileUri,
+		Boolean onlyDefaults)
+	{
 		List<Intent> result = new ArrayList<>();
+
+		if(onlyDefaults) {
+			if (outputFileUri != null)
+				intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+
+			result.add(intent);
+			return result;
+		}
 
 		List<ResolveInfo> activities = getCurrentActivity().getPackageManager()
 			.queryIntentActivities(intent, 0);
