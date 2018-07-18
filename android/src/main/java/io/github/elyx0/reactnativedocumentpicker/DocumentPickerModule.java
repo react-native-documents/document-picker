@@ -171,12 +171,12 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 							new Intent(MediaStore.ACTION_VIDEO_CAPTURE), null, onlyDefaults));
 				}
 
-				// if (packageManager.hasSystemFeature(PackageManager.FEATURE_RECORD_AUDIO)) {
-				//   // Collect all audio capture intents
-				//   if (hasMimeType(args, "audio"))
-				//     allIntents.addAll(getAllIntentsForIntent(
-				//       new Intent(MediaStore.ACTION_AUDIO_CAPTURE), null, onlyDefaults));
-				// }
+				if (packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE)) {
+					// Collect all audio capture intents
+					if (hasMimeType(args, "audio"))
+						allIntents.addAll(getAllIntentsForIntent(
+							new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION), null, onlyDefaults));
+				}
 			}
 
 			if (allIntents.size() == 0) {
