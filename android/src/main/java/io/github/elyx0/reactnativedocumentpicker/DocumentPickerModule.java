@@ -54,6 +54,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private static final String OPTION_TYPE = "type";
 	private static final String OPTION_MULIPLE = "multiple";
+	private static final String OPTION_CAPTURE = "capture";
 	private static final String OPTION_ONLY_DEFAULTS = "onlyDefaults";
 	private static final String OPTION_PRIVATE = "private";
 
@@ -145,28 +146,37 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			outputFileUri = null;
 
 			// Add intents to capture media instead of pick files from filesystem
-			PackageManager packageManager = currentActivity.getPackageManager();
+			if(!args.isNull(OPTION_CAPTURE) && args.getBoolean(OPTION_CAPTURE)) {
+				PackageManager packageManager = currentActivity.getPackageManager();
 
-			if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-				// collect all image capture intents
-				if (hasMimeType(args, "image")) {
-					boolean isPrivate = !args.isNull(OPTION_PRIVATE) && args.getBoolean(OPTION_PRIVATE);
-					if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
-						outputFileUri = Uri.fromFile(createImageFile(isPrivate));
-			    } else {
-						outputFileUri = FileProvider.getUriForFile(currentActivity,
-							currentActivity.getPackageName(), createImageFile(isPrivate));
+				if (packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+					// Collect all image capture intents
+					if (hasMimeType(args, "image")) {
+						boolean isPrivate = !args.isNull(OPTION_PRIVATE) && args.getBoolean(OPTION_PRIVATE);
+						if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP_MR1) {
+							outputFileUri = Uri.fromFile(createImageFile(isPrivate));
+						} else {
+							outputFileUri = FileProvider.getUriForFile(currentActivity,
+								currentActivity.getPackageName(), createImageFile(isPrivate));
+						}
+
+						allIntents.addAll(getAllIntentsForIntent(
+							new Intent(MediaStore.ACTION_IMAGE_CAPTURE), outputFileUri,
+							onlyDefaults));
 					}
 
-					allIntents.addAll(getAllIntentsForIntent(
-						new Intent(MediaStore.ACTION_IMAGE_CAPTURE), outputFileUri,
-						onlyDefaults));
+					// // Collect all video capture intents
+					// if (hasMimeType(args, "video"))
+					//   allIntents.addAll(getAllIntentsForIntent(
+					//     new Intent(MediaStore.ACTION_VIDEO_CAPTURE), null, onlyDefaults));
 				}
 
-				// // Add video capture intent
-				// if (hasMimeType(args, "video"))
-				//   allIntents.addAll(getAllIntentsForIntent(
-				//     new Intent(MediaStore.ACTION_VIDEO_CAPTURE), null));
+				// if (packageManager.hasSystemFeature(PackageManager.FEATURE_RECORD_AUDIO)) {
+				//   // Collect all audio capture intents
+				//   if (hasMimeType(args, "audio"))
+				//     allIntents.addAll(getAllIntentsForIntent(
+				//       new Intent(MediaStore.ACTION_AUDIO_CAPTURE), null, onlyDefaults));
+				// }
 			}
 
 			if (allIntents.size() == 0) {
@@ -177,12 +187,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			Intent mainIntent = allIntents.get(0);
 			allIntents.remove(mainIntent);
 
-			// if (packageManager.hasSystemFeature(PackageManager.FEATURE_RECORD_AUDIO)) {
-			//  // Add audio capture intent
-			// 	if (hasMimeType(args, "audio"))
-			//   allIntents.addAll(getAllIntentsForIntent(
-			//     new Intent(MediaStore.ACTION_AUDIO_CAPTURE), null));
-			// }
 
 			// if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
 				mainIntent = Intent.createChooser(mainIntent, null);
