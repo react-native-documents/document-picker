@@ -114,4 +114,8 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     }
 }
 
++ (BOOL)requiresMainQueueSetup {
+  return YES;
+}
+
 @end
