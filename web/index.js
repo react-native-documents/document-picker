@@ -41,15 +41,19 @@ function pick({multiple, type})
     {
       body.removeEventListener('focus', onfocus, true);
 
-      const {files} = input;
-      if ( !files.length ) {
-        const error = new Error('User canceled document picker');
-              error.code = E_DOCUMENT_PICKER_CANCELED;
+      setTimeout(() => {
 
-        return reject(error);
-      }
+        const {files} = input;
+        if ( !files.length ) {
+          const error = new Error('User canceled document picker');
+                error.code = E_DOCUMENT_PICKER_CANCELED;
 
-      resolve(Array.prototype.map.call(files, addUri));
+          return reject(error);
+        }
+
+        resolve(Array.prototype.map.call(files, addUri));
+
+      }, 500);
     }
 
     body.addEventListener('focus', onfocus, true);
