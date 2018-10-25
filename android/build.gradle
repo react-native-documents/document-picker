@@ -1,21 +1,24 @@
 buildscript {
     repositories {
+        google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.2'
+        classpath 'com.android.tools.build:gradle:3.1.4'
     }
 }
 
 apply plugin: 'com.android.library'
 
+def _ext = rootProject.ext;
+
 android {
-    compileSdkVersion 'android-25'
-    buildToolsVersion '25.0.1'
+    compileSdkVersion _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 26;
+    buildToolsVersion _ext.has('buildToolsVersion') ? _ext.buildToolsVersion : '26.0.3';
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 26;
     }
 
     buildTypes {
