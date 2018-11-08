@@ -128,7 +128,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
 		} catch (ActivityNotFoundException e) {
-			this.promise.reject(UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
+			this.promise.reject(E_UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
 			this.promise = null;
 		} catch (Exception e) {
 			e.printStackTrace();
