@@ -58,6 +58,7 @@ const Types = {
   mimeTypes: {
     'allFiles': '*/*',
     'images': 'image/*',
+    'video': 'video/*',
     'plainText': 'text/plain',
     'audio': 'audio/*',
     'pdf': 'application/pdf',
@@ -65,6 +66,7 @@ const Types = {
   utis: {
     'allFiles': 'public.content',
     'images': 'public.image',
+    'video': 'public.video',
     'plainText': 'public.plain-text',
     'audio': 'public.audio',
     'pdf': 'com.adobe.pdf',
@@ -72,6 +74,7 @@ const Types = {
   extensions: {
     'allFiles': '*',
     'images': '.png .jpg .jpeg',
+    'video': '.avi .mpeg .ogv .webm .3gp .3g2 .mp4',
     'plainText': '.txt',
     'audio': '.adts .adt .aac .aif .aifc .aiff .au .snd .mid .midi .rmi .mp3 .mp2 .m3u .m4a .wav .wma .wax .asf .3g2 .3gp .m4b .mp4',
     'pdf': '.pdf',
