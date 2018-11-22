@@ -58,7 +58,7 @@ const Types = {
   mimeTypes: {
     'allFiles': '*/*',
     'images': 'image/*',
-    'video': 'video/*',
+    'video': 'video/mp4,video/x-m4v,video/*',
     'plainText': 'text/plain',
     'audio': 'audio/*',
     'pdf': 'application/pdf',
