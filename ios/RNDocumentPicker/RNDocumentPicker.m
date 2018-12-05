@@ -16,20 +16,10 @@
 
 
 @implementation RNDocumentPicker {
-    NSMutableArray *composeViews;
-    NSMutableArray *composeCallbacks;
+    NSMutableArray *_composeCallbacks;
 }
 
 @synthesize bridge = _bridge;
-
-- (instancetype)init
-{
-    if ((self = [super init])) {
-        composeCallbacks = [[NSMutableArray alloc] init];
-        composeViews = [[NSMutableArray alloc] init];
-    }
-    return self;
-}
 
 - (dispatch_queue_t)methodQueue
 {
@@ -44,7 +34,7 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     NSArray *allowedUTIs = [RCTConvert NSArray:options[@"filetype"]];
     UIDocumentMenuViewController *documentPicker = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
 
-    [composeCallbacks addObject:callback];
+    [[self composeCallbacks] addObject:callback];
 
 
     documentPicker.delegate = self;
@@ -85,8 +75,8 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url {
     if (controller.documentPickerMode == UIDocumentPickerModeImport) {
-        RCTResponseSenderBlock callback = [composeCallbacks lastObject];
-        [composeCallbacks removeLastObject];
+        RCTResponseSenderBlock callback = [[self composeCallbacks] lastObject];
+        [[self composeCallbacks] removeLastObject];
 
         [url startAccessingSecurityScopedResource];
 
@@ -112,6 +102,13 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
 
         [url stopAccessingSecurityScopedResource];
     }
+}
+
+- (NSMutableArray *)composeCallbacks {
+    if(_composeCallbacks == nil) {
+        _composeCallbacks = [[NSMutableArray alloc] init];
+    }
+    return _composeCallbacks;
 }
 
 @end
