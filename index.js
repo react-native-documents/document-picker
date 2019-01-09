@@ -93,16 +93,22 @@ export default class DocumentPicker {
    */
   static types = PlatformTypes[Platform.OS] || Types.mimeTypes
 
-  static pick(opts) {
-    opts = opts || {};
-    opts.multiple = false;
-    return pick(opts).then((results) => results[0]);
+  static pick(opts = {}) {
+    const options = {
+      ...opts,
+      multiple: false
+    }
+
+    return pick(options).then((results) => results[0]);
   }
 
-  static pickMultiple(opts) {
-    opts = opts || {};
-    opts.multiple = true;
-    return pick(opts);
+  static pickMultiple(opts = {}) {
+    const options = {
+      ...opts,
+      multiple: true
+    }
+
+    return pick(options);
   }
 
   static isCancel(err) {
