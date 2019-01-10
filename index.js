@@ -93,7 +93,7 @@ export default class DocumentPicker {
    */
   static types = PlatformTypes[Platform.OS] || Types.mimeTypes
 
-  static pick(opts = {}) {
+  static pick(opts) {
     const options = {
       ...opts,
       multiple: false
@@ -102,7 +102,7 @@ export default class DocumentPicker {
     return pick(options).then((results) => results[0]);
   }
 
-  static pickMultiple(opts = {}) {
+  static pickMultiple(opts) {
     const options = {
       ...opts,
       multiple: true
