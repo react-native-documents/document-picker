@@ -1,18 +1,12 @@
 ﻿using Newtonsoft.Json.Linq;
 using ReactNative.Bridge;
 using System;
-using Newtonsoft.Json.Linq;
-using ReactNative.Bridge;
-using ReactNative.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
-using Windows.UI.Popups;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using ZXing;
-using static System.FormattableString;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
