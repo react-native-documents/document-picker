@@ -34,13 +34,27 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
     NSArray *allowedUTIs = [RCTConvert NSArray:options[@"filetype"]];
     UIDocumentMenuViewController *documentPicker = [[UIDocumentMenuViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
 
+    //moved up to prevent variable not initialized error
+    UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
+    
+    //adding of image view controller
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    
+    imagePickerController.delegate = self;
+    
+    [documentPicker addOptionWithTitle:@"Photos" image:nil order:UIDocumentMenuOrderFirst handler:^{
+        //returning with response to open the image picker
+        RCTResponseSenderBlock callback = [[self composeCallbacks] lastObject];
+        NSMutableDictionary* result = [NSMutableDictionary dictionary];
+        [result setValue:@"true" forKey:@"fromPhotos"];
+        callback(@[[NSNull null], result]);
+    }];
+    
     [[self composeCallbacks] addObject:callback];
-
 
     documentPicker.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
 
-    UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
     while (rootViewController.modalViewController) {
         rootViewController = rootViewController.modalViewController;
     }
