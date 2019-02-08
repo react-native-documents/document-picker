@@ -125,7 +125,7 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         try {
             File downloaded = download(uri, outputDir);
 
-            map.putInt(Fields.FILE_SIZE, (int) downloaded.length());
+            map.putDouble(Fields.FILE_SIZE, new Long(downloaded.length()).doubleValue());
             map.putString(Fields.FILE_NAME, downloaded.getName());
             map.putString(Fields.TYPE, mimeTypeFromName(uri.toString()));
         } catch (IOException e) {
@@ -141,7 +141,7 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         if(!file.exists())
             return map;
 
-        map.putInt(Fields.FILE_SIZE, (int) file.length());
+        map.putDouble(Fields.FILE_SIZE, new Long(file.length()).doubleValue());
         map.putString(Fields.FILE_NAME, file.getName());
         map.putString(Fields.TYPE, mimeTypeFromName(file.getAbsolutePath()));
 
@@ -166,7 +166,7 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
                 if (!cursor.isNull(sizeIndex)) {
                     String size = cursor.getString(sizeIndex);
                     if (size != null)
-                        map.putInt(Fields.FILE_SIZE, Integer.valueOf(size));
+                        map.putDouble(Fields.FILE_SIZE, Double.valueOf(size));
                 }
             }
         } finally {
