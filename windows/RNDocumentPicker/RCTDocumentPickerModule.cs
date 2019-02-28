@@ -9,6 +9,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace RNDocumentPicker
 {
@@ -22,13 +23,14 @@ namespace RNDocumentPicker
 	private static readonly String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
 
 	private static readonly String OPTION_TYPE = "type";
-        private static readonly String CACHE_TYPE = "cache";
+    private static readonly String CACHE_TYPE = "cache";
     private static readonly String OPTION_MULIPLE = "multiple";
-
-	private static readonly String FIELD_URI = "uri";
+    private static readonly String OPTION_READ_CONTENT = "readContent";
+    private static readonly String FIELD_URI = "uri";
 	private static readonly String FIELD_NAME = "name";
 	private static readonly String FIELD_TYPE = "type";
 	private static readonly String FIELD_SIZE = "size";
+    private static readonly String FIELD_CONTENT = "content";
 
         public RCTDocumentPickerModule(ReactContext reactContext)
             : base(reactContext)
@@ -100,13 +102,14 @@ namespace RNDocumentPicker
                         if (_isInForeground)
                         {
                             var isMultiple = options.Value<bool>(OPTION_MULIPLE);
+                            var readContent = options.Value<bool>(OPTION_READ_CONTENT);
                             if (isMultiple)
                             {
-                                await PickMultipleFileAsync(openPicker, cache, promise);
+                                await PickMultipleFileAsync(openPicker, cache, readContent, promise);
                             }
                             else
                             {
-                                await PickSingleFileAsync(openPicker, cache, promise);
+                                await PickSingleFileAsync(openPicker, cache, readContent, promise);
                             }
                         }
                         else
@@ -125,8 +128,23 @@ namespace RNDocumentPicker
             }
         }
 
-        private async Task<JObject> PrepareFile(StorageFile file, Boolean cache)
+        private async Task<JObject> PrepareFile(StorageFile file, Boolean cache, Boolean readContent)
         {
+            String base64Content = null;
+            if (readContent)
+            {
+                var fileStream = await file.OpenReadAsync();
+                using (StreamReader reader = new StreamReader(fileStream.AsStream()))
+                {
+                    using (var memstream = new MemoryStream())
+                    {
+                        reader.BaseStream.CopyTo(memstream);
+                        var bytes = memstream.ToArray();
+                        base64Content = Convert.ToBase64String(bytes);
+                    }
+                }
+            }
+
             if (cache == true)
             {
                 var fileInCache = await file.CopyAsync(ApplicationData.Current.TemporaryFolder, file.Name.ToString(), NameCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
@@ -136,7 +154,8 @@ namespace RNDocumentPicker
                     { FIELD_URI, fileInCache.Path },
                     { FIELD_TYPE, fileInCache.ContentType },
                     { FIELD_NAME, fileInCache.Name },
-                    { FIELD_SIZE, basicProperties.Size}
+                    { FIELD_SIZE, basicProperties.Size},
+                    { FIELD_CONTENT, base64Content }
                 };
             }
             else {
@@ -146,18 +165,19 @@ namespace RNDocumentPicker
                     { FIELD_URI, file.Path },
                     { FIELD_TYPE, file.ContentType },
                     { FIELD_NAME, file.Name },
-                    { FIELD_SIZE, basicProperties.Size}
+                    { FIELD_SIZE, basicProperties.Size},
+                    { FIELD_CONTENT, base64Content }
                 };
             }
         }
 
-        private async Task<bool> PickMultipleFileAsync(FileOpenPicker picker, Boolean cache, IPromise promise) {
+        private async Task<bool> PickMultipleFileAsync(FileOpenPicker picker, Boolean cache, Boolean readContent, IPromise promise) {
             IReadOnlyList<StorageFile> files = await picker.PickMultipleFilesAsync().AsTask().ConfigureAwait(false);
             if (files.Count > 0)
             {
                 JArray jarrayObj = new JArray();
                 foreach (var file in files) {
-                    jarrayObj.Add(PrepareFile(file, cache).Result);
+                    jarrayObj.Add(PrepareFile(file, cache, readContent).Result);
                 }
                 promise.Resolve(jarrayObj);
             }
@@ -169,12 +189,12 @@ namespace RNDocumentPicker
             return true;
         }
 
-        private async Task<bool> PickSingleFileAsync(FileOpenPicker picker, Boolean cache, IPromise promise) {
+        private async Task<bool> PickSingleFileAsync(FileOpenPicker picker, Boolean cache, Boolean readContent, IPromise promise) {
             var file = await picker.PickSingleFileAsync().AsTask().ConfigureAwait(false);
             if (file != null)
             {
                 JArray jarrayObj = new JArray();
-                jarrayObj.Add(PrepareFile(file, cache).Result);
+                jarrayObj.Add(PrepareFile(file, cache, readContent).Result);
                 promise.Resolve(jarrayObj);
             }
             else
