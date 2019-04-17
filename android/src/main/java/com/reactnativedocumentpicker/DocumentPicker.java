@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
 
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
@@ -64,7 +65,11 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
 
         if (!args.isNull("filetype")) {
             ReadableArray filetypes = args.getArray("filetype");
-            if (filetypes.size() > 0) {
+            if (filetypes.size() > 1) {
+                intent.setType("*/*");
+                String[] strList = filetypes.toArrayList().toArray(new String[0]);
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, strList);
+            } else if (filetypes.size() == 1) {
                 intent.setType(filetypes.getString(0));
             }
         }
