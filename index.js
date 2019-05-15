@@ -24,9 +24,9 @@ class DocumentPickerUtil {
   static audio() {
     return (Platform.OS === 'android') ? "audio/*" : "public.audio";
   }
-  
+
   static video() {
-    return (Platform.OS === 'android') ? "video/*" : "public.video";
+    return (Platform.OS === 'android') ? "video/*" : "public.movie";
   }
 
   static pdf() {
