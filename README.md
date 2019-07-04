@@ -1,6 +1,8 @@
 # react-native-document-picker
 
-A React Native wrapper for Apple's ``UIDocumentMenuViewController`` and for Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK``.
+## WARNING: Early release of v3 /!\ WE _NEED_ testing and PR. Otherwise go back to v2.x
+
+A React Native wrapper for Apple's `UIDocumentMenuViewController` and for Android's `Intent.ACTION_OPEN_DOCUMENT` / `Intent.ACTION_PICK`.
 
 ### Installation
 
@@ -25,14 +27,14 @@ rnpm link
 **Manually Link Native Modules**
 
 1. Run `npm install react-native-document-picker --save`
-2. Open your project in XCode, right click on `Libraries` and click `Add
-   Files to "Your Project Name"`, select `RNDocumentPicker.xcodeproj` [(Screenshot)](http://url.brentvatne.ca/jQp8) then [(Screenshot)](http://url.brentvatne.ca/1gqUD).
+2. Open your project in XCode, right click on `Libraries` and click `Add Files to "Your Project Name"`, select `RNDocumentPicker.xcodeproj` [(Screenshot)](http://url.brentvatne.ca/jQp8) then [(Screenshot)](http://url.brentvatne.ca/1gqUD).
 3. Add `libRNDocumentPicker.a` to `Build Phases -> Link Binary With Libraries`
    https://facebook.github.io/react-native/docs/linking-libraries-ios
 
 **CocoaPods**
 
 Add the following to your podfile:
+
 ```
 pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker'
 ```
@@ -81,49 +83,56 @@ public class MainApplication extends Application implements ReactApplication {
 ```
 
 ## Example
+
 ```javascript
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+import {
+  DocumentPicker,
+  DocumentPickerUtil,
+} from 'react-native-document-picker';
 
 // iPhone/Android
-DocumentPicker.show({
-      filetype: [DocumentPickerUtil.images()],
-    },(error,res) => {
-      // Android
-      console.log(
-         res.uri,
-         res.type, // mime type
-         res.fileName,
-         res.fileSize
-      );
-    });
+DocumentPicker.show(
+  {
+    filetype: [DocumentPickerUtil.images()],
+  },
+  (error, res) => {
+    // Android
+    console.log(
+      res.uri,
+      res.type, // mime type
+      res.fileName,
+      res.fileSize
+    );
+  }
+);
 
 // iPad
-const {pageX, pageY} = event.nativeEvent;
+const { pageX, pageY } = event.nativeEvent;
 
-DocumentPicker.show({
-  top: pageY,
-  left: pageX,
-  filetype: ['public.image'],
-}, (error, url) => {
-  alert(url);
-});
-
+DocumentPicker.show(
+  {
+    top: pageY,
+    left: pageX,
+    filetype: ['public.image'],
+  },
+  (error, url) => {
+    alert(url);
+  }
+);
 ```
 
 ### Note
+
 The full list of UTI is available here:
-[(https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)](https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html
-)]
+[(https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)](https://developer.apple.com/library/ios/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)]
 
 ## Here is how it looks:
-![screenshot](http://i.stack.imgur.com/dv0iQ.png)
 
+![screenshot](http://i.stack.imgur.com/dv0iQ.png)
 
 ## Common issues ⚠️
 
 Please check these issues tagged [addTo FAQ](https://github.com/Elyx0/react-native-document-picker/issues?utf8=%E2%9C%93&q=+is%3Aissue+label%3A%22addto%3A+FAQ%22+)
-
-
 
 ## How to send it back ?
 
@@ -131,6 +140,7 @@ I recommend using [https://github.com/johanneslumpe/react-native-fs](https://git
 I had to modify [Uploader.m](https://gist.github.com/Elyx0/5dc53bef294b42c847f1baea7cc5e911) so it would use `NSFileCoordinator` with `NSFileCoordinatorReadingForUploading` option.
 
 I added a check for file length that would be thrown into RNFS catch block.
+
 ```obj-c
 if ([fileData length] == 0) {
     NSError *errorUp = [NSError errorWithDomain:@"com.whatever.yourapp" code:77 userInfo:[NSDictionary dictionaryWithObject:@"empty" forKey:NSLocalizedDescriptionKey]];
@@ -138,7 +148,6 @@ if ([fileData length] == 0) {
     return;
 }
 ```
-
 
 ```javascript
 let url = "file://whatever/com.bla.bla/file.ext"; //The url you received from the DocumentPicker
@@ -200,17 +209,18 @@ RNFS.uploadFiles({
        console.log(err);
     });
 ```
-## File Type 
-***All type of Files*** ``` 'public.allFiles' or DocumentPickerUtil.allFiles()```<br/> 
-***Only PDF*** ``` 'public.pdf' or DocumentPickerUtil.pdf() ``` <br/> 
-***Audio*** ``` 'public.audio' or DocumentPickerUtil.audio()``` <br/> 
-***Plain Text*** ``` 'public.plainText' or DocumentPickerUtil.plainText() ``` <br/> 
+
+## File Type
+
+**_All type of Files_** `'public.allFiles' or DocumentPickerUtil.allFiles()`<br/>
+**_Only PDF_** `'public.pdf' or DocumentPickerUtil.pdf()` <br/>
+**_Audio_** `'public.audio' or DocumentPickerUtil.audio()` <br/>
+**_Plain Text_** `'public.plainText' or DocumentPickerUtil.plainText()` <br/>
 
 ## Reminder
 
 You need to enable iCloud Documents to access iCloud
 ![screen](https://313e5987718b346aaf83-f5e825270f29a84f7881423410384342.ssl.cf1.rackcdn.com/1411920674-enable-icloud-drive.png)
-
 
 ## Halp wanted: Improvements
 
