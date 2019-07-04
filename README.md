@@ -15,7 +15,7 @@ npm i --save react-native-document-picker
 For 0.29.2+ projects, simply link native packages via the following command (note: rnpm has been merged into react-native)
 
 ```
-react-native link
+react-native link react-native-document-picker
 ```
 
 As for projects < 0.29 you need `rnpm` to link native packages
