@@ -1,11 +1,10 @@
 # react-native-document-picker
 
-## WARNING: Experimental branch of v3 /!\
-
 A React Native wrapper for:
- * Apple's ``UIDocumentMenuViewController``
- * Android's ``Intent.ACTION_OPEN_DOCUMENT`` / ``Intent.ACTION_PICK`` 
- * Windows ``Windows.Storage.Pickers``
+
+- Apple's `UIDocumentMenuViewController`
+- Android's `Intent.ACTION_OPEN_DOCUMENT` / `Intent.ACTION_PICK`
+- Windows `Windows.Storage.Pickers`
 
 ### Installation
 
@@ -24,14 +23,14 @@ react-native link
 **Manually Link Native Modules**
 
 1. Run `npm install react-native-document-picker --save`
-2. Open your project in XCode, right click on `Libraries` and click `Add
-   Files to "Your Project Name"` [(Screenshot)](http://url.brentvatne.ca/jQp8) then [(Screenshot)](http://url.brentvatne.ca/1gqUD).
+2. Open your project in XCode, right click on `Libraries` and click `Add Files to "Your Project Name"` [(Screenshot)](http://url.brentvatne.ca/jQp8) then [(Screenshot)](http://url.brentvatne.ca/1gqUD).
 3. Add `libRNDocumentPicker.a` to `Build Phases -> Link Binary With Libraries`
    [(Screenshot)](http://url.brentvatne.ca/17Xfe).
 
 **CocoaPods**
 
 Add the following to your podfile:
+
 ```
 pod 'react-native-document-picker', :path => '../node_modules/react-native-document-picker`
 ```
@@ -91,36 +90,37 @@ Use `pick` or `pickMultiple` to open a document picker for the user to select fi
 
 **Options:**
 
-* **`type`**:`string|Array<string>`: The type or types of documents to allow selection of. May be an array of types as single type string.
-  * On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`.
-  * On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
-  * If `type` is omitted it will be treated as `*/*` or `public.content`.
-  * Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
+- **`type`**:`string|Array<string>`: The type or types of documents to allow selection of. May be an array of types as single type string.
+  - On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`.
+  - On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
+  - If `type` is omitted it will be treated as `*/*` or `public.content`.
+  - Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
 
 **Result:**
 
 The object a `pick` Promise resolves to or the objects in the array a `pickMultiple` Promise resolves to will contain the following keys.
 
-* **`uri`**: The URI representing the document picked by the user. *On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver.*
-* **`type`**: The MIME type of the file. *On Android some DocumentProviders may not provide MIME types for their documents. On iOS this MIME type is based on the best MIME type for the file extension according to Apple's internal "Uniform Type Identifiers" database.*
-* **`name`**: The display name of the file. *This is normally the filename of the file, but Android does not guarantee that this will be a filename from all DocumentProviders.*
-* **`size`**: The file size of the document. *On Android some DocumentProviders may not provide this information for a document.*
+- **`uri`**: The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver._
+- **`type`**: The MIME type of the file. _On Android some DocumentProviders may not provide MIME types for their documents. On iOS this MIME type is based on the best MIME type for the file extension according to Apple's internal "Uniform Type Identifiers" database._
+- **`name`**: The display name of the file. _This is normally the filename of the file, but Android does not guarantee that this will be a filename from all DocumentProviders._
+- **`size`**: The file size of the document. _On Android some DocumentProviders may not provide this information for a document._
 
 ### `DocumentPicker.types.*`
 
 `DocumentPicker.types.*` provides a few common types for use as `type` values, these types will use the correct format for each platform (MIME types on Android, UTIs on iOS).
 
-* `DocumentPicker.types.allFiles`: All document types, on Android this is `*/*`, on iOS is is `public.content` (note that some binary and archive types do not inherit from `public.content`)
-* `DocumentPicker.types.images`: All image types (`image/*` or  `public.image`)
-* `DocumentPicker.types.plainText`: Plain text files ie: `.txt` (`text/plain` or  `public.plain-text`)
-* `DocumentPicker.types.audio`: All audio types (`audio/*` or  `public.audio`)
-* `DocumentPicker.types.pdf`: PDF documents (`application/pdf` or  `com.adobe.pdf`)
+- `DocumentPicker.types.allFiles`: All document types, on Android this is `*/*`, on iOS is is `public.content` (note that some binary and archive types do not inherit from `public.content`)
+- `DocumentPicker.types.images`: All image types (`image/*` or `public.image`)
+- `DocumentPicker.types.plainText`: Plain text files ie: `.txt` (`text/plain` or `public.plain-text`)
+- `DocumentPicker.types.audio`: All audio types (`audio/*` or `public.audio`)
+- `DocumentPicker.types.pdf`: PDF documents (`application/pdf` or `com.adobe.pdf`)
 
 ### `DocumentPicker.isCancel(err)`
 
 If the user cancels the document picker without choosing a file (by pressing the system back button on Android or the Cancel button on iOS) the Promise will be rejected with a cancellation error. You can check for this error using `DocumentPicker.isCancel(err)` allowing you to ignore it and cleanup any parts of your interface that may not be needed anymore.
 
 ## Example
+
 ```javascript
 import DocumentPicker from 'react-native-document-picker';
 
@@ -130,13 +130,13 @@ try {
     type: [DocumentPicker.types.images],
   });
   console.log(
-     res.uri,
-     res.type, // mime type
-     res.name,
-     res.size
+    res.uri,
+    res.type, // mime type
+    res.name,
+    res.size
   );
-} catch ( err ) {
-  if ( DocumentPicker.isCancel(err) ) {
+} catch (err) {
+  if (DocumentPicker.isCancel(err)) {
     // User cancelled the picker, exit any dialogs or menus and move on
   } else {
     throw err;
@@ -148,16 +148,16 @@ try {
   const results = await DocumentPicker.pickMultiple({
     type: [DocumentPicker.types.images],
   });
-  for ( const res of results ) {
+  for (const res of results) {
     console.log(
-       res.uri,
-       res.type, // mime type
-       res.name,
-       res.size
+      res.uri,
+      res.type, // mime type
+      res.name,
+      res.size
     );
   }
-} catch ( err ) {
-  if ( DocumentPicker.isCancel(err) ) {
+} catch (err) {
+  if (DocumentPicker.isCancel(err)) {
     // User cancelled the picker, exit any dialogs or menus and move on
   } else {
     throw err;
@@ -166,8 +166,8 @@ try {
 ```
 
 ## Here is how it looks:
-![screenshot](http://i.stack.imgur.com/dv0iQ.png)
 
+![screenshot](http://i.stack.imgur.com/dv0iQ.png)
 
 ## How to send it back ?
 
@@ -175,6 +175,7 @@ I recommend using [https://github.com/johanneslumpe/react-native-fs](https://git
 I had to modify [Uploader.m](https://gist.github.com/Elyx0/5dc53bef294b42c847f1baea7cc5e911) so it would use `NSFileCoordinator` with `NSFileCoordinatorReadingForUploading` option.
 
 I added a check for file length that would be thrown into RNFS catch block.
+
 ```obj-c
 if ([fileData length] == 0) {
     NSError *errorUp = [NSError errorWithDomain:@"com.whatever.yourapp" code:77 userInfo:[NSDictionary dictionaryWithObject:@"empty" forKey:NSLocalizedDescriptionKey]];
@@ -182,7 +183,6 @@ if ([fileData length] == 0) {
     return;
 }
 ```
-
 
 ```javascript
 let url = "file://whatever/com.bla.bla/file.ext"; //The url you received from the DocumentPicker
@@ -249,7 +249,6 @@ RNFS.uploadFiles({
 
 You need to enable iCloud Documents to access iCloud
 ![screen](https://313e5987718b346aaf83-f5e825270f29a84f7881423410384342.ssl.cf1.rackcdn.com/1411920674-enable-icloud-drive.png)
-
 
 ## Halp wanted: Improvements
 
