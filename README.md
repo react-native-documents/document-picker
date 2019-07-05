@@ -96,6 +96,17 @@ Use `pick` or `pickMultiple` to open a document picker for the user to select fi
   * On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
   * If `type` is omitted it will be treated as `*/*` or `public.content`.
   * Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
+* **[UWP only] `readContent`**: Boolean which defaults to `false`. If `readContent` is set to true the content of the picked file/files will be read and supplied in the result object.
+  * Be aware that this can introduce a huge performance hit in case of big files. (The files are read completely and into the memory and encoded to base64 afterwards to add them to the result object)
+  * However reading the file directly from within the Thread which managed the picker can be necessary on Windows: Windows Apps can only read the Downloads folder and their own app folder by default and If a file is outside of these locations it cannot be acessed directly. However if the user picks the file through a file picker permissions to that file are granted implicitly.
+    ```
+    In addition to the default locations, an app can access additional files and folders by declaring capabilities in the app manifest (see App capability declarations), or by calling a file picker to let the user pick files and folders for the app to access (see Open files and folders with a picker).
+    ```
+    https://docs.microsoft.com/en-us/windows/uwp/files/file-access-permissions
+  
+    Unfortunately that permission is not granted to the whole app, but only the Thread which handled the filepicker. Therefore it can be useful to read the file directly.
+  * You can use `react-native-fs` on Android and IOS to read the picked file.
+  
 
 **Result:**
 
@@ -105,6 +116,7 @@ The object a `pick` Promise resolves to or the objects in the array a `pickMulti
 * **`type`**: The MIME type of the file. *On Android some DocumentProviders may not provide MIME types for their documents. On iOS this MIME type is based on the best MIME type for the file extension according to Apple's internal "Uniform Type Identifiers" database.*
 * **`name`**: The display name of the file. *This is normally the filename of the file, but Android does not guarantee that this will be a filename from all DocumentProviders.*
 * **`size`**: The file size of the document. *On Android some DocumentProviders may not provide this information for a document.*
+* **[UWP only] `content`**: The base64 encoded content of the picked file if the option `readContent` was set to `true`.
 
 ### `DocumentPicker.types.*`
 
