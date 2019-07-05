@@ -1,5 +1,8 @@
 # react-native-document-picker
 
+⚠️ Breaking: New Interface: use v2 branch if you need to go back.
+PR are welcome to add what's missing.
+
 A React Native wrapper for:
 
 - Apple's `UIDocumentMenuViewController`
