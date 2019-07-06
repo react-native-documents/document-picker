@@ -38,13 +38,3 @@ target 'example' do
 
   use_native_modules!('../../')
 end
-
-target 'example-tvOS' do
-  # Pods for example-tvOS
-
-  target 'example-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
-end

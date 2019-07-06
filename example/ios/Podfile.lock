@@ -97,7 +97,7 @@ DEPENDENCIES:
   - React-jsi (from `../../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../../node_modules/react-native/ReactCommon/jsinspector`)
-  - react-native-document-picker (from `/Users/user/oss/react-native-document-picker`)
+  - react-native-document-picker (from `/Users/kusamatakeo/oss/react-native-document-picker`)
   - React-RCTActionSheet (from `../../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../../node_modules/react-native/Libraries/Blob`)
@@ -138,7 +138,7 @@ EXTERNAL SOURCES:
   React-jsinspector:
     :path: "../../node_modules/react-native/ReactCommon/jsinspector"
   react-native-document-picker:
-    :path: "/Users/user/oss/react-native-document-picker"
+    :path: "/Users/kusamatakeo/oss/react-native-document-picker"
   React-RCTActionSheet:
     :path: "../../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -188,6 +188,6 @@ SPEC CHECKSUMS:
   React-RCTWebSocket: fca087d583724aa0e5fef7d911f0f2a28d0f2736
   yoga: 616fde658be980aa60a2158835170f3f9c2d04b4
 
-PODFILE CHECKSUM: 204bbbcc58dde0372e35d068e7774ced432984c8
+PODFILE CHECKSUM: ca6e7cff9dfbfcda1c13d46a4ddc55a75ac145ff
 
 COCOAPODS: 1.7.2
