@@ -63,3 +63,13 @@ DocumentPicker.pickMultiple({
 DocumentPicker.pickMultiple({
   type: [DocumentPicker.types.video,DocumentPicker.types.pdf, 'public.audio']
 })
+
+try {
+  throw new Error('test')
+} catch (e) {
+  if(DocumentPicker.isCancel(e)){
+
+  } else {
+
+  }
+}
