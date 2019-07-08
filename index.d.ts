@@ -48,7 +48,7 @@ declare module 'react-native-document-picker' {
     ): Promise<DocumentPickerResponse>;
     static pickMultiple<OS extends keyof PlatformTypes = Platform>(
       options: DocumentPickerOptions<OS>
-    ): Promise<DocumentPickerResponse>;
+    ): Promise<DocumentPickerResponse[]>;
     static isCancel<IError extends {code?: string}>(err?: IError): boolean;
   }
 }
