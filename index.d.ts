@@ -37,8 +37,8 @@ declare module 'react-native-document-picker' {
   interface DocumentPickerResponse {
     uri: string;
     type: string;
-    fileName: string;
-    fileSize: string;
+    name: string;
+    size: string;
   }
   type Platform = 'ios' | 'android' | 'windows'
   export default class DocumentPicker<OS extends keyof PlatformTypes = Platform> {
