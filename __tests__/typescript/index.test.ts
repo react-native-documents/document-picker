@@ -1,4 +1,4 @@
-import { DocumentPicker} from "react-native-document-picker";
+import DocumentPicker from "react-native-document-picker";
 
 // Option is correct about pick
 
