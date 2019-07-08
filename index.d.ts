@@ -41,7 +41,7 @@ declare module 'react-native-document-picker' {
     fileSize: string;
   }
   type Platform = 'ios' | 'android' | 'windows'
-  export class DocumentPicker<OS extends keyof PlatformTypes = Platform> {
+  export default class DocumentPicker<OS extends keyof PlatformTypes = Platform> {
     static types: PlatformTypes['ios'] | PlatformTypes['android'] | PlatformTypes['windows']
     static pick<OS extends keyof PlatformTypes = Platform>(
       options: DocumentPickerOptions<OS>
