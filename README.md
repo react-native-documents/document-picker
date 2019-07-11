@@ -5,7 +5,7 @@ PR are welcome to add what's missing.
 
 A React Native wrapper for:
 
-- Apple's `UIDocumentMenuViewController`
+- Apple's `UIDocumentPickerViewController`
 - Android's `Intent.ACTION_OPEN_DOCUMENT` / `Intent.ACTION_PICK`
 - Windows `Windows.Storage.Pickers`
 
