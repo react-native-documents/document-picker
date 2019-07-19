@@ -37,8 +37,8 @@ declare module 'react-native-document-picker' {
   interface DocumentPickerResponse {
     uri: string;
     type: string;
-    fileName: string;
-    fileSize: string;
+    name: string;
+    size: string;
   }
   type Platform = 'ios' | 'android' | 'windows'
   export default class DocumentPicker<OS extends keyof PlatformTypes = Platform> {
@@ -48,7 +48,7 @@ declare module 'react-native-document-picker' {
     ): Promise<DocumentPickerResponse>;
     static pickMultiple<OS extends keyof PlatformTypes = Platform>(
       options: DocumentPickerOptions<OS>
-    ): Promise<DocumentPickerResponse>;
+    ): Promise<DocumentPickerResponse[]>;
     static isCancel<IError extends {code?: string}>(err?: IError): boolean;
   }
 }
