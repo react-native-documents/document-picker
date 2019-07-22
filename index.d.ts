@@ -1,4 +1,14 @@
 declare module 'react-native-document-picker' {
+  type UTI = 'public.png' | 'public.jpeg' | 'com.adobe.pdf';
+  type MimeType = 'image/jpg' | 'image/jpeg' | 'image/png' | 'application/pdf';
+  type Extension = '.jpeg' | '.jpg' | '.png' | '.txt' | '.pdf';
+
+  type DocumentType = {
+    android: MimeType | MimeType[]
+    ios: UTI | UTI[]
+    windows: Extension | Extension[]
+  };
+
   type Types = {
     mimeTypes: {
       allFiles: '*/*',
@@ -32,7 +42,7 @@ declare module 'react-native-document-picker' {
     windows: Types['extensions']
   };
   interface DocumentPickerOptions<OS extends keyof PlatformTypes> {
-    type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]]>
+    type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]]> | DocumentType[OS]
   }
   interface DocumentPickerResponse {
     uri: string;
