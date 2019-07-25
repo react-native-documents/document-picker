@@ -1,7 +1,6 @@
 import DocumentPicker from "react-native-document-picker";
 
 // Option is correct about pick
-
 DocumentPicker.pick({
   type: [DocumentPicker.types.allFiles]
 })
@@ -63,6 +62,13 @@ DocumentPicker.pickMultiple({
 DocumentPicker.pickMultiple({
   type: [DocumentPicker.types.video,DocumentPicker.types.pdf, 'public.audio']
 })
+
+DocumentPicker.pick({type: 'image/jpg'});
+DocumentPicker.pick({type: 'public.png'});
+
+DocumentPicker.pick({type: ['image/jpg', 'image/jpeg', 'image/png', 'application/pdf']});
+DocumentPicker.pick({type: ['public.png', 'public.jpeg']});
+
 
 try {
   throw new Error('test')
