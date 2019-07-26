@@ -25,6 +25,17 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.logging.Logger;
+
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
  */
@@ -174,22 +185,41 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 	}
 
-	private WritableMap getMetadata(Uri uri) {
+	private WritableMap getMetadata(Uri uri) throws FileNotFoundException {
 		WritableMap map = Arguments.createMap();
 
-		map.putString(FIELD_URI, uri.toString());
 
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 
 		map.putString(FIELD_TYPE, contentResolver.getType(uri));
 
 		Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
-
 		try {
 			if (cursor != null && cursor.moveToFirst()) {
+				String fileName = "";
 				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 				if (!cursor.isNull(displayNameIndex)) {
-					map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
+					fileName = cursor.getString(displayNameIndex);
+					map.putString(FIELD_NAME, fileName);
+				}
+
+				if (uri != null && "content".equals(uri.getScheme())) {
+					try {
+						InputStream input = DocumentPickerModule.getInputStreamForVirtualFile(contentResolver,uri,contentResolver.getType(uri));
+						File file = new File(getReactApplicationContext().getCacheDir(),fileName);
+						OutputStream output = new FileOutputStream(file);
+						byte[] buffer = new byte[4 * 1024]; // or other buffer size
+						int read;
+						while ((read = input.read(buffer)) != -1) {
+							output.write(buffer, 0, read);
+						}
+						output.flush();
+						map.putString(FIELD_URI, file.getPath());
+					} catch (IOException e) {
+						throw new FileNotFoundException();
+					}
+				} else {
+					map.putString(FIELD_URI, uri.toString());
 				}
 
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -212,4 +242,20 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 		return map;
 	}
+
+	private static InputStream getInputStreamForVirtualFile(ContentResolver resolver, Uri uri, String mimeTypeFilter)
+			throws IOException {
+
+		String[] openableMimeTypes = resolver.getStreamTypes(uri, mimeTypeFilter);
+
+		if (openableMimeTypes == null ||
+				openableMimeTypes.length < 1) {
+			throw new FileNotFoundException();
+		}
+
+		return resolver
+				.openTypedAssetFileDescriptor(uri, openableMimeTypes[0], null)
+				.createInputStream();
+	}
+
 }
