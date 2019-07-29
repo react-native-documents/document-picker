@@ -7,7 +7,7 @@
  */
 
 import React, { Fragment } from 'react';
-import { Button, SafeAreaView, StatusBar } from 'react-native';
+import { Button, SafeAreaView, StatusBar,Platform } from 'react-native';
 import DocumentPicker from '../'
 
 
@@ -30,7 +30,15 @@ const App = () => {
                   res.name,
                   res.size
                 );
+                if(Platform.OS==='android' && res.uri && res.uri.startsWith('content://')) {
+                  const uri = decodeURIComponent(res.uri)
+                  let result = await fetch(res.uri)
+                  const blob = await result.blob()
+                  console.log(blob);
+                  console.log(result)
+                }
               } catch (err) {
+                console.error(err)
                 if (DocumentPicker.isCancel(err)) {
                   // User cancelled the picker, exit any dialogs or menus and move on
                 } else {
