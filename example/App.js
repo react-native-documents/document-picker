@@ -30,12 +30,10 @@ const App = () => {
                   res.name,
                   res.size
                 );
-                if(Platform.OS==='android' && res.uri && res.uri.startsWith('content://')) {
-                  let result = await fetch(res.uri)
-                  const blob = await result.blob()
-                  console.log(blob);
-                  console.log(result)
-                }
+                let result = await fetch(res.uri)
+                const blob = await result.blob()
+                console.log(blob);
+                console.log(result)
               } catch (err) {
                 console.error(err)
                 if (DocumentPicker.isCancel(err)) {
