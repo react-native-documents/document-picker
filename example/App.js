@@ -31,7 +31,6 @@ const App = () => {
                   res.size
                 );
                 if(Platform.OS==='android' && res.uri && res.uri.startsWith('content://')) {
-                  const uri = decodeURIComponent(res.uri)
                   let result = await fetch(res.uri)
                   const blob = await result.blob()
                   console.log(blob);
