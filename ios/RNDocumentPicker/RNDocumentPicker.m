@@ -5,6 +5,7 @@
 #if __has_include(<React/RCTConvert.h>)
 #import <React/RCTConvert.h>
 #import <React/RCTBridge.h>
+#import <React/RCTUtils.h>
 #else // back compatibility for RN version < 0.40
 #import "RCTConvert.h"
 #import "RCTBridge.h"
@@ -72,10 +73,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     }
 #endif
     
-    UIViewController *rootViewController = [[[[UIApplication sharedApplication]delegate] window] rootViewController];
-    while (rootViewController.presentedViewController) {
-        rootViewController = rootViewController.presentedViewController;
-    }
+    UIViewController *rootViewController = RCTPresentedViewController();
     
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
