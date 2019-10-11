@@ -179,7 +179,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 					}
 					realName = realFile.substring(0, index);
 					realType = realFile.substring(index + 1);
-					Log.d("nmsl", uri.toString());
 					Log.d("nmsl", "real name  " + realName);
 					Log.d("nmsl", "real type  " + realType);
 				}
