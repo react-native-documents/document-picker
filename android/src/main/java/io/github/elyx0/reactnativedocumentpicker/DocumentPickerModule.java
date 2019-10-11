@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
@@ -26,7 +27,9 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
 /**
- * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
+ * @see <a href=
+ *      "https://developer.android.com/guide/topics/providers/document-provider.html">android
+ *      documentation</a>
  */
 public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String NAME = "RNDocumentPicker";
@@ -47,6 +50,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
+	private String realName = "";
+	private String realType = "";
 
 	private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
 		@Override
@@ -137,6 +142,11 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 	}
 
+	/**
+	 * In case of Huawei devices, we need to capture the file's real name and type
+	 * from its uri
+	 */
+
 	public void onShowActivityResult(int resultCode, Intent data, Promise promise) {
 		if (resultCode == Activity.RESULT_CANCELED) {
 			promise.reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
@@ -146,6 +156,34 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 			if (data != null) {
 				uri = data.getData();
+				// Start getting real name and type
+				String filePath = queryAbsolutePath(getReactApplicationContext(), uri);
+				Log.d("nmsl", " " + filePath);
+				if (filePath != null) {// this is not a file
+					String originalUri = data.getData().toString();
+					Log.d("nmsl", originalUri);
+					int index = -1;
+					for (int i = filePath.length() - 1; i >= 0; i--) {
+						if (filePath.charAt(i) == '/') {
+							index = i;
+							break;
+						}
+					}
+					String realFile = filePath.substring(index + 1);
+					Log.d("nmsl", realFile);
+					for (int i = realFile.length() - 1; i >= 0; i--) {
+						if (realFile.charAt(i) == '.') {
+							index = i;
+							break;
+						}
+					}
+					realName = realFile.substring(0, index);
+					realType = realFile.substring(index + 1);
+					Log.d("nmsl", uri.toString());
+					Log.d("nmsl", "real name  " + realName);
+					Log.d("nmsl", "real type  " + realType);
+				}
+				// end of getting real name and type
 				clipData = data.getClipData();
 			}
 
@@ -174,6 +212,31 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 	}
 
+	/**
+	 * 
+	 * @param context Current application context
+	 * @param uri     The query uri
+	 * @return The absolute path of uri file like storage/emulated/0/... NOT
+	 *         /sdcard/wangyimusic/download.
+	 */
+	public static String queryAbsolutePath(final ReactApplicationContext context, final Uri uri) {
+		final String[] projection = { MediaStore.MediaColumns.DATA };
+		Cursor cursor = null;
+		try {
+			cursor = context.getContentResolver().query(uri, projection, null, null, null);
+			if (cursor != null && cursor.moveToFirst()) {
+				final int index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+				return cursor.getString(index);
+			}
+		} catch (final Exception ex) {
+			ex.printStackTrace();
+			if (cursor != null) {
+				cursor.close();
+			}
+		}
+		return null;
+	}
+
 	private WritableMap getMetadata(Uri uri) {
 		WritableMap map = Arguments.createMap();
 
@@ -182,6 +245,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 
 		map.putString(FIELD_TYPE, contentResolver.getType(uri));
+		Log.d("nmsl", "first type " + contentResolver.getType(uri));
 
 		Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
 
@@ -189,13 +253,19 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			if (cursor != null && cursor.moveToFirst()) {
 				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 				if (!cursor.isNull(displayNameIndex)) {
+					Log.d("nmsl", "assign names");
 					map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
+					Log.d("nmsl", cursor.getString(displayNameIndex));
+				} else {// If we don't find the name from column index, we use the name and type we get
+						// before (only happen in Huawei now
+					map.putString(FIELD_NAME, realName + "." + realType);
 				}
 
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 					int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
 					if (!cursor.isNull(mimeIndex)) {
 						map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
+						Log.d("nmsl", "second type  " + cursor.getString(mimeIndex));
 					}
 				}
 
