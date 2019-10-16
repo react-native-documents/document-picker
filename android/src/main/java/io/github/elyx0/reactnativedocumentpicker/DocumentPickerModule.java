@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
-import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -158,10 +157,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				uri = data.getData();
 				// Start getting real name and type
 				String filePath = queryAbsolutePath(getReactApplicationContext(), uri);
-				Log.d("nmsl", " " + filePath);
-				if (filePath != null) {// this is not a file
+				if (filePath != null) {// ensure this is a file
 					String originalUri = data.getData().toString();
-					Log.d("nmsl", originalUri);
 					int index = -1;
 					for (int i = filePath.length() - 1; i >= 0; i--) {
 						if (filePath.charAt(i) == '/') {
@@ -170,7 +167,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 						}
 					}
 					String realFile = filePath.substring(index + 1);
-					Log.d("nmsl", realFile);
 					for (int i = realFile.length() - 1; i >= 0; i--) {
 						if (realFile.charAt(i) == '.') {
 							index = i;
@@ -179,8 +175,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 					}
 					realName = realFile.substring(0, index);
 					realType = realFile.substring(index + 1);
-					Log.d("nmsl", "real name  " + realName);
-					Log.d("nmsl", "real type  " + realType);
 				}
 				// end of getting real name and type
 				clipData = data.getClipData();
@@ -244,7 +238,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 
 		map.putString(FIELD_TYPE, contentResolver.getType(uri));
-		Log.d("nmsl", "first type " + contentResolver.getType(uri));
 
 		Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
 
@@ -252,9 +245,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			if (cursor != null && cursor.moveToFirst()) {
 				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 				if (!cursor.isNull(displayNameIndex)) {
-					Log.d("nmsl", "assign names");
 					map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
-					Log.d("nmsl", cursor.getString(displayNameIndex));
 				} else {// If we don't find the name from column index, we use the name and type we get
 						// before (only happen in Huawei now
 					map.putString(FIELD_NAME, realName + "." + realType);
@@ -264,7 +255,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 					int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
 					if (!cursor.isNull(mimeIndex)) {
 						map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
-						Log.d("nmsl", "second type  " + cursor.getString(mimeIndex));
 					}
 				}
 
