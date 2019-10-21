@@ -127,7 +127,7 @@ The object a `pick` Promise resolves to or the objects in the array a `pickMulti
 
 `DocumentPicker.types.*` provides a few common types for use as `type` values, these types will use the correct format for each platform (MIME types on Android, UTIs on iOS).
 
-- `DocumentPicker.types.allFiles`: All document types, on Android this is `*/*`, on iOS is is `public.content` (note that some binary and archive types do not inherit from `public.content`)
+- `DocumentPicker.types.allFiles`: All document types, on Android this is `*/*`, on iOS is `public.content` (note that some binary and archive types do not inherit from `public.content`)
 - `DocumentPicker.types.images`: All image types (`image/*` or `public.image`)
 - `DocumentPicker.types.plainText`: Plain text files ie: `.txt` (`text/plain` or `public.plain-text`)
 - `DocumentPicker.types.audio`: All audio types (`audio/*` or `public.audio`)
