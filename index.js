@@ -64,9 +64,7 @@ function pick(opts) {
     Platform.Version < 19
   ) {
     console.warn(
-      `RNDocumentPicker: Android API level ${
-        Platform.Version
-      } does not support multiple types, falling back to */*`
+      `RNDocumentPicker: Android API level ${Platform.Version} does not support multiple types, falling back to */*`
     );
   }
 
@@ -79,8 +77,16 @@ const Types = {
     audio: 'audio/*',
     images: 'image/*',
     plainText: 'text/plain',
-    pdf: 'application/pdf',
     video: 'video/*',
+    pdf: 'application/pdf',
+    doc: 'application/doc',
+    docx:
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xls: 'application/vnd.ms-excel',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ppt: 'application/vnd.ms-powerpoint',
+    pptx:
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation'
   },
   utis: {
     allFiles: 'public.content',
@@ -89,6 +95,12 @@ const Types = {
     plainText: 'public.plain-text',
     pdf: 'com.adobe.pdf',
     video: 'public.movie',
+    docx: 'com.adobe.docx',
+    doc: 'com.adobe.doc',
+    xls: 'com.adobe.xls',
+    xlsx: 'com.adobe.xlsx',
+    ppt: 'com.adobe.ppt',
+    pptx: 'com.adobe.pptx',
   },
   extensions: {
     allFiles: '*',
@@ -98,13 +110,19 @@ const Types = {
     plainText: '.txt',
     pdf: '.pdf',
     video: '.mp4',
-  },
+    doc: '.doc',
+    docx: '.docx',
+    xls: '.xls',
+    xlsx: '.xlsx',
+    ppt: '.ppt',
+    pptx: '.pptx'
+  }
 };
 
 const PlatformTypes = {
   android: Types.mimeTypes,
   ios: Types.utis,
-  windows: Types.extensions,
+  windows: Types.extensions
 };
 
 export default class DocumentPicker {
@@ -118,7 +136,7 @@ export default class DocumentPicker {
   static pick(opts) {
     const options = {
       ...opts,
-      multiple: false,
+      multiple: false
     };
 
     return pick(options).then(results => results[0]);
@@ -127,7 +145,7 @@ export default class DocumentPicker {
   static pickMultiple(opts) {
     const options = {
       ...opts,
-      multiple: true,
+      multiple: true
     };
 
     return pick(options);
