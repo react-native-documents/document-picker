@@ -177,18 +177,18 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private WritableMap getMetadata(Uri uri) {
 		WritableMap map = Arguments.createMap();
 
-		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
+		String path = PathResolver.getRealPathFromURI(getReactApplicationContext(), uri);
+		map.putString(FIELD_URI, path);
 
+		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 		map.putString(FIELD_TYPE, contentResolver.getType(uri));
-		String fileName = "";
 
 		Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
 		try {
 			if (cursor != null && cursor.moveToFirst()) {
 				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 				if (!cursor.isNull(displayNameIndex)) {
-					fileName = cursor.getString(displayNameIndex);
-					map.putString(FIELD_NAME, fileName);
+					map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
 				}
 
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -208,8 +208,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				cursor.close();
 			}
 		}
-		String path = PathResolver.getRealPathFromURI(getReactApplicationContext(), uri);
-		map.putString(FIELD_URI, path);
 
 		return map;
 	}
