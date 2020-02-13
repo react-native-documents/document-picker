@@ -42,7 +42,8 @@ declare module 'react-native-document-picker' {
     windows: Types['extensions']
   };
   interface DocumentPickerOptions<OS extends keyof PlatformTypes> {
-    type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]]> | DocumentType[OS]
+    type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]]> | DocumentType[OS];
+    getPath: boolean;
   }
   interface DocumentPickerResponse {
     uri: string;

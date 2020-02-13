@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,14 +17,19 @@ import android.util.Log;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
+import com.facebook.react.bridge.GuardedResultAsyncTask;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
@@ -42,6 +48,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private static final String OPTION_TYPE = "type";
 	private static final String OPTION_MULIPLE = "multiple";
+	private static final String OPTION_GET_PATH= "getPath";
 
 	private static final String FIELD_URI = "uri";
 	private static final String FIELD_NAME = "name";
@@ -54,7 +61,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			if (requestCode == READ_REQUEST_CODE) {
 				if (promise != null) {
 					onShowActivityResult(resultCode, data, promise);
-					promise = null;
 				}
 			}
 		}
@@ -70,6 +76,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	}
 
 	private Promise promise;
+	private boolean getRealPath;
 
 	public DocumentPickerModule(ReactApplicationContext reactContext) {
 		super(reactContext);
@@ -90,13 +97,13 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	@ReactMethod
 	public void pick(ReadableMap args, Promise promise) {
 		Activity currentActivity = getCurrentActivity();
+		this.promise = promise;
+		this.getRealPath = args.hasKey(OPTION_GET_PATH) && args.getBoolean(OPTION_GET_PATH);
 
 		if (currentActivity == null) {
-			promise.reject(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");
+			sendError(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");
 			return;
 		}
-
-		this.promise = promise;
 
 		try {
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -128,18 +135,16 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
 		} catch (ActivityNotFoundException e) {
-			this.promise.reject(E_UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
-			this.promise = null;
+			sendError(E_UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.promise.reject(E_FAILED_TO_SHOW_PICKER, e.getLocalizedMessage());
-			this.promise = null;
+			sendError(E_FAILED_TO_SHOW_PICKER, e.getLocalizedMessage());
 		}
 	}
 
 	public void onShowActivityResult(int resultCode, Intent data, Promise promise) {
 		if (resultCode == Activity.RESULT_CANCELED) {
-			promise.reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
+			sendError(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
 		} else if (resultCode == Activity.RESULT_OK) {
 			Uri uri = null;
 			ClipData clipData = null;
@@ -150,65 +155,109 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			}
 
 			try {
-				WritableArray results = Arguments.createArray();
-
+				List<Uri> uris = new ArrayList<>();
 				if (uri != null) {
-					results.pushMap(getMetadata(uri));
+					uris.add(uri);
 				} else if (clipData != null && clipData.getItemCount() > 0) {
 					final int length = clipData.getItemCount();
 					for (int i = 0; i < length; ++i) {
 						ClipData.Item item = clipData.getItemAt(i);
-						results.pushMap(getMetadata(item.getUri()));
+						uris.add(item.getUri());
 					}
 				} else {
-					promise.reject(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
+					sendError(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
 					return;
 				}
 
-				promise.resolve(results);
+				new ProcessDataTask(getReactApplicationContext(), uris, getRealPath, promise).execute();
 			} catch (Exception e) {
-				promise.reject(E_UNEXPECTED_EXCEPTION, e.getLocalizedMessage(), e);
+				sendError(E_UNEXPECTED_EXCEPTION, e.getLocalizedMessage(), e);
 			}
 		} else {
-			promise.reject(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
+			sendError(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
 		}
 	}
 
-	private WritableMap getMetadata(Uri uri) {
-		WritableMap map = Arguments.createMap();
+	static class ProcessDataTask extends GuardedResultAsyncTask<ReadableArray> {
 
-		String path = PathResolver.getRealPathFromURI(getReactApplicationContext(), uri);
-		map.putString(FIELD_URI, path);
+		private Context context;
+		private final List<Uri> uris;
+		private final boolean getRealPath;
+		private final Promise promise;
 
-		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
-		map.putString(FIELD_TYPE, contentResolver.getType(uri));
-
-		Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
-		try {
-			if (cursor != null && cursor.moveToFirst()) {
-				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-				if (!cursor.isNull(displayNameIndex)) {
-					map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
-				}
-
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-					int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
-					if (!cursor.isNull(mimeIndex)) {
-						map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
-					}
-				}
-
-				int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-				if (!cursor.isNull(sizeIndex)) {
-					map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
-				}
-			}
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
+		protected ProcessDataTask(ReactContext reactContext, List<Uri> uris, boolean getRealPath, Promise promise) {
+			super(reactContext.getExceptionHandler());
+			this.context = reactContext.getApplicationContext();
+			this.uris = uris;
+			this.getRealPath = getRealPath;
+			this.promise = promise;
 		}
 
-		return map;
+		@Override
+		protected ReadableArray doInBackgroundGuarded() {
+			WritableArray results = Arguments.createArray();
+			for (Uri uri : uris) {
+				results.pushMap(getMetadata(uri));
+			}
+			return results;
+		}
+
+		@Override
+		protected void onPostExecuteGuarded(ReadableArray readableArray) {
+			promise.resolve(readableArray);
+		}
+
+		private WritableMap getMetadata(Uri uri) {
+			WritableMap map = Arguments.createMap();
+
+			if (getRealPath) {
+				String path = PathResolver.getRealPathFromURI(context, uri);
+				map.putString(FIELD_URI, path);
+			} else {
+				map.putString(FIELD_URI, uri.toString());
+			}
+
+			ContentResolver contentResolver = context.getContentResolver();
+			map.putString(FIELD_TYPE, contentResolver.getType(uri));
+
+			Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
+			try {
+				if (cursor != null && cursor.moveToFirst()) {
+					int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+					if (!cursor.isNull(displayNameIndex)) {
+						map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
+					}
+
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+						int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
+						if (!cursor.isNull(mimeIndex)) {
+							map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
+						}
+					}
+
+					int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+					if (!cursor.isNull(sizeIndex)) {
+						map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
+					}
+				}
+			} finally {
+				if (cursor != null) {
+					cursor.close();
+				}
+			}
+
+			return map;
+		}
+	}
+
+	private void sendError(String code, String message) {
+		sendError(code, message, null);
+	}
+
+	private void sendError(String code, String message, Exception e) {
+		if (this.promise != null) {
+			this.promise.reject(code, message, e);
+			this.promise = null;
+		}
 	}
 }
