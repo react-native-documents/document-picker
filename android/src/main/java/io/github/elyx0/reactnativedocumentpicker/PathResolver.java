@@ -50,10 +50,21 @@ public class PathResolver {
                         String path = rawuri.getPath();
                         return path;
                     }
-                    final Uri contentUri = ContentUris.withAppendedId(
-                            Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                    String[] contentUriPrefixesToTry = new String[]{
+                            "content://downloads/public_downloads",
+                            "content://downloads/my_downloads"
+                    };
+                    for (String contentUriPrefix : contentUriPrefixesToTry) {
 
-                    return getDataColumn(context, contentUri, null, null);
+                        final Uri contentUri = ContentUris.withAppendedId(
+                                Uri.parse(contentUriPrefix), Long.valueOf(id));
+
+                        String path = getDataColumn(context, contentUri, null, null);
+                        if (path != null) {
+                            return path;
+                        }
+                    }
+                    return copyFile(context, uri);
                 }
                 catch (Exception ex) {
                     //something went wrong, but android should still be able to handle the original uri by returning null here (see readFile(...))
