@@ -10,6 +10,16 @@
 #import "RCTBridge.h"
 #endif
 
+// WEAKIFY & STRONGIFY
+// Helper macro.
+#define weakify(var) __weak typeof(var) RNDocumentPicker_##var = var;
+
+#define strongify(var) \
+_Pragma("clang diagnostic push") \
+_Pragma("clang diagnostic ignored \"-Wshadow\"") \
+__strong typeof(var) var = RNDocumentPicker_##var; \
+_Pragma("clang diagnostic pop")
+
 static NSString *const E_DOCUMENT_PICKER_CANCELED = @"DOCUMENT_PICKER_CANCELED";
 static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
 
@@ -146,11 +156,14 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 {
+  weakify(self);
+  dispatch_async(dispatch_get_main_queue(), ^{
+    strongify(self);
     if (controller.documentPickerMode == UIDocumentPickerModeImport) {
-        RCTPromiseResolveBlock resolve = [composeResolvers lastObject];
-        RCTPromiseRejectBlock reject = [composeRejecters lastObject];
-        [composeResolvers removeLastObject];
-        [composeRejecters removeLastObject];
+        RCTPromiseResolveBlock resolve = [self->composeResolvers lastObject];
+        RCTPromiseRejectBlock reject = [self->composeRejecters lastObject];
+        [self->composeResolvers removeLastObject];
+        [self->composeRejecters removeLastObject];
         
         NSMutableArray *results = [NSMutableArray array];
         for (id url in urls) {
@@ -166,6 +179,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
         
         resolve(results);
     }
+  });
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
