@@ -124,6 +124,15 @@ export default class DocumentPicker {
     return pick(options).then(results => results[0]);
   }
 
+static deleteFile(urlfile) {
+    if (Platform.OS === "android") {
+      return deleteFile(urlfile).then(results => results);
+    }
+    else {
+      return null;
+    }
+  
+
   static pickMultiple(opts) {
     const options = {
       ...opts,
@@ -136,4 +145,22 @@ export default class DocumentPicker {
   static isCancel(err) {
     return err && err.code === E_DOCUMENT_PICKER_CANCELED;
   }
+}
+
+
+function deleteFile(urlfile) {
+  if (Platform.OS === "android") {
+    if (urlfile) {
+      return RNDocumentPicker.deleteFile(urlfile);
+    }
+    else {
+      throw new TypeError(
+        'A `deleteFile` must have a `URI`'
+      );
+    }
+  }
+  else {
+    return null;
+  }
+
 }
