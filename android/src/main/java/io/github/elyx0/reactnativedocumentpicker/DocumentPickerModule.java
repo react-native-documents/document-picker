@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -25,12 +26,22 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import java.io.File;
+
+import java.io.FileOutputStream;
+
+import java.io.InputStream;
+
+import java.io.OutputStream;
+
+
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
  */
 public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String NAME = "RNDocumentPicker";
 	private static final int READ_REQUEST_CODE = 41;
+	private static final String TAG = DocumentPickerModule.class.getName();
 
 	private static final String E_ACTIVITY_DOES_NOT_EXIST = "ACTIVITY_DOES_NOT_EXIST";
 	private static final String E_FAILED_TO_SHOW_PICKER = "FAILED_TO_SHOW_PICKER";
@@ -59,6 +70,10 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			}
 		}
 	};
+
+
+
+
 
 	private String[] readableArrayToStringArray(ReadableArray readableArray) {
 		int l = readableArray.size();
@@ -143,7 +158,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		} else if (resultCode == Activity.RESULT_OK) {
 			Uri uri = null;
 			ClipData clipData = null;
-
+			Log.i(TAG, "onShowActivityResult: DATA\n"+data);
 			if (data != null) {
 				uri = data.getData();
 				clipData = data.getClipData();
@@ -158,6 +173,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 					final int length = clipData.getItemCount();
 					for (int i = 0; i < length; ++i) {
 						ClipData.Item item = clipData.getItemAt(i);
+						Log.i(TAG, "onShowActivityResult: ITEM\n"+item);
 						results.pushMap(getMetadata(item.getUri()));
 					}
 				} else {
@@ -176,9 +192,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private WritableMap getMetadata(Uri uri) {
 		WritableMap map = Arguments.createMap();
-
-		map.putString(FIELD_URI, uri.toString());
-
+		
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 
 		map.putString(FIELD_TYPE, contentResolver.getType(uri));
@@ -190,6 +204,10 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 				if (!cursor.isNull(displayNameIndex)) {
 					map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
+
+					String newURL=writeFile(uri,cursor.getString(displayNameIndex));
+					map.putString(FIELD_URI, newURL);
+
 				}
 
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -212,4 +230,50 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 		return map;
 	}
+
+
+	String writeFile(Uri uri,String name){
+		OutputStream outstream;
+		String newPath="";
+		try {
+
+			InputStream inputStream = getCurrentActivity().getContentResolver().openInputStream(uri);
+			try {
+				File file = new File(getCurrentActivity().getCacheDir(), name);
+				if(file.exists()){
+					file.delete();
+				}
+
+				newPath=file.getAbsolutePath();
+
+				OutputStream output = new FileOutputStream(file);
+				byte[] buffer = new byte[4 * 1024]; // or other buffer size
+				int read;
+
+				while ((read = inputStream.read(buffer)) != -1) {
+					output.write(buffer, 0, read);
+				}
+
+				output.flush();
+
+			} finally {
+				inputStream.close();
+			}
+
+		} catch (Exception e) {
+			System.err.println(e.toString());
+		}
+		return  newPath;
+	}
+
+
+	@ReactMethod
+	public void deleteFile(String uri, Promise promise) {
+		File file = new File(uri);
+		if(file.exists()){
+			file.delete();
+		}
+		promise.resolve(true);
+	}
+
 }
