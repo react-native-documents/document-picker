@@ -1,5 +1,7 @@
 # react-native-document-picker
 
+⚠️ NOTE: since version 3.3.2 we're using git version tags prefixed with `v`, eg. `v3.3.2`. This is a standard format and should mean no changes to your workflows.
+
 ⚠️ Breaking: New Interface: use v2 branch if you need to go back.
 PR are welcome to add what's missing.
 
