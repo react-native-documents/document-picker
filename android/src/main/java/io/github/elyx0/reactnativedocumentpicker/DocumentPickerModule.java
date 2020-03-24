@@ -48,7 +48,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private static final String OPTION_TYPE = "type";
 	private static final String OPTION_MULIPLE = "multiple";
-	private static final String OPTION_GET_PATH= "getPath";
+	private static final String OPTION_USE_PATH= "usePath";
 
 	private static final String FIELD_URI = "uri";
 	private static final String FIELD_NAME = "name";
@@ -98,7 +98,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	public void pick(ReadableMap args, Promise promise) {
 		Activity currentActivity = getCurrentActivity();
 		this.promise = promise;
-		this.getRealPath = args.hasKey(OPTION_GET_PATH) && args.getBoolean(OPTION_GET_PATH);
+		this.getRealPath = args.hasKey(OPTION_USE_PATH) && args.getBoolean(OPTION_USE_PATH);
 
 		if (currentActivity == null) {
 			sendError(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");

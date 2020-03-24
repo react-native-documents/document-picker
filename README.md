@@ -98,7 +98,7 @@ Use `pick` or `pickMultiple` to open a document picker for the user to select fi
   - On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
   - If `type` is omitted it will be treated as `*/*` or `public.content`.
   - Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
-- **[Android only] `getPath`**: `boolean` which defaults to `false`. If `getPath` is set to true, it will try to get the real path from content uri. If file is from a remote source, it will download and return the cache file.
+- **[Android only] `usePath`**: `boolean` which defaults to `false`. If `usePath` is set to true, it will try to get the real path from content uri. If file is from a remote source, it will download and return the cache file.
 - **[UWP only] `readContent`**: Boolean which defaults to `false`. If `readContent` is set to true the content of the picked file/files will be read and supplied in the result object.
 
   - Be aware that this can introduce a huge performance hit in case of big files. (The files are read completely and into the memory and encoded to base64 afterwards to add them to the result object)
@@ -118,7 +118,7 @@ Use `pick` or `pickMultiple` to open a document picker for the user to select fi
 
 The object a `pick` Promise resolves to or the objects in the array a `pickMultiple` Promise resolves to will contain the following keys.
 
-- **`uri`**: The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver. If `getPath` set to true, this value will be the file path from storage_
+- **`uri`**: The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver. If `usePath` set to true, this value will be the file path from storage_
 - **`type`**: The MIME type of the file. _On Android some DocumentProviders may not provide MIME types for their documents. On iOS this MIME type is based on the best MIME type for the file extension according to Apple's internal "Uniform Type Identifiers" database._
 - **`name`**: The display name of the file. _This is normally the filename of the file, but Android does not guarantee that this will be a filename from all DocumentProviders._
 - **`size`**: The file size of the document. _On Android some DocumentProviders may not provide this information for a document._
