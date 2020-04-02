@@ -134,6 +134,7 @@ The object a `pick` Promise resolves to or the objects in the array a `pickMulti
 - `DocumentPicker.types.plainText`: Plain text files ie: `.txt` (`text/plain` or `public.plain-text`)
 - `DocumentPicker.types.audio`: All audio types (`audio/*` or `public.audio`)
 - `DocumentPicker.types.pdf`: PDF documents (`application/pdf` or `com.adobe.pdf`)
+- `DocumentPicker.types.zip`: Zip files (`application/zip` or `public.zip-archive`)
 
 ### `DocumentPicker.isCancel(err)`
 
