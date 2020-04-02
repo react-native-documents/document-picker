@@ -81,6 +81,7 @@ const Types = {
     plainText: 'text/plain',
     pdf: 'application/pdf',
     video: 'video/*',
+    zip: 'application/zip'
   },
   utis: {
     allFiles: 'public.content',
@@ -89,6 +90,7 @@ const Types = {
     plainText: 'public.plain-text',
     pdf: 'com.adobe.pdf',
     video: 'public.movie',
+    zip: 'public.zip-archive',
   },
   extensions: {
     allFiles: '*',

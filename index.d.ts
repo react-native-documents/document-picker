@@ -17,6 +17,7 @@ declare module 'react-native-document-picker' {
       plainText: 'text/plain',
       pdf: 'application/pdf',
       video: 'video/*',
+      zip: 'application/zip',
     },
     utis: {
       allFiles: 'public.content',
@@ -25,6 +26,7 @@ declare module 'react-native-document-picker' {
       plainText: 'public.plain-text',
       pdf: 'com.adobe.pdf',
       video: 'public.movie',
+      zip: 'public.zip-archive',
     },
     extensions: {
       allFiles: '*',
@@ -34,6 +36,7 @@ declare module 'react-native-document-picker' {
       plainText: '.txt',
       pdf: '.pdf',
       video: '.mp4',
+      zip: '.zip .gz',
     },
   };
   type PlatformTypes = {
