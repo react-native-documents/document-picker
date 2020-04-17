@@ -27,11 +27,11 @@ See [this](install-old.md)
 
 ## API
 
-### `DocumentPicker.pick(options)` and `DocumentPicker.pickMultiple(options)`
+#### `DocumentPicker.pick(options)` and `DocumentPicker.pickMultiple(options)`
 
 Use `pick` or `pickMultiple` to open a document picker for the user to select file(s). Both methods return a Promise. `pick` will only allow a single selection and the Promise will resolve to that single result. `pickMultiple` will allow multiple selection and the Promise returned will always resolve to an array of results.
 
-#### Options
+### Options
 
 ##### `type`:`string|Array<string>`:
 
@@ -58,7 +58,7 @@ Boolean which defaults to `false`. If `readContent` is set to true the content o
 
   - You can use `react-native-fs` on Android and IOS to read the picked file.
 
-#### Result
+### Result
 
 The object a `pick` Promise resolves to or the objects in the array a `pickMultiple` Promise resolves to will contain the following keys.
 
