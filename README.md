@@ -23,7 +23,7 @@ If you are using RN >= 0.60, only run `pod install` from the ios directory. Then
 
 #### RN < 0.60 / Manual Instructions
 
-See [this](install-old.md)
+See [this](./install-old.md)
 
 ## API
 
