@@ -23,22 +23,27 @@ If you are using RN >= 0.60, only run `pod install` from the ios directory. Then
 
 #### RN < 0.60 / Manual Instructions
 
-See [this](install-old.md)
+See [this](./install-old.md)
 
 ## API
 
-### `DocumentPicker.pick(opts)` and `DocumentPicker.pickMultiple(opts)`
+#### `DocumentPicker.pick(options)` and `DocumentPicker.pickMultiple(options)`
 
 Use `pick` or `pickMultiple` to open a document picker for the user to select file(s). Both methods return a Promise. `pick` will only allow a single selection and the Promise will resolve to that single result. `pickMultiple` will allow multiple selection and the Promise returned will always resolve to an array of results.
 
-**Options:**
+### Options
 
-- **`type`**:`string|Array<string>`: The type or types of documents to allow selection of. May be an array of types as single type string.
+##### `type`:`string|Array<string>`:
+
+The type or types of documents to allow selection of. May be an array of types as single type string.
   - On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`.
   - On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
   - If `type` is omitted it will be treated as `*/*` or `public.content`.
   - Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
-- **[UWP only] `readContent`**: Boolean which defaults to `false`. If `readContent` is set to true the content of the picked file/files will be read and supplied in the result object.
+
+#####  `readContent`:
+
+Boolean which defaults to `false`. If `readContent` is set to true the content of the picked file/files will be read and supplied in the result object.
 
   - Be aware that this can introduce a huge performance hit in case of big files. (The files are read completely and into the memory and encoded to base64 afterwards to add them to the result object)
   - However reading the file directly from within the Thread which managed the picker can be necessary on Windows: Windows Apps can only read the Downloads folder and their own app folder by default and If a file is outside of these locations it cannot be acessed directly. However if the user picks the file through a file picker permissions to that file are granted implicitly.
@@ -53,15 +58,29 @@ Use `pick` or `pickMultiple` to open a document picker for the user to select fi
 
   - You can use `react-native-fs` on Android and IOS to read the picked file.
 
-**Result:**
+### Result
 
 The object a `pick` Promise resolves to or the objects in the array a `pickMultiple` Promise resolves to will contain the following keys.
 
-- **`uri`**: The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver._
-- **`type`**: The MIME type of the file. _On Android some DocumentProviders may not provide MIME types for their documents. On iOS this MIME type is based on the best MIME type for the file extension according to Apple's internal "Uniform Type Identifiers" database._
-- **`name`**: The display name of the file. _This is normally the filename of the file, but Android does not guarantee that this will be a filename from all DocumentProviders._
-- **`size`**: The file size of the document. _On Android some DocumentProviders may not provide this information for a document._
-- **[UWP only] `content`**: The base64 encoded content of the picked file if the option `readContent` was set to `true`.
+##### `uri`: 
+
+The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver._
+
+##### `type`:
+
+The MIME type of the file. _On Android some DocumentProviders may not provide MIME types for their documents. On iOS this MIME type is based on the best MIME type for the file extension according to Apple's internal "Uniform Type Identifiers" database._
+
+##### `name`:
+
+The display name of the file. _This is normally the filename of the file, but Android does not guarantee that this will be a filename from all DocumentProviders._
+
+##### `size`:
+
+The file size of the document. _On Android some DocumentProviders may not provide this information for a document._
+
+##### [UWP only] `content`:
+
+The base64 encoded content of the picked file if the option `readContent` was set to `true`.
 
 ### `DocumentPicker.types.*`
 
