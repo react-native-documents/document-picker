@@ -97,6 +97,7 @@ The base64 encoded content of the picked file if the option `readContent` was se
 - `DocumentPicker.types.audio`: All audio types (`audio/*` or `public.audio`)
 - `DocumentPicker.types.pdf`: PDF documents (`application/pdf` or `com.adobe.pdf`)
 - `DocumentPicker.types.zip`: Zip files (`application/zip` or `public.zip-archive`)
+- `DocumentPicker.types.csv`: Csv files (`text/csv` or `public.comma-separated-values-text`)
 
 ### `DocumentPicker.isCancel(err)`
 

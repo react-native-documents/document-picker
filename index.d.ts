@@ -13,6 +13,7 @@ declare module 'react-native-document-picker' {
     mimeTypes: {
       allFiles: '*/*',
       audio: 'audio/*',
+      csv: 'text/csv',
       images: 'image/*',
       plainText: 'text/plain',
       pdf: 'application/pdf',
@@ -22,6 +23,7 @@ declare module 'react-native-document-picker' {
     utis: {
       allFiles: 'public.content',
       audio: 'public.audio',
+      csv: 'public.comma-separated-values-text',
       images: 'public.image',
       plainText: 'public.plain-text',
       pdf: 'com.adobe.pdf',
@@ -32,6 +34,7 @@ declare module 'react-native-document-picker' {
       allFiles: '*',
       audio:
         '.3g2 .3gp .aac .adt .adts .aif .aifc .aiff .asf .au .m3u .m4a .m4b .mid .midi .mp2 .mp3 .mp4 .rmi .snd .wav .wax .wma',
+      csv: '.csv',
       images: '.jpeg .jpg .png',
       plainText: '.txt',
       pdf: '.pdf',
