@@ -46,9 +46,16 @@ The type or types of documents to allow selection of. May be an array of types a
   - If `type` is omitted it will be treated as `*/*` or `public.content`.
   - Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
 
-#####  `readContent`:
+##### [iOS only] `copyToTempDirectory`:`boolean`:
 
-Boolean which defaults to `false`. If `readContent` is set to true the content of the picked file/files will be read and supplied in the result object.
+Defaults to false. If true, the picked file is copied to `NSTemporaryDirectory` directory, which allows other APIs to read the file immediately. The uri of the file will be returned in `temporaryUri`
+
+This might also help if you're running into permission issues. This may impact performance for large files, so keep this in mind if you expect users to pick particularly large files and your app does not need immediate read access.
+
+
+#####  [UWP only] `readContent`:`boolean`
+
+Defaults to `false`. If `readContent` is set to true the content of the picked file/files will be read and supplied in the result object.
 
   - Be aware that this can introduce a huge performance hit in case of big files. (The files are read completely and into the memory and encoded to base64 afterwards to add them to the result object)
   - However reading the file directly from within the Thread which managed the picker can be necessary on Windows: Windows Apps can only read the Downloads folder and their own app folder by default and If a file is outside of these locations it cannot be acessed directly. However if the user picks the file through a file picker permissions to that file are granted implicitly.
@@ -67,7 +74,7 @@ Boolean which defaults to `false`. If `readContent` is set to true the content o
 
 The object a `pick` Promise resolves to or the objects in the array a `pickMultiple` Promise resolves to will contain the following keys.
 
-##### `uri`: 
+##### `uri`:
 
 The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver._
 

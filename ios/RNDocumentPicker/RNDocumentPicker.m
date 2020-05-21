@@ -2,14 +2,10 @@
 
 #import <MobileCoreServices/MobileCoreServices.h>
 
-#if __has_include(<React/RCTConvert.h>)
 #import <React/RCTConvert.h>
 #import <React/RCTBridge.h>
 #import <React/RCTUtils.h>
-#else // back compatibility for RN version < 0.40
-#import "RCTConvert.h"
-#import "RCTBridge.h"
-#endif
+
 
 static NSString *const E_DOCUMENT_PICKER_CANCELED = @"DOCUMENT_PICKER_CANCELED";
 static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
@@ -18,6 +14,7 @@ static NSString *const OPTION_TYPE = @"type";
 static NSString *const OPTION_MULIPLE = @"multiple";
 
 static NSString *const FIELD_URI = @"uri";
+static NSString *const TEMP_FIELD_URI = @"temporaryUri";
 static NSString *const FIELD_NAME = @"name";
 static NSString *const FIELD_TYPE = @"type";
 static NSString *const FIELD_SIZE = @"size";
@@ -26,9 +23,9 @@ static NSString *const FIELD_SIZE = @"size";
 @end
 
 @implementation RNDocumentPicker {
-    NSMutableArray *composeViews;
     NSMutableArray *composeResolvers;
     NSMutableArray *composeRejecters;
+    BOOL shouldCopyToCacheDirectory;
 }
 
 @synthesize bridge = _bridge;
@@ -38,7 +35,6 @@ static NSString *const FIELD_SIZE = @"size";
     if ((self = [super init])) {
         composeResolvers = [[NSMutableArray alloc] init];
         composeRejecters = [[NSMutableArray alloc] init];
-        composeViews = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -63,6 +59,8 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     
     [composeResolvers addObject:resolve];
     [composeRejecters addObject:reject];
+    shouldCopyToCacheDirectory = options[@"copyToTempDirectory"] && [options[@"copyToTempDirectory"] boolValue] == YES;
+
     
     documentPicker.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
@@ -88,9 +86,11 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     __block NSError *fileError;
     
     [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&fileError byAccessor:^(NSURL *newURL) {
-        
         if (!fileError) {
             [result setValue:newURL.absoluteString forKey:FIELD_URI];
+            NSURL* maybeTempPath = shouldCopyToCacheDirectory == YES ? [RNDocumentPicker copyToUniqueDestinationFrom: newURL] : newURL;
+            [result setValue: maybeTempPath.absoluteString forKey:TEMP_FIELD_URI];
+
             [result setValue:[newURL lastPathComponent] forKey:FIELD_NAME];
             
             NSError *attributesError = nil;
@@ -120,6 +120,25 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
         return nil;
     } else {
         return result;
+    }
+}
+
++ (NSURL *)copyToUniqueDestinationFrom:(NSURL *) url
+{
+    // todo extract
+    NSURL *documentsDir = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] lastObject];
+
+    NSURL *temporaryDirectoryURL = [NSURL fileURLWithPath: NSTemporaryDirectory() isDirectory: YES];
+    NSString *temporarySubDirName = [[NSUUID UUID] UUIDString];
+    NSURL *destinationUrl = [temporaryDirectoryURL URLByAppendingPathComponent:[NSString stringWithFormat:@"%@/%@", temporarySubDirName, url.lastPathComponent]];
+    
+    NSFileManager *filemgr = [NSFileManager defaultManager];
+    
+    NSError *err;
+    if ([filemgr copyItemAtURL:url toURL:destinationUrl error:&err]) {
+        return destinationUrl;
+    } else {
+        return url;
     }
 }
 
