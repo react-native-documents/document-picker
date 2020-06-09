@@ -70,7 +70,7 @@ public class PathResolver {
                     //something went wrong, but android should still be able to handle the original uri by returning null here (see readFile(...))
                     return null;
                 }
-                
+
             }
             // MediaProvider
             else if (isMediaDocument(uri)) {
@@ -96,16 +96,7 @@ public class PathResolver {
             }
             else if ("content".equalsIgnoreCase(uri.getScheme())) {
 
-                // Return the remote address
-                if (isGooglePhotosUri(uri))
-                    return uri.getLastPathSegment();
-
-                String path = getDataColumn(context, uri, null, null);
-                if (TextUtils.isEmpty(path)) {
-                    // Try to copy file
-                    return copyFile(context, uri);
-                }
-                return path;
+                return getContentData(context, uri);
             }
             // Other Providers
             else{
@@ -115,11 +106,7 @@ public class PathResolver {
         // MediaStore (and general)
         else if ("content".equalsIgnoreCase(uri.getScheme())) {
 
-            // Return the remote address
-            if (isGooglePhotosUri(uri))
-                return uri.getLastPathSegment();
-
-            return getDataColumn(context, uri, null, null);
+            return getContentData(context, uri);
         }
         // File
         else if ("file".equalsIgnoreCase(uri.getScheme())) {
@@ -127,6 +114,22 @@ public class PathResolver {
         }
 
         return null;
+    }
+
+    private static String getContentData(Context context, Uri uri) {
+        // Return the remote address
+        if (isGooglePhotosUri(uri)) {
+            return uri.getLastPathSegment();
+        } else if (isGoogleDriveUri(uri)) {
+            return copyFile(context, uri);
+        }
+
+        String path = getDataColumn(context, uri, null, null);
+        if (TextUtils.isEmpty(path)) {
+            // Try to copy file
+            return copyFile(context, uri);
+        }
+        return path;
     }
 
     static String copyFile(Context context, Uri uri) {
@@ -236,4 +239,7 @@ public class PathResolver {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
+    public static boolean isGoogleDriveUri(Uri uri) {
+        return "content://com.google.android.apps.docs.storage.legacy".equals(uri.getAuthority());
+    }
 }
