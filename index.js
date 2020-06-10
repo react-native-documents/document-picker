@@ -70,6 +70,10 @@ function pick(opts) {
     );
   }
 
+  if ('copyTo' in opts && !['cachesDirectory', 'documentDirectory'].includes(opts.copyTo)) {
+    throw new TypeError('Invalid copyTo option: ' + opts.copyTo);
+  }
+
   return RNDocumentPicker.pick(opts);
 }
 

@@ -8,9 +8,9 @@ Pod::Spec.new do |s|
   s.summary         = package['description']
   s.license         = package['license']
   s.homepage        = package['homepage']
-  s.authors         = { 'Elyx0' => 'elyx00@gmail.com' }
+  s.authors         = package['author']
   s.source          = { :git => "https://github.com/Elyx0/react-native-document-picker", :tag => "v#{s.version}" }
   s.source_files    = "ios/RNDocumentPicker/*.{h,m}"
-  s.platform        = :ios, "7.0"
+  s.platform        = :ios, "10.0"
   s.dependency        'React'
 end
