@@ -38,7 +38,7 @@ function pick(opts) {
 
   opts.type = Array.isArray(opts.type) ? opts.type : [opts.type];
 
-  if (opts.type.some(type => type === undefined)) {
+  if (opts.type.some((type) => type === undefined)) {
     throw new TypeError(
       'Unexpected undefined type option, did you try using a DocumentPicker.types.* that does not exist?'
     );
@@ -50,23 +50,15 @@ function pick(opts) {
     );
   }
 
-  opts.type.forEach(type => {
+  opts.type.forEach((type) => {
     if (typeof type !== 'string') {
-      throw new TypeError(
-        'Invalid type option, expected a string not: ' + type
-      );
+      throw new TypeError('Invalid type option, expected a string not: ' + type);
     }
   });
 
-  if (
-    opts.type.length > 1 &&
-    Platform.OS === 'android' &&
-    Platform.Version < 19
-  ) {
+  if (opts.type.length > 1 && Platform.OS === 'android' && Platform.Version < 19) {
     console.warn(
-      `RNDocumentPicker: Android API level ${
-        Platform.Version
-      } does not support multiple types, falling back to */*`
+      `RNDocumentPicker: Android API level ${Platform.Version} does not support multiple types, falling back to */*`
     );
   }
 
@@ -86,7 +78,7 @@ const Types = {
     plainText: 'text/plain',
     pdf: 'application/pdf',
     video: 'video/*',
-    zip: 'application/zip'
+    zip: 'application/zip',
   },
   utis: {
     allFiles: 'public.content',
@@ -107,6 +99,7 @@ const Types = {
     plainText: '.txt',
     pdf: '.pdf',
     video: '.mp4',
+    zip: '.zip .gz',
   },
 };
 
@@ -130,7 +123,7 @@ export default class DocumentPicker {
       multiple: false,
     };
 
-    return pick(options).then(results => results[0]);
+    return pick(options).then((results) => results[0]);
   }
 
   static pickMultiple(opts) {
