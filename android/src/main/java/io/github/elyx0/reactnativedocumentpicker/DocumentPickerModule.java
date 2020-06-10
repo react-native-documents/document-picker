@@ -44,7 +44,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String OPTION_MULIPLE = "multiple";
 
 	private static final String FIELD_URI = "uri";
-	private static final String TEMP_URI = "temporaryUri";
+	private static final String FIELD_FILE_COPY_URI = "fileCopyUri";
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
@@ -169,8 +169,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		WritableMap map = Arguments.createMap();
 
 		map.putString(FIELD_URI, uri.toString());
-		// TODO vonovak - TEMP_URI is implemented on iOS only (copyToTempDirectory) settings flag
-		map.putString(TEMP_URI, uri.toString());
+		// TODO vonovak - FIELD_FILE_COPY_URI is implemented on iOS only (copyTo) settings
+		map.putString(FIELD_FILE_COPY_URI, uri.toString());
 
 		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
 

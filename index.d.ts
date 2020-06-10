@@ -49,11 +49,12 @@ declare module 'react-native-document-picker' {
   };
   interface DocumentPickerOptions<OS extends keyof PlatformTypes> {
     type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]]> | DocumentType[OS];
-	copyToTempDirectory?: boolean
+	  copyTo?: 'cachesDirectory' | 'documentDirectory';
   }
   interface DocumentPickerResponse {
     uri: string;
-    temporaryUri: string;
+    fileCopyUri: string;
+    copyError?: string;
     type: string;
     name: string;
     size: string;
