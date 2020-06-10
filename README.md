@@ -250,4 +250,3 @@ RNFS.uploadFiles({
 
 - Fix Xcode warning about constraints
 - support options for the [UIDocumentPickerViewController](https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/DocumentPickerProgrammingGuide/AccessingDocuments/AccessingDocuments.html#//apple_ref/doc/uid/TP40014451-CH2-SW5)
-- Handle Upload by itself ?
