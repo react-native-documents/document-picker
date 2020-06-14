@@ -51,6 +51,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String OPTION_USE_PATH= "usePath";
 
 	private static final String FIELD_URI = "uri";
+	private static final String FIELD_FILE_COPY_URI = "fileCopyUri";
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
@@ -65,15 +66,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			}
 		}
 	};
-
-	private String[] readableArrayToStringArray(ReadableArray readableArray) {
-		int l = readableArray.size();
-		String[] array = new String[l];
-		for (int i = 0; i < l; ++i) {
-			array[i] = readableArray.getString(i);
-		}
-		return array;
-	}
 
 	private Promise promise;
 	private boolean getRealPath;
@@ -112,10 +104,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			intent.setType("*/*");
 			if (!args.isNull(OPTION_TYPE)) {
 				ReadableArray types = args.getArray(OPTION_TYPE);
-				if (types.size() > 1) {
+				if (types != null && types.size() > 1) {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-						String[] mimeTypes = readableArrayToStringArray(types);
-						intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+						intent.putExtra(Intent.EXTRA_MIME_TYPES, Arguments.toList(types));
 					} else {
 						Log.e(NAME, "Multiple type values not supported below API level 19");
 					}
@@ -216,12 +207,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			} else {
 				map.putString(FIELD_URI, uri.toString());
 			}
+			// TODO vonovak - FIELD_FILE_COPY_URI is implemented on iOS only (copyTo) settings
+			map.putString(FIELD_FILE_COPY_URI, uri.toString());
 
-			ContentResolver contentResolver = context.getContentResolver();
+			ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
+
 			map.putString(FIELD_TYPE, contentResolver.getType(uri));
 
-			Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
-			try {
+			try (Cursor cursor = contentResolver.query(uri, null, null, null, null, null)) {
 				if (cursor != null && cursor.moveToFirst()) {
 					int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 					if (!cursor.isNull(displayNameIndex)) {
@@ -240,14 +233,11 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 						map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
 					}
 				}
-			} finally {
-				if (cursor != null) {
-					cursor.close();
-				}
 			}
 
 			return map;
 		}
+
 	}
 
 	private void sendError(String code, String message) {

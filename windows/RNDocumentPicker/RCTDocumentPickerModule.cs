@@ -27,6 +27,7 @@ namespace RNDocumentPicker
     private static readonly String OPTION_MULIPLE = "multiple";
     private static readonly String OPTION_READ_CONTENT = "readContent";
     private static readonly String FIELD_URI = "uri";
+    private static readonly String FIELD_FILE_COPY_URI = "fileCopyUri";
 	private static readonly String FIELD_NAME = "name";
 	private static readonly String FIELD_TYPE = "type";
 	private static readonly String FIELD_SIZE = "size";
@@ -152,6 +153,7 @@ namespace RNDocumentPicker
 
                 return new JObject {
                     { FIELD_URI, fileInCache.Path },
+                    { FIELD_FILE_COPY_URI, fileInCache.Path },
                     { FIELD_TYPE, fileInCache.ContentType },
                     { FIELD_NAME, fileInCache.Name },
                     { FIELD_SIZE, basicProperties.Size},
@@ -163,6 +165,7 @@ namespace RNDocumentPicker
 
                 return new JObject {
                     { FIELD_URI, file.Path },
+                    { FIELD_FILE_COPY_URI, file.Path },
                     { FIELD_TYPE, file.ContentType },
                     { FIELD_NAME, file.Name },
                     { FIELD_SIZE, basicProperties.Size},

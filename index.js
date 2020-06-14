@@ -38,7 +38,7 @@ function pick(opts) {
 
   opts.type = Array.isArray(opts.type) ? opts.type : [opts.type];
 
-  if (opts.type.some(type => type === undefined)) {
+  if (opts.type.some((type) => type === undefined)) {
     throw new TypeError(
       'Unexpected undefined type option, did you try using a DocumentPicker.types.* that does not exist?'
     );
@@ -50,24 +50,20 @@ function pick(opts) {
     );
   }
 
-  opts.type.forEach(type => {
+  opts.type.forEach((type) => {
     if (typeof type !== 'string') {
-      throw new TypeError(
-        'Invalid type option, expected a string not: ' + type
-      );
+      throw new TypeError('Invalid type option, expected a string not: ' + type);
     }
   });
 
-  if (
-    opts.type.length > 1 &&
-    Platform.OS === 'android' &&
-    Platform.Version < 19
-  ) {
+  if (opts.type.length > 1 && Platform.OS === 'android' && Platform.Version < 19) {
     console.warn(
-      `RNDocumentPicker: Android API level ${
-        Platform.Version
-      } does not support multiple types, falling back to */*`
+      `RNDocumentPicker: Android API level ${Platform.Version} does not support multiple types, falling back to */*`
     );
+  }
+
+  if ('copyTo' in opts && !['cachesDirectory', 'documentDirectory'].includes(opts.copyTo)) {
+    throw new TypeError('Invalid copyTo option: ' + opts.copyTo);
   }
 
   return RNDocumentPicker.pick(opts);
@@ -77,27 +73,33 @@ const Types = {
   mimeTypes: {
     allFiles: '*/*',
     audio: 'audio/*',
+    csv: 'text/csv',
     images: 'image/*',
     plainText: 'text/plain',
     pdf: 'application/pdf',
     video: 'video/*',
+    zip: 'application/zip',
   },
   utis: {
     allFiles: 'public.content',
     audio: 'public.audio',
+    csv: 'public.comma-separated-values-text',
     images: 'public.image',
     plainText: 'public.plain-text',
     pdf: 'com.adobe.pdf',
     video: 'public.movie',
+    zip: 'public.zip-archive',
   },
   extensions: {
     allFiles: '*',
     audio:
       '.3g2 .3gp .aac .adt .adts .aif .aifc .aiff .asf .au .m3u .m4a .m4b .mid .midi .mp2 .mp3 .mp4 .rmi .snd .wav .wax .wma',
+    csv: '.csv',
     images: '.jpeg .jpg .png',
     plainText: '.txt',
     pdf: '.pdf',
     video: '.mp4',
+    zip: '.zip .gz',
   },
 };
 
@@ -121,7 +123,7 @@ export default class DocumentPicker {
       multiple: false,
     };
 
-    return pick(options).then(results => results[0]);
+    return pick(options).then((results) => results[0]);
   }
 
   static pickMultiple(opts) {
