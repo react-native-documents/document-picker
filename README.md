@@ -48,9 +48,9 @@ The type or types of documents to allow selection of. May be an array of types a
 - If `type` is omitted it will be treated as `*/*` or `public.content`.
 - Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
 
-##### [iOS only] `copyTo`:`"cachesDirectory" | "documentDirectory"`:
+##### `copyTo`:`"cachesDirectory" | "documentDirectory"`:
 
-If specified, the picked file is copied to `NSCachesDirectory` / `NSDocumentDirectory` directory. The uri of the copy will be available in result's `fileCopyUri`. If copying the file fails (eg. due to lack of space), `fileCopyUri` will be the same as `uri`, and more details about the error will be available in `copyError` field in the result.
+If specified, the picked file is copied to `NSCachesDirectory` / `NSDocumentDirectory` (iOS) or `getCacheDir` / `getFilesDir` (Android). The uri of the copy will be available in result's `fileCopyUri`. If copying the file fails (eg. due to lack of space), `fileCopyUri` will be the same as `uri`, and more details about the error will be available in `copyError` field in the result.
 
 This should help if you need to work with the file(s) later on, because by default, [the picked documents are temporary files. They remain available only until your application terminates](https://developer.apple.com/documentation/uikit/uidocumentpickerdelegate/2902364-documentpicker). This may impact performance for large files, so keep this in mind if you expect users to pick particularly large files and your app does not need immediate read access.
 
@@ -77,15 +77,11 @@ The object a `pick` Promise resolves to or the objects in the array a `pickMulti
 
 ##### `uri`:
 
-The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver. If `usePath` set to true, this value will be the file path from storage_
-
-##### [Android only] `usePath`**:
-
-`boolean` which defaults to `false`. If `usePath` is set to true, it will try to get the real path from content uri. If file is from a remote source, it will download and return the cache file.
+The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver._
 
 ##### `fileCopyUri`:
 
-Same as `uri`, but has special meaning on iOS, if `copyTo` option is specified.
+Same as `uri`, but has special meaning if `copyTo` option is specified.
 
 ##### `type`:
 
