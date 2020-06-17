@@ -48,7 +48,6 @@ declare module 'react-native-document-picker' {
   };
   interface DocumentPickerOptions<OS extends keyof PlatformTypes> {
     type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]]> | DocumentType[OS];
-    usePath: boolean;
     copyTo?: 'cachesDirectory' | 'documentDirectory';
   }
   interface DocumentPickerResponse {
