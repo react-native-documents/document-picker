@@ -28,6 +28,10 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,10 +52,11 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private static final String OPTION_TYPE = "type";
 	private static final String OPTION_MULIPLE = "multiple";
-	private static final String OPTION_USE_PATH= "usePath";
+	private static final String OPTION_COPYTO = "copyTo";
 
 	private static final String FIELD_URI = "uri";
 	private static final String FIELD_FILE_COPY_URI = "fileCopyUri";
+	private static final String FIELD_COPY_ERROR = "copyError";
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
@@ -68,7 +73,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	};
 
 	private Promise promise;
-	private boolean getRealPath;
+	private String copyTo;
 
 	public DocumentPickerModule(ReactApplicationContext reactContext) {
 		super(reactContext);
@@ -90,7 +95,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	public void pick(ReadableMap args, Promise promise) {
 		Activity currentActivity = getCurrentActivity();
 		this.promise = promise;
-		this.getRealPath = args.hasKey(OPTION_USE_PATH) && args.getBoolean(OPTION_USE_PATH);
+		this.copyTo = args.hasKey(OPTION_COPYTO) ? args.getString(OPTION_COPYTO) : null;
 
 		if (currentActivity == null) {
 			sendError(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");
@@ -160,7 +165,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 					return;
 				}
 
-				new ProcessDataTask(getReactApplicationContext(), uris, getRealPath, promise).execute();
+				new ProcessDataTask(getReactApplicationContext(), uris, copyTo, promise).execute();
 			} catch (Exception e) {
 				sendError(E_UNEXPECTED_EXCEPTION, e.getLocalizedMessage(), e);
 			}
@@ -169,18 +174,17 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 	}
 
-	static class ProcessDataTask extends GuardedResultAsyncTask<ReadableArray> {
-
+	private static class ProcessDataTask extends GuardedResultAsyncTask<ReadableArray> {
 		private Context context;
 		private final List<Uri> uris;
-		private final boolean getRealPath;
+		private final String copyTo;
 		private final Promise promise;
 
-		protected ProcessDataTask(ReactContext reactContext, List<Uri> uris, boolean getRealPath, Promise promise) {
+		protected ProcessDataTask(ReactContext reactContext, List<Uri> uris, String copyTo, Promise promise) {
 			super(reactContext.getExceptionHandler());
 			this.context = reactContext.getApplicationContext();
 			this.uris = uris;
-			this.getRealPath = getRealPath;
+			this.copyTo = copyTo;
 			this.promise = promise;
 		}
 
@@ -199,35 +203,24 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 
 		private WritableMap getMetadata(Uri uri) {
+			ContentResolver contentResolver = context.getContentResolver();
 			WritableMap map = Arguments.createMap();
-
-			if (getRealPath) {
-				String path = PathResolver.getRealPathFromURI(context, uri);
-				map.putString(FIELD_URI, path);
-			} else {
-				map.putString(FIELD_URI, uri.toString());
-			}
-			// TODO vonovak - FIELD_FILE_COPY_URI is implemented on iOS only (copyTo) settings
-			map.putString(FIELD_FILE_COPY_URI, uri.toString());
-
-			ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
-
+			map.putString(FIELD_URI, uri.toString());
 			map.putString(FIELD_TYPE, contentResolver.getType(uri));
-
+			String fileName = null;
 			try (Cursor cursor = contentResolver.query(uri, null, null, null, null, null)) {
 				if (cursor != null && cursor.moveToFirst()) {
 					int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 					if (!cursor.isNull(displayNameIndex)) {
-						map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
+						fileName = cursor.getString(displayNameIndex);
+						map.putString(FIELD_NAME, fileName);
 					}
-
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 						int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
 						if (!cursor.isNull(mimeIndex)) {
 							map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
 						}
 					}
-
 					int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
 					if (!cursor.isNull(sizeIndex)) {
 						map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
@@ -235,7 +228,57 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				}
 			}
 
+			if (copyTo != null) {
+				File dir = context.getCacheDir();
+				if (copyTo.equals("documentDirectory")) {
+					dir = context.getFilesDir();
+				}
+				if (fileName == null) {
+					fileName = DocumentsContract.getDocumentId(uri);
+				}
+				try {
+					File destFile = new File(dir, fileName);
+					String path = copyFile(context, uri, destFile);
+					map.putString(FIELD_FILE_COPY_URI, path);
+				} catch (IOException e) {
+					e.printStackTrace();
+					map.putString(FIELD_FILE_COPY_URI, uri.toString());
+					map.putString(FIELD_COPY_ERROR, e.getMessage());
+				}
+			} else {
+				map.putString(FIELD_FILE_COPY_URI, uri.toString());
+			}
 			return map;
+		}
+
+		public static String copyFile(Context context, Uri uri, File destFile) throws IOException {
+			InputStream in = null;
+			FileOutputStream out = null;
+			try {
+				in = context.getContentResolver().openInputStream(uri);
+				if (in != null) {
+					out = new FileOutputStream(destFile);
+					byte[] buffer = new byte[1024];
+					while (in.read(buffer) > 0) {
+						out.write(buffer);
+					}
+					out.close();
+					in.close();
+					return destFile.getAbsolutePath();
+				} else {
+					throw new NullPointerException("Invalid input stream");
+				}
+			} catch (Exception e) {
+				try {
+					if (in != null) {
+						in.close();
+					}
+					if (out != null) {
+						out.close();
+					}
+				} catch (IOException ignored) {}
+				throw e;
+			}
 		}
 
 	}
@@ -246,8 +289,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private void sendError(String code, String message, Exception e) {
 		if (this.promise != null) {
-			this.promise.reject(code, message, e);
+			Promise temp = this.promise;
 			this.promise = null;
+			temp.reject(code, message, e);
 		}
 	}
 }
