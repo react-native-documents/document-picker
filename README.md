@@ -6,7 +6,7 @@
 A React Native wrapper for:
 
 - Apple's `UIDocumentPickerViewController`
-- Android's `Intent.ACTION_OPEN_DOCUMENT` / `Intent.ACTION_PICK`
+- Android's `Intent.ACTION_GET_CONTENT`
 - Windows `Windows.Storage.Pickers`
 
 ### Installation
