@@ -110,7 +110,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 						String[] mimeTypes = readableArrayToStringArray(types);
 						intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-						// intent.putExtra(Intent.EXTRA_MIME_TYPES, Arguments.toList(types));
 					} else {
 						Log.e(NAME, "Multiple type values not supported below API level 19");
 					}
