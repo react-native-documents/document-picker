@@ -61,6 +61,15 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 	};
 
+	private String[] readableArrayToStringArray(ReadableArray readableArray) {
+		int l = readableArray.size();
+		String[] array = new String[l];
+		for (int i = 0; i < l; ++i) {
+			array[i] = readableArray.getString(i);
+		}
+		return array;
+	}
+
 	private Promise promise;
 
 	public DocumentPickerModule(ReactApplicationContext reactContext) {
@@ -99,7 +108,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				ReadableArray types = args.getArray(OPTION_TYPE);
 				if (types != null && types.size() > 1) {
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-						intent.putExtra(Intent.EXTRA_MIME_TYPES, Arguments.toList(types));
+						String[] mimeTypes = readableArrayToStringArray(types);
+						intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 					} else {
 						Log.e(NAME, "Multiple type values not supported below API level 19");
 					}
