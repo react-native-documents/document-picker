@@ -48,6 +48,7 @@ declare module 'react-native-document-picker' {
   };
   interface DocumentPickerOptions<OS extends keyof PlatformTypes> {
     type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]]> | DocumentType[OS];
+    mode?: 'import' | 'open';
     copyTo?: 'cachesDirectory' | 'documentDirectory';
   }
   interface DocumentPickerResponse {
@@ -68,5 +69,6 @@ declare module 'react-native-document-picker' {
       options: DocumentPickerOptions<OS>
     ): Promise<DocumentPickerResponse[]>;
     static isCancel<IError extends { code?: string }>(err?: IError): boolean;
+    static releaseSecureAccess(uris: Array<string>): void;
   }
 }

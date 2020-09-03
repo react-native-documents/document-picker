@@ -62,11 +62,33 @@ function pick(opts) {
     );
   }
 
+  if ('mode' in opts && !['import', 'open'].includes(opts.mode)) {
+    throw new TypeError('Invalid mode option: ' + opts.mode);
+  }
+
   if ('copyTo' in opts && !['cachesDirectory', 'documentDirectory'].includes(opts.copyTo)) {
     throw new TypeError('Invalid copyTo option: ' + opts.copyTo);
   }
 
   return RNDocumentPicker.pick(opts);
+}
+
+function releaseSecureAccess(uris) {
+  if (Platform.OS !== 'ios') {
+    return;
+  }
+
+  if (!Array.isArray(uris)) {
+    throw new TypeError('`uris` should be an array of strings');
+  }
+
+  uris.forEach((uri) => {
+    if (typeof uri !== 'string') {
+      throw new TypeError('Invalid uri parameter, expected a string not: ' + uri);
+    }
+  });
+
+  RNDocumentPicker.releaseSecureAccess(uris);
 }
 
 const Types = {
@@ -137,5 +159,9 @@ export default class DocumentPicker {
 
   static isCancel(err) {
     return err && err.code === E_DOCUMENT_PICKER_CANCELED;
+  }
+
+  static releaseSecureAccess(uris) {
+    releaseSecureAccess(uris);
   }
 }
