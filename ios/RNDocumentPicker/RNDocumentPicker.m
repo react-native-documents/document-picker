@@ -170,7 +170,9 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
         NSMutableDictionary* result = [self getMetadataForUrl:url error:&error];
         if (result) {
             NSArray *results = @[result];
-            resolve(results);
+            if (resolve != NULL) {
+                resolve(results);
+            }
         } else {
             reject(E_INVALID_DATA_RETURNED, error.localizedDescription, error);
         }
@@ -197,7 +199,9 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
             }
         }
         
-        resolve(results);
+        if (resolve != NULL) {
+            resolve(results);
+        }
     }
 }
 
