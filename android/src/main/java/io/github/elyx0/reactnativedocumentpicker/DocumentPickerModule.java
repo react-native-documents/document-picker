@@ -178,14 +178,12 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private WritableMap getMetadata(Uri uri) {
 		WritableMap map = Arguments.createMap();
 
-    System.out.println("CEKK URI STRING " + uri.toString());
     String path = uri.getPath().toString();
     try {
       path = RealPathUtil.getRealPathFromURI(getReactApplicationContext(), uri);
     } catch (Exception err) {
       Log.e("ERR_GET_PATH", err.toString());
     }
-    System.out.println("CEKK URI STRING " + path);
     map.putString(FIELD_URI, "file://"+path);
 
 		// TODO vonovak - FIELD_FILE_COPY_URI is implemented on iOS only (copyTo) settings
