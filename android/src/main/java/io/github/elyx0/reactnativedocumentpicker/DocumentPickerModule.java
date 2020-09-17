@@ -100,7 +100,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		this.promise = promise;
 
 		try {
-			Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
 			intent.addCategory(Intent.CATEGORY_OPENABLE);
 
 			intent.setType("*/*");
