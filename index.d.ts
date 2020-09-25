@@ -14,9 +14,12 @@ declare module 'react-native-document-picker' {
       allFiles: '*/*';
       audio: 'audio/*';
       csv: 'text/csv';
+      doc: 'application/msword';
+      excel: 'application/vnd.ms-excel';
       images: 'image/*';
-      plainText: 'text/plain';
       pdf: 'application/pdf';
+      plainText: 'text/plain';
+      powerpoint: 'application/vnd.ms-powerpoint';
       video: 'video/*';
       zip: 'application/zip';
     };
@@ -24,19 +27,26 @@ declare module 'react-native-document-picker' {
       allFiles: 'public.content';
       audio: 'public.audio';
       csv: 'public.comma-separated-values-text';
+      doc: 'com.microsoft.word.doc';
+      excel: 'com.microsoft.excel.xls';
       images: 'public.image';
-      plainText: 'public.plain-text';
       pdf: 'com.adobe.pdf';
+      plainText: 'public.plain-text';
+      powerpoint: 'com.microsoft.powerpoint.ppt';
       video: 'public.movie';
       zip: 'public.zip-archive';
     };
     extensions: {
       allFiles: '*';
-      audio: '.3g2 .3gp .aac .adt .adts .aif .aifc .aiff .asf .au .m3u .m4a .m4b .mid .midi .mp2 .mp3 .mp4 .rmi .snd .wav .wax .wma';
+      audio:
+        '.3g2 .3gp .aac .adt .adts .aif .aifc .aiff .asf .au .m3u .m4a .m4b .mid .midi .mp2 .mp3 .mp4 .rmi .snd .wav .wax .wma';
       csv: '.csv';
+      doc: '.doc .docx';
+      excel: '.xls .xlsx';
       images: '.jpeg .jpg .png';
-      plainText: '.txt';
       pdf: '.pdf';
+      plainText: '.txt';
+      powerpoint: '.ppt .pptx';
       video: '.mp4';
       zip: '.zip .gz';
     };
