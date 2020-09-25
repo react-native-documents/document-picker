@@ -38,8 +38,7 @@ declare module 'react-native-document-picker' {
     };
     extensions: {
       allFiles: '*';
-      audio:
-        '.3g2 .3gp .aac .adt .adts .aif .aifc .aiff .asf .au .m3u .m4a .m4b .mid .midi .mp2 .mp3 .mp4 .rmi .snd .wav .wax .wma';
+      audio: '.3g2 .3gp .aac .adt .adts .aif .aifc .aiff .asf .au .m3u .m4a .m4b .mid .midi .mp2 .mp3 .mp4 .rmi .snd .wav .wax .wma';
       csv: '.csv';
       doc: '.doc .docx';
       excel: '.xls .xlsx';
