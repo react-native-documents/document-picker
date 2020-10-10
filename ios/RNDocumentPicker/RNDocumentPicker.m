@@ -145,8 +145,13 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris)
 {
     for (NSString *uri in uris) {
-        NSURL *url = [NSURL URLWithString:uri];
-        [url stopAccessingSecurityScopedResource];
+        for (NSURL *url in urls) {
+            if ([url.absoluteString isEqual:uri]) {
+                [url stopAccessingSecurityScopedResource];
+                [urls removeObject:url];
+                break;
+            }
+        }
     }
 }
 
