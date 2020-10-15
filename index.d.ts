@@ -21,7 +21,7 @@ declare module 'react-native-document-picker' {
       zip: 'application/zip';
     };
     utis: {
-      allFiles: 'public.content';
+      allFiles: 'public.data com.apple.package';
       audio: 'public.audio';
       csv: 'public.comma-separated-values-text';
       images: 'public.image';
