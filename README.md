@@ -117,7 +117,7 @@ The base64 encoded content of the picked file if the option `readContent` was se
 
 If the user cancels the document picker without choosing a file (by pressing the system back button on Android or the Cancel button on iOS) the Promise will be rejected with a cancellation error. You can check for this error using `DocumentPicker.isCancel(err)` allowing you to ignore it and cleanup any parts of your interface that may not be needed anymore.
 
-#### [iOS only] `DocumentPicker.releaseSecureAccess(uri)`
+#### [iOS only] `DocumentPicker.releaseSecureAccess(uris: Array<string>)`
 
 If `mode` is set to `open` iOS is giving you a secure access to a file located outside from your sandbox.
 In that case Apple is asking you to release the access as soon as you finish using the resource.
