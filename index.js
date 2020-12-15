@@ -87,7 +87,7 @@ const Types = {
     zip: 'application/zip',
   },
   utis: {
-    allFiles: 'public.content',
+    allFiles: 'public.item',
     audio: 'public.audio',
     csv: 'public.comma-separated-values-text',
     doc: 'com.microsoft.word.doc',
