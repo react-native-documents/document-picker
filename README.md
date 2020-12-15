@@ -102,12 +102,18 @@ The base64 encoded content of the picked file if the option `readContent` was se
 `DocumentPicker.types.*` provides a few common types for use as `type` values, these types will use the correct format for each platform (MIME types on Android, UTIs on iOS).
 
 - `DocumentPicker.types.allFiles`: All document types, on Android this is `*/*`, on iOS is `public.item`
-- `DocumentPicker.types.images`: All image types (`image/*` or `public.image`)
-- `DocumentPicker.types.plainText`: Plain text files ie: `.txt` (`text/plain` or `public.plain-text`)
-- `DocumentPicker.types.audio`: All audio types (`audio/*` or `public.audio`)
-- `DocumentPicker.types.pdf`: PDF documents (`application/pdf` or `com.adobe.pdf`)
-- `DocumentPicker.types.zip`: Zip files (`application/zip` or `public.zip-archive`)
-- `DocumentPicker.types.csv`: Csv files (`text/csv` or `public.comma-separated-values-text`)
+- `DocumentPicker.types.images`: All image types
+- `DocumentPicker.types.plainText`: Plain text files
+- `DocumentPicker.types.audio`: All audio types
+- `DocumentPicker.types.pdf`: PDF documents
+- `DocumentPicker.types.zip`: Zip files
+- `DocumentPicker.types.csv`: Csv files
+- `DocumentPicker.types.doc`: doc files
+- `DocumentPicker.types.docx`: docx files
+- `DocumentPicker.types.ppt`: ppt files
+- `DocumentPicker.types.pptx`: pptx files
+- `DocumentPicker.types.xls`: xls files
+- `DocumentPicker.types.xlsx`: xlsx files
 
 ### `DocumentPicker.isCancel(err)`
 
