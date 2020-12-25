@@ -1,7 +1,8 @@
 # react-native-document-picker
 
-⚠️ NOTE: since version 3.3.2 we're using git version tags prefixed with `v`, eg. `v3.3.2`. This is a standard format and should mean no changes to your workflows.
+⚠️ NOTE: if you want to ask questions, we opened [GH discussions](https://github.com/rnmods/react-native-document-picker/discussions) for that purpose! 🤗 Issue tracker is now reserved for bugs only and issues not following the issue template will be closed. Thank you!
 
+⚠️ NOTE: since version 3.3.2 we're using git version tags prefixed with `v`, eg. `v3.3.2`. This is a standard format and should mean no changes to your workflows.
 
 A React Native wrapper for:
 
