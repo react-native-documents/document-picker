@@ -47,6 +47,10 @@ The type or types of documents to allow selection of. May be an array of types a
 - If `type` is omitted it will be treated as `*/*` or `public.item`.
 - Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
 
+##### [iOS only] `mode`:`"import" | "open"`:
+
+Defaults to `import`. If `mode` is set to `import` the document picker imports the file from outside to inside the sandbox, otherwise if `mode` is set to `open` the document picker opens the file right in place.
+
 ##### [iOS only] `copyTo`:`"cachesDirectory" | "documentDirectory"`:
 
 If specified, the picked file is copied to `NSCachesDirectory` / `NSDocumentDirectory` directory. The uri of the copy will be available in result's `fileCopyUri`. If copying the file fails (eg. due to lack of space), `fileCopyUri` will be the same as `uri`, and more details about the error will be available in `copyError` field in the result.
@@ -76,7 +80,7 @@ The object a `pick` Promise resolves to or the objects in the array a `pickMulti
 
 ##### `uri`:
 
-The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver._
+The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container if `mode` is not specified or set at `import` otherwise it will be the original `file://` URI. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver._
 
 ##### `fileCopyUri`:
 
@@ -116,9 +120,14 @@ The base64 encoded content of the picked file if the option `readContent` was se
 - `DocumentPicker.types.xls`: xls files
 - `DocumentPicker.types.xlsx`: xlsx files
 
-### `DocumentPicker.isCancel(err)`
+#### `DocumentPicker.isCancel(err)`
 
 If the user cancels the document picker without choosing a file (by pressing the system back button on Android or the Cancel button on iOS) the Promise will be rejected with a cancellation error. You can check for this error using `DocumentPicker.isCancel(err)` allowing you to ignore it and cleanup any parts of your interface that may not be needed anymore.
+
+#### [iOS only] `DocumentPicker.releaseSecureAccess(uris: Array<string>)`
+
+If `mode` is set to `open` iOS is giving you a secure access to a file located outside from your sandbox.
+In that case Apple is asking you to release the access as soon as you finish using the resource.
 
 ## Example
 

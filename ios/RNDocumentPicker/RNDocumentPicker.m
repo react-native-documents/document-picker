@@ -11,7 +11,7 @@ static NSString *const E_DOCUMENT_PICKER_CANCELED = @"DOCUMENT_PICKER_CANCELED";
 static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
 
 static NSString *const OPTION_TYPE = @"type";
-static NSString *const OPTION_MULIPLE = @"multiple";
+static NSString *const OPTION_MULTIPLE = @"multiple";
 
 static NSString *const FIELD_URI = @"uri";
 static NSString *const FIELD_FILE_COPY_URI = @"fileCopyUri";
@@ -24,9 +24,11 @@ static NSString *const FIELD_SIZE = @"size";
 @end
 
 @implementation RNDocumentPicker {
+    UIDocumentPickerMode mode;
+    NSString *copyDestination;
     NSMutableArray *composeResolvers;
     NSMutableArray *composeRejecters;
-    NSString* copyDestination;
+    NSMutableArray *urls;
 }
 
 @synthesize bridge = _bridge;
@@ -34,13 +36,22 @@ static NSString *const FIELD_SIZE = @"size";
 - (instancetype)init
 {
     if ((self = [super init])) {
-        composeResolvers = [[NSMutableArray alloc] init];
-        composeRejecters = [[NSMutableArray alloc] init];
+        composeResolvers = [NSMutableArray new];
+        composeRejecters = [NSMutableArray new];
+        urls = [NSMutableArray new];
     }
     return self;
 }
 
-+ (BOOL)requiresMainQueueSetup {
+- (void)dealloc
+{
+    for (NSURL *url in urls) {
+        [url stopAccessingSecurityScopedResource];
+    }
+}
+
++ (BOOL)requiresMainQueueSetup
+{
     return NO;
 }
 
@@ -55,20 +66,19 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
-    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:UIDocumentPickerModeImport];
-    
+    mode = options[@"mode"] && [options[@"mode"] isEqualToString:@"open"] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
+    copyDestination = options[@"copyTo"] ? options[@"copyTo"] : nil;
     [composeResolvers addObject:resolve];
     [composeRejecters addObject:reject];
-    copyDestination = options[@"copyTo"] ? options[@"copyTo"] : nil;
 
-    
+    NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
+    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:mode];
     documentPicker.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
     
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
     if (@available(iOS 11, *)) {
-        documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULIPLE]];
+        documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULTIPLE]];
     }
 #endif
     
@@ -79,19 +89,22 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
 - (NSMutableDictionary *)getMetadataForUrl:(NSURL *)url error:(NSError **)error
 {
-    __block NSMutableDictionary* result = [NSMutableDictionary dictionary];
+    __block NSMutableDictionary *result = [NSMutableDictionary dictionary];
     
+    if (mode == UIDocumentPickerModeOpen)
+        [urls addObject:url];
     [url startAccessingSecurityScopedResource];
     
-    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
+    NSFileCoordinator *coordinator = [NSFileCoordinator new];
     NSError *fileError;
     
     [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&fileError byAccessor:^(NSURL *newURL) {
+        
         if (!fileError) {
-            [result setValue:newURL.absoluteString forKey:FIELD_URI];
+            [result setValue:((mode == UIDocumentPickerModeOpen) ? url : newURL).absoluteString forKey:FIELD_URI];
             NSError *copyError;
-            NSURL* maybeFileCopyPath = copyDestination ? [RNDocumentPicker copyToUniqueDestinationFrom:newURL usingDestinationPreset:copyDestination error:copyError] : newURL;
-            [result setValue: maybeFileCopyPath.absoluteString forKey:FIELD_FILE_COPY_URI];
+            NSURL *maybeFileCopyPath = copyDestination ? [RNDocumentPicker copyToUniqueDestinationFrom:newURL usingDestinationPreset:copyDestination error:copyError] : newURL;
+            [result setValue:maybeFileCopyPath.absoluteString forKey:FIELD_FILE_COPY_URI];
             if (copyError) {
                 [result setValue:copyError.description forKey:FIELD_COPY_ERR];
             }
@@ -118,7 +131,8 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
         }
     }];
     
-    [url stopAccessingSecurityScopedResource];
+    if (mode != UIDocumentPickerModeOpen)
+        [url stopAccessingSecurityScopedResource];
     
     if (fileError) {
         *error = fileError;
@@ -128,19 +142,35 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     }
 }
 
-+ (NSURL*)getDirectoryForFileCopy:(NSString*) copyToDirectory {
+RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris)
+{
+    NSMutableArray *discardedItems = [NSMutableArray array];
+    for (NSString *uri in uris) {
+        for (NSURL *url in urls) {
+            if ([url.absoluteString isEqual:uri]) {
+                [url stopAccessingSecurityScopedResource];
+                [discardedItems addObject:url];
+                break;
+            }
+        }
+    }
+    [urls removeObjectsInArray:discardedItems];
+}
+
++ (NSURL *)getDirectoryForFileCopy:(NSString *)copyToDirectory
+{
     if ([@"cachesDirectory" isEqualToString:copyToDirectory]) {
         return [NSFileManager.defaultManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask].firstObject;
     } else if ([@"documentDirectory" isEqualToString:copyToDirectory]) {
         return [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
     }
     // this should not happen as the value is checked in JS, but we fall back to NSTemporaryDirectory()
-    return [NSURL fileURLWithPath: NSTemporaryDirectory() isDirectory: YES];
+    return [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
 }
 
-+ (NSURL *)copyToUniqueDestinationFrom:(NSURL *) url usingDestinationPreset: (NSString*) copyToDirectory error:(NSError *)error
++ (NSURL *)copyToUniqueDestinationFrom:(NSURL *)url usingDestinationPreset:(NSString *)copyToDirectory error:(NSError *)error
 {
-    NSURL* destinationRootDir = [self getDirectoryForFileCopy:copyToDirectory];
+    NSURL *destinationRootDir = [self getDirectoryForFileCopy:copyToDirectory];
     // we don't want to rename the file so we put it into a unique location
     NSString *uniqueSubDirName = [[NSUUID UUID] UUIDString];
     NSURL *destinationDir = [destinationRootDir URLByAppendingPathComponent:[NSString stringWithFormat:@"%@/", uniqueSubDirName]];
@@ -160,56 +190,50 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url
 {
-    if (controller.documentPickerMode == UIDocumentPickerModeImport) {
-        RCTPromiseResolveBlock resolve = [composeResolvers lastObject];
-        RCTPromiseRejectBlock reject = [composeRejecters lastObject];
-        [composeResolvers removeLastObject];
-        [composeRejecters removeLastObject];
-        
-        NSError *error;
-        NSMutableDictionary* result = [self getMetadataForUrl:url error:&error];
-        if (result) {
-            NSArray *results = @[result];
-            resolve(results);
-        } else {
-            reject(E_INVALID_DATA_RETURNED, error.localizedDescription, error);
-        }
+    RCTPromiseResolveBlock resolve = [composeResolvers lastObject];
+    RCTPromiseRejectBlock reject = [composeRejecters lastObject];
+    [composeResolvers removeLastObject];
+    [composeRejecters removeLastObject];
+    
+    NSError *error;
+    NSMutableDictionary *result = [self getMetadataForUrl:url error:&error];
+    if (result) {
+        NSArray *results = @[result];
+        resolve(results);
+    } else {
+        reject(E_INVALID_DATA_RETURNED, error.localizedDescription, error);
     }
 }
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 {
-    if (controller.documentPickerMode == UIDocumentPickerModeImport) {
-        RCTPromiseResolveBlock resolve = [composeResolvers lastObject];
-        RCTPromiseRejectBlock reject = [composeRejecters lastObject];
-        [composeResolvers removeLastObject];
-        [composeRejecters removeLastObject];
-        
-        NSMutableArray *results = [NSMutableArray array];
-        for (id url in urls) {
-            NSError *error;
-            NSMutableDictionary* result = [self getMetadataForUrl:url error:&error];
-            if (result) {
-                [results addObject:result];
-            } else {
-                reject(E_INVALID_DATA_RETURNED, error.localizedDescription, error);
-                return;
-            }
+    RCTPromiseResolveBlock resolve = [composeResolvers lastObject];
+    RCTPromiseRejectBlock reject = [composeRejecters lastObject];
+    [composeResolvers removeLastObject];
+    [composeRejecters removeLastObject];
+    
+    NSMutableArray *results = [NSMutableArray array];
+    for (id url in urls) {
+        NSError *error;
+        NSMutableDictionary *result = [self getMetadataForUrl:url error:&error];
+        if (result) {
+            [results addObject:result];
+        } else {
+            reject(E_INVALID_DATA_RETURNED, error.localizedDescription, error);
+            return;
         }
-        
-        resolve(results);
     }
+    
+    resolve(results);
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
 {
-    if (controller.documentPickerMode == UIDocumentPickerModeImport) {
-        RCTPromiseRejectBlock reject = [composeRejecters lastObject];
-        [composeResolvers removeLastObject];
-        [composeRejecters removeLastObject];
-        
-        reject(E_DOCUMENT_PICKER_CANCELED, @"User canceled document picker", nil);
-    }
+    RCTPromiseRejectBlock reject = [composeRejecters lastObject];
+    [composeResolvers removeLastObject];
+    [composeRejecters removeLastObject];
+    
+    reject(E_DOCUMENT_PICKER_CANCELED, @"User canceled document picker", nil);
 }
 
 @end
