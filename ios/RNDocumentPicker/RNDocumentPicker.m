@@ -144,15 +144,17 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
 RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris)
 {
+    NSMutableArray *discardedItems = [NSMutableArray array];
     for (NSString *uri in uris) {
         for (NSURL *url in urls) {
             if ([url.absoluteString isEqual:uri]) {
                 [url stopAccessingSecurityScopedResource];
-                [urls removeObject:url];
+                [discardedItems addObject:url];
                 break;
             }
         }
     }
+    [urls removeObjectsInArray:discardedItems];
 }
 
 + (NSURL *)getDirectoryForFileCopy:(NSString *)copyToDirectory
