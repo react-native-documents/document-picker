@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,14 +186,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	}
 
 	private static class ProcessDataTask extends GuardedResultAsyncTask<ReadableArray> {
-		private Context context;
+		private final WeakReference<Context> weakContext;
 		private final List<Uri> uris;
 		private final String copyTo;
 		private final Promise promise;
 
 		protected ProcessDataTask(ReactContext reactContext, List<Uri> uris, String copyTo, Promise promise) {
 			super(reactContext.getExceptionHandler());
-			this.context = reactContext.getApplicationContext();
+			this.weakContext = new WeakReference<>(reactContext.getApplicationContext());
 			this.uris = uris;
 			this.copyTo = copyTo;
 			this.promise = promise;
@@ -213,16 +214,19 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 		}
 
 		private WritableMap getMetadata(Uri uri) {
+			Context context = weakContext.get();
+			if (context == null) {
+				return Arguments.createMap();
+			}
 			ContentResolver contentResolver = context.getContentResolver();
 			WritableMap map = Arguments.createMap();
 			map.putString(FIELD_URI, uri.toString());
 			map.putString(FIELD_TYPE, contentResolver.getType(uri));
-			String fileName = null;
 			try (Cursor cursor = contentResolver.query(uri, null, null, null, null, null)) {
 				if (cursor != null && cursor.moveToFirst()) {
 					int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
 					if (!cursor.isNull(displayNameIndex)) {
-						fileName = cursor.getString(displayNameIndex);
+						String fileName = cursor.getString(displayNameIndex);
 						map.putString(FIELD_NAME, fileName);
 					}
 					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -238,13 +242,19 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				}
 			}
 
+			prepareFileUri(context, map, uri);
+			return map;
+		}
+
+		private void prepareFileUri(Context context, WritableMap map, Uri uri) {
 			if (copyTo != null) {
 				File dir = context.getCacheDir();
 				if (copyTo.equals("documentDirectory")) {
 					dir = context.getFilesDir();
 				}
+				String fileName = map.getString(FIELD_NAME);
 				if (fileName == null) {
-					fileName = DocumentsContract.getDocumentId(uri);
+					fileName = System.currentTimeMillis() + "";
 				}
 				try {
 					File destFile = new File(dir, fileName);
@@ -258,7 +268,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			} else {
 				map.putString(FIELD_FILE_COPY_URI, uri.toString());
 			}
-			return map;
 		}
 
 		public static String copyFile(Context context, Uri uri, File destFile) throws IOException {
@@ -290,7 +299,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				throw e;
 			}
 		}
-
 	}
 
 	private void sendError(String code, String message) {
