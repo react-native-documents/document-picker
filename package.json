@@ -1,6 +1,6 @@
 {
   "name": "react-native-document-picker",
-  "version": "3.5.1",
+  "version": "4.2.0",
   "description": "A react native interface to access Documents from dropbox google drive, iCloud",
   "main": "index.js",
   "scripts": {

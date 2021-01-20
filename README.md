@@ -1,14 +1,13 @@
 # react-native-document-picker
 
-⚠️ NOTE: since version 3.3.2 we're using git version tags prefixed with `v`, eg. `v3.3.2`. This is a standard format and should mean no changes to your workflows.
+🚧🚧 GH discussions available 🚧🚧
 
-⚠️ Breaking: New Interface: use v2 branch if you need to go back.
-PR are welcome to add what's missing.
+If you want to ask questions, we opened [GH discussions](https://github.com/rnmods/react-native-document-picker/discussions) for that purpose! 🤗 Issue tracker is now reserved for bugs and feature requests only and issues not following the issue template can be closed. Thank you!
 
 A React Native wrapper for:
 
 - Apple's `UIDocumentPickerViewController`
-- Android's `Intent.ACTION_OPEN_DOCUMENT` / `Intent.ACTION_PICK`
+- Android's `Intent.ACTION_GET_CONTENT`
 - Windows `Windows.Storage.Pickers`
 
 ### Installation
@@ -45,10 +44,14 @@ The type or types of documents to allow selection of. May be an array of types a
 
 - On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`. See [common MIME types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types).
 - On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
-- If `type` is omitted it will be treated as `*/*` or `public.content`.
+- If `type` is omitted it will be treated as `*/*` or `public.item`.
 - Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
 
-##### `copyTo`:`"cachesDirectory" | "documentDirectory"`:
+##### [iOS only] `mode`:`"import" | "open"`:
+
+Defaults to `import`. If `mode` is set to `import` the document picker imports the file from outside to inside the sandbox, otherwise if `mode` is set to `open` the document picker opens the file right in place.
+
+##### [iOS and Android only] `copyTo`:`"cachesDirectory" | "documentDirectory"`:
 
 If specified, the picked file is copied to `NSCachesDirectory` / `NSDocumentDirectory` (iOS) or `getCacheDir` / `getFilesDir` (Android). The uri of the copy will be available in result's `fileCopyUri`. If copying the file fails (eg. due to lack of space), `fileCopyUri` will be the same as `uri`, and more details about the error will be available in `copyError` field in the result.
 
@@ -77,7 +80,7 @@ The object a `pick` Promise resolves to or the objects in the array a `pickMulti
 
 ##### `uri`:
 
-The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver._
+The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container if `mode` is not specified or set at `import` otherwise it will be the original `file://` URI. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver._
 
 ##### `fileCopyUri`:
 
@@ -103,17 +106,28 @@ The base64 encoded content of the picked file if the option `readContent` was se
 
 `DocumentPicker.types.*` provides a few common types for use as `type` values, these types will use the correct format for each platform (MIME types on Android, UTIs on iOS).
 
-- `DocumentPicker.types.allFiles`: All document types, on Android this is `*/*`, on iOS is `public.content` (note that some binary and archive types do not inherit from `public.content`)
-- `DocumentPicker.types.images`: All image types (`image/*` or `public.image`)
-- `DocumentPicker.types.plainText`: Plain text files ie: `.txt` (`text/plain` or `public.plain-text`)
-- `DocumentPicker.types.audio`: All audio types (`audio/*` or `public.audio`)
-- `DocumentPicker.types.pdf`: PDF documents (`application/pdf` or `com.adobe.pdf`)
-- `DocumentPicker.types.zip`: Zip files (`application/zip` or `public.zip-archive`)
-- `DocumentPicker.types.csv`: Csv files (`text/csv` or `public.comma-separated-values-text`)
+- `DocumentPicker.types.allFiles`: All document types, on Android this is `*/*`, on iOS is `public.item`
+- `DocumentPicker.types.images`: All image types
+- `DocumentPicker.types.plainText`: Plain text files
+- `DocumentPicker.types.audio`: All audio types
+- `DocumentPicker.types.pdf`: PDF documents
+- `DocumentPicker.types.zip`: Zip files
+- `DocumentPicker.types.csv`: Csv files
+- `DocumentPicker.types.doc`: doc files
+- `DocumentPicker.types.docx`: docx files
+- `DocumentPicker.types.ppt`: ppt files
+- `DocumentPicker.types.pptx`: pptx files
+- `DocumentPicker.types.xls`: xls files
+- `DocumentPicker.types.xlsx`: xlsx files
 
-### `DocumentPicker.isCancel(err)`
+#### `DocumentPicker.isCancel(err)`
 
 If the user cancels the document picker without choosing a file (by pressing the system back button on Android or the Cancel button on iOS) the Promise will be rejected with a cancellation error. You can check for this error using `DocumentPicker.isCancel(err)` allowing you to ignore it and cleanup any parts of your interface that may not be needed anymore.
+
+#### [iOS only] `DocumentPicker.releaseSecureAccess(uris: Array<string>)`
+
+If `mode` is set to `open` iOS is giving you a secure access to a file located outside from your sandbox.
+In that case Apple is asking you to release the access as soon as you finish using the resource.
 
 ## Example
 

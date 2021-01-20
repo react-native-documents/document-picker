@@ -36,10 +36,6 @@ DocumentPicker.pickMultiple({
 });
 
 DocumentPicker.pickMultiple({
-  type: [DocumentPicker.types.allFiles],
-});
-
-DocumentPicker.pickMultiple({
   type: [DocumentPicker.types.audio],
 });
 
