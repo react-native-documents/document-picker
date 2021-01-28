@@ -62,12 +62,10 @@ function pick(opts) {
     );
   }
 
-  //Make sure If user selects folder option 
-  
   if (Array.isArray(opts.type) && opts.type.length > 1) {
-    if(opts.type.includes('folder')){
+    if (opts.type.includes('folder')) {
       throw new TypeError(
-        'When `type` array is `folder` then other options are not supported.'
+        'When type array is folder then other options are not supported.'
       );
     }
   }
