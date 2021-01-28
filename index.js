@@ -64,9 +64,7 @@ function pick(opts) {
 
   if (Array.isArray(opts.type) && opts.type.length > 1) {
     if (opts.type.includes('folder')) {
-      throw new TypeError(
-        'When type array is folder then other options are not supported.'
-      );
+      throw new TypeError('When type array is folder then other options are not supported');
     }
   }
 
