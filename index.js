@@ -62,6 +62,16 @@ function pick(opts) {
     );
   }
 
+  //Make sure If user selects folder option 
+  
+  if (Array.isArray(opts.type) && opts.type.length > 1) {
+    if(opts.type.includes('folder')){
+      throw new TypeError(
+        'When `type` array is `folder` then other options are not supported.'
+      );
+    }
+  }
+
   if ('mode' in opts && !['import', 'open'].includes(opts.mode)) {
     throw new TypeError('Invalid mode option: ' + opts.mode);
   }
@@ -140,6 +150,7 @@ const Types = {
     xls: '.xls',
     xlsx: '.xlsx',
     zip: '.zip .gz',
+    folder: 'folder',
   },
 };
 
