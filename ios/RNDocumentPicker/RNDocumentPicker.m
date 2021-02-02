@@ -208,6 +208,11 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris)
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 {
     RCTPromiseResolveBlock resolve = [composeResolvers lastObject];
+
+    if (resolve == nil) {
+        return;
+    }
+
     RCTPromiseRejectBlock reject = [composeRejecters lastObject];
     [composeResolvers removeLastObject];
     [composeRejecters removeLastObject];
