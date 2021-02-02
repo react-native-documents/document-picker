@@ -20,7 +20,9 @@ namespace RNDocumentPicker
 
 	private static readonly String E_FAILED_TO_SHOW_PICKER = "FAILED_TO_SHOW_PICKER";
 	private static readonly String E_DOCUMENT_PICKER_CANCELED = "DOCUMENT_PICKER_CANCELED";
-	private static readonly String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
+    private static readonly String E_FOLDER_PICKER_CANCELED = "FOLDER_PICKER_CANCELED";
+
+        private static readonly String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
 
 	private static readonly String OPTION_TYPE = "type";
     private static readonly String CACHE_TYPE = "cache";
@@ -76,11 +78,20 @@ namespace RNDocumentPicker
                 // Get file type array options
                 var fileTypeArray = options.Value<JArray>(OPTION_TYPE);
                 var cache = options.Value<Boolean>(CACHE_TYPE);
+
+                //if pick called to launch folder picker.
+                bool isFolderPicker = false;
+
                 // Init file type filter
                 if (fileTypeArray != null && fileTypeArray.Count > 0)
                 {
                     foreach (String typeString in fileTypeArray)
                     {
+                        if(typeString == "folder"){
+                            isFolderPicker = true;
+                            break;
+                        }
+
                         List<String> types = typeString.Split(' ').ToList();
                         foreach (String type in types)
                         {
@@ -96,33 +107,63 @@ namespace RNDocumentPicker
                     openPicker.FileTypeFilter.Add("*");
                 }
 
-                RunOnDispatcher(async () =>
+                if(isFolderPicker)
                 {
-                    try
+                    var openFolderPicker = new FolderPicker();
+
+                    RunOnDispatcher(async () =>
                     {
-                        if (_isInForeground)
+                        try
                         {
-                            var isMultiple = options.Value<bool>(OPTION_MULIPLE);
-                            var readContent = options.Value<bool>(OPTION_READ_CONTENT);
-                            if (isMultiple)
+                            if (_isInForeground)
                             {
-                                await PickMultipleFileAsync(openPicker, cache, readContent, promise);
+                                openFolderPicker.ViewMode = PickerViewMode.List;
+                                openFolderPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+                                openFolderPicker.FileTypeFilter.Add("*");
+
+                                await PickFolderAsync(openFolderPicker, promise);
                             }
                             else
                             {
-                                await PickSingleFileAsync(openPicker, cache, readContent, promise);
+                                _pendingPicker = openPicker;
                             }
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            _pendingPicker = openPicker;
+                            promise.Reject(E_FAILED_TO_SHOW_PICKER, ex.Message);
                         }
-                    }
-                    catch (Exception ex)
+                    });
+                }
+                else
+                {
+                    RunOnDispatcher(async () =>
                     {
-                        promise.Reject(E_FAILED_TO_SHOW_PICKER, ex.Message);
-                    }
-                });
+                        try
+                        {
+                            if (_isInForeground)
+                            {
+                                var isMultiple = options.Value<bool>(OPTION_MULIPLE);
+                                var readContent = options.Value<bool>(OPTION_READ_CONTENT);
+                                if (isMultiple)
+                                {
+                                    await PickMultipleFileAsync(openPicker, cache, readContent, promise);
+                                }
+                                else
+                                {
+                                    await PickSingleFileAsync(openPicker, cache, readContent, promise);
+                                }
+                            }
+                            else
+                            {
+                                _pendingPicker = openPicker;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            promise.Reject(E_FAILED_TO_SHOW_PICKER, ex.Message);
+                        }
+                    });
+                }
             }
             catch (Exception ex) {
                 promise.Reject(E_UNEXPECTED_EXCEPTION, ex.Message);
@@ -208,6 +249,36 @@ namespace RNDocumentPicker
             return true;
         }
 
+        private async Task<JObject> PrepareFolder(StorageFolder folder)
+        {
+            String base64Content = null;
+            var basicProperties = await folder.GetBasicPropertiesAsync();
+
+            return new JObject {
+                { FIELD_URI, folder.Path },
+                { FIELD_FILE_COPY_URI, folder.Path },
+                { FIELD_NAME, folder.Name },
+                { FIELD_SIZE, basicProperties.Size},
+                { FIELD_CONTENT, base64Content }
+            };
+        }
+		
+        private async Task<bool> PickFolderAsync(FolderPicker picker, IPromise promise)
+        {
+            var folder = await picker.PickSingleFolderAsync().AsTask().ConfigureAwait(false);
+            if (folder != null)
+            {
+                JArray jarrayObj = new JArray();
+                jarrayObj.Add(PrepareFolder(folder).Result);
+                promise.Resolve(jarrayObj);
+            }
+            else
+            {
+                promise.Reject(E_FOLDER_PICKER_CANCELED, "User canceled document picker");
+            }
+
+            return true;
+        }
         private void OnInvoked(Object error, Object success, ICallback callback)
         {
             callback.Invoke(error, success);

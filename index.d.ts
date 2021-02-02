@@ -57,6 +57,7 @@ declare module 'react-native-document-picker' {
       xls: '.xls';
       xlsx: '.xlsx';
       zip: '.zip .gz';
+      folder: 'folder';
     };
   };
   type PlatformTypes = {
