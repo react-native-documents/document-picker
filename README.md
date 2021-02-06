@@ -186,7 +186,9 @@ try {
 
 ## How to send it back ?
 
-I recommend using [https://github.com/johanneslumpe/react-native-fs](https://github.com/johanneslumpe/react-native-fs)
+Use blob support that is built-in into react natve - [see comment](https://github.com/rnmods/react-native-document-picker/issues/70#issuecomment-384335402).
+
+Alternatively, use [https://github.com/johanneslumpe/react-native-fs](https://github.com/johanneslumpe/react-native-fs)
 I had to modify [Uploader.m](https://gist.github.com/Elyx0/5dc53bef294b42c847f1baea7cc5e911) so it would use `NSFileCoordinator` with `NSFileCoordinatorReadingForUploading` option.
 
 I added a check for file length that would be thrown into RNFS catch block.
