@@ -10,10 +10,16 @@ A React Native wrapper for:
 - Android's `Intent.ACTION_GET_CONTENT`
 - Windows `Windows.Storage.Pickers`
 
+Requires Android 5.0+ and iOS 10+
+
 ### Installation
 
 ```bash
 npm i --save react-native-document-picker
+
+OR
+
+yarn add react-native-document-picker
 ```
 
 You need to enable iCloud Documents to access iCloud
@@ -45,7 +51,6 @@ The type or types of documents to allow selection of. May be an array of types a
 - On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`. See [common MIME types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types).
 - On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
 - If `type` is omitted it will be treated as `*/*` or `public.item`.
-- Multiple type strings are not supported on Android before KitKat (API level 19), Jellybean will fall back to `*/*` if you provide an array with more than one value.
 
 ##### [iOS only] `mode`:`"import" | "open"`:
 
