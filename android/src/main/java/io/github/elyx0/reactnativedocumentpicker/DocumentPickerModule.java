@@ -8,11 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
-import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -120,27 +118,17 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			if (!args.isNull(OPTION_TYPE)) {
 				ReadableArray types = args.getArray(OPTION_TYPE);
 				if (types != null && types.size() > 1) {
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-						String[] mimeTypes = readableArrayToStringArray(types);
-						intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-					} else {
-						Log.e(NAME, "Multiple type values not supported below API level 19");
-					}
+					String[] mimeTypes = readableArrayToStringArray(types);
+					intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
 				} else if (types.size() == 1) {
 					intent.setType(types.getString(0));
 				}
 			}
 
 			boolean multiple = !args.isNull(OPTION_MULIPLE) && args.getBoolean(OPTION_MULIPLE);
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-				intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
-			}
+			intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
 
-			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-				intent = Intent.createChooser(intent, null);
-			}
-
-			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
+			currentActivity.startActivityForResult(Intent.createChooser(intent, null), READ_REQUEST_CODE, Bundle.EMPTY);
 		} catch (ActivityNotFoundException e) {
 			sendError(E_UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
 		} catch (Exception e) {
@@ -163,14 +151,15 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 			try {
 				List<Uri> uris = new ArrayList<>();
-				if (uri != null) {
-					uris.add(uri);
-				} else if (clipData != null && clipData.getItemCount() > 0) {
+				// condition order seems to matter: https://github.com/rnmods/react-native-document-picker/issues/317#issuecomment-645222635
+				if (clipData != null && clipData.getItemCount() > 0) {
 					final int length = clipData.getItemCount();
 					for (int i = 0; i < length; ++i) {
 						ClipData.Item item = clipData.getItemAt(i);
 						uris.add(item.getUri());
 					}
+				} else if (uri != null) {
+					uris.add(uri);
 				} else {
 					sendError(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
 					return;
@@ -229,11 +218,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 						String fileName = cursor.getString(displayNameIndex);
 						map.putString(FIELD_NAME, fileName);
 					}
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-						int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
-						if (!cursor.isNull(mimeIndex)) {
-							map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
-						}
+					int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
+					if (!cursor.isNull(mimeIndex)) {
+						map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
 					}
 					int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
 					if (!cursor.isNull(sizeIndex)) {
@@ -254,7 +241,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				}
 				String fileName = map.getString(FIELD_NAME);
 				if (fileName == null) {
-					fileName = System.currentTimeMillis() + "";
+					fileName = String.valueOf(System.currentTimeMillis());
 				}
 				try {
 					File destFile = new File(dir, fileName);
