@@ -51,9 +51,9 @@ The type or types of documents to allow selection of. May be an array of types a
 
 Defaults to `import`. If `mode` is set to `import` the document picker imports the file from outside to inside the sandbox, otherwise if `mode` is set to `open` the document picker opens the file right in place.
 
-##### [iOS only] `copyTo`:`"cachesDirectory" | "documentDirectory"`:
+##### [iOS and Android only] `copyTo`:`"cachesDirectory" | "documentDirectory"`:
 
-If specified, the picked file is copied to `NSCachesDirectory` / `NSDocumentDirectory` directory. The uri of the copy will be available in result's `fileCopyUri`. If copying the file fails (eg. due to lack of space), `fileCopyUri` will be the same as `uri`, and more details about the error will be available in `copyError` field in the result.
+If specified, the picked file is copied to `NSCachesDirectory` / `NSDocumentDirectory` (iOS) or `getCacheDir` / `getFilesDir` (Android). The uri of the copy will be available in result's `fileCopyUri`. If copying the file fails (eg. due to lack of space), `fileCopyUri` will be the same as `uri`, and more details about the error will be available in `copyError` field in the result.
 
 This should help if you need to work with the file(s) later on, because by default, [the picked documents are temporary files. They remain available only until your application terminates](https://developer.apple.com/documentation/uikit/uidocumentpickerdelegate/2902364-documentpicker). This may impact performance for large files, so keep this in mind if you expect users to pick particularly large files and your app does not need immediate read access.
 
@@ -84,7 +84,7 @@ The URI representing the document picked by the user. _On iOS this will be a `fi
 
 ##### `fileCopyUri`:
 
-Same as `uri`, but has special meaning on iOS, if `copyTo` option is specified.
+Same as `uri`, but has special meaning if `copyTo` option is specified.
 
 ##### `type`:
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,14 +17,24 @@ import android.util.Log;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
+import com.facebook.react.bridge.GuardedResultAsyncTask;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
@@ -42,9 +53,11 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 	private static final String OPTION_TYPE = "type";
 	private static final String OPTION_MULIPLE = "multiple";
+	private static final String OPTION_COPYTO = "copyTo";
 
 	private static final String FIELD_URI = "uri";
 	private static final String FIELD_FILE_COPY_URI = "fileCopyUri";
+	private static final String FIELD_COPY_ERROR = "copyError";
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
@@ -55,7 +68,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			if (requestCode == READ_REQUEST_CODE) {
 				if (promise != null) {
 					onShowActivityResult(resultCode, data, promise);
-					promise = null;
 				}
 			}
 		}
@@ -71,6 +83,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	}
 
 	private Promise promise;
+	private String copyTo;
 
 	public DocumentPickerModule(ReactApplicationContext reactContext) {
 		super(reactContext);
@@ -91,13 +104,13 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	@ReactMethod
 	public void pick(ReadableMap args, Promise promise) {
 		Activity currentActivity = getCurrentActivity();
+		this.promise = promise;
+		this.copyTo = args.hasKey(OPTION_COPYTO) ? args.getString(OPTION_COPYTO) : null;
 
 		if (currentActivity == null) {
-			promise.reject(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");
+			sendError(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");
 			return;
 		}
-
-		this.promise = promise;
 
 		try {
 			Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -129,18 +142,16 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 			currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
 		} catch (ActivityNotFoundException e) {
-			this.promise.reject(E_UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
-			this.promise = null;
+			sendError(E_UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			this.promise.reject(E_FAILED_TO_SHOW_PICKER, e.getLocalizedMessage());
-			this.promise = null;
+			sendError(E_FAILED_TO_SHOW_PICKER, e.getLocalizedMessage());
 		}
 	}
 
 	public void onShowActivityResult(int resultCode, Intent data, Promise promise) {
 		if (resultCode == Activity.RESULT_CANCELED) {
-			promise.reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
+			sendError(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
 		} else if (resultCode == Activity.RESULT_OK) {
 			Uri uri = null;
 			ClipData clipData = null;
@@ -151,62 +162,154 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 			}
 
 			try {
-				WritableArray results = Arguments.createArray();
-
+				List<Uri> uris = new ArrayList<>();
 				if (uri != null) {
-					results.pushMap(getMetadata(uri));
+					uris.add(uri);
 				} else if (clipData != null && clipData.getItemCount() > 0) {
 					final int length = clipData.getItemCount();
 					for (int i = 0; i < length; ++i) {
 						ClipData.Item item = clipData.getItemAt(i);
-						results.pushMap(getMetadata(item.getUri()));
+						uris.add(item.getUri());
 					}
 				} else {
-					promise.reject(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
+					sendError(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
 					return;
 				}
 
-				promise.resolve(results);
+				new ProcessDataTask(getReactApplicationContext(), uris, copyTo, promise).execute();
 			} catch (Exception e) {
-				promise.reject(E_UNEXPECTED_EXCEPTION, e.getLocalizedMessage(), e);
+				sendError(E_UNEXPECTED_EXCEPTION, e.getLocalizedMessage(), e);
 			}
 		} else {
-			promise.reject(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
+			sendError(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
 		}
 	}
 
-	private WritableMap getMetadata(Uri uri) {
-		WritableMap map = Arguments.createMap();
+	private static class ProcessDataTask extends GuardedResultAsyncTask<ReadableArray> {
+		private final WeakReference<Context> weakContext;
+		private final List<Uri> uris;
+		private final String copyTo;
+		private final Promise promise;
 
-		map.putString(FIELD_URI, uri.toString());
-		// TODO vonovak - FIELD_FILE_COPY_URI is implemented on iOS only (copyTo) settings
-		map.putString(FIELD_FILE_COPY_URI, uri.toString());
+		protected ProcessDataTask(ReactContext reactContext, List<Uri> uris, String copyTo, Promise promise) {
+			super(reactContext.getExceptionHandler());
+			this.weakContext = new WeakReference<>(reactContext.getApplicationContext());
+			this.uris = uris;
+			this.copyTo = copyTo;
+			this.promise = promise;
+		}
 
-		ContentResolver contentResolver = getReactApplicationContext().getContentResolver();
+		@Override
+		protected ReadableArray doInBackgroundGuarded() {
+			WritableArray results = Arguments.createArray();
+			for (Uri uri : uris) {
+				results.pushMap(getMetadata(uri));
+			}
+			return results;
+		}
 
-		map.putString(FIELD_TYPE, contentResolver.getType(uri));
+		@Override
+		protected void onPostExecuteGuarded(ReadableArray readableArray) {
+			promise.resolve(readableArray);
+		}
 
-		try (Cursor cursor = contentResolver.query(uri, null, null, null, null, null)) {
-			if (cursor != null && cursor.moveToFirst()) {
-				int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-				if (!cursor.isNull(displayNameIndex)) {
-					map.putString(FIELD_NAME, cursor.getString(displayNameIndex));
-				}
-
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-					int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
-					if (!cursor.isNull(mimeIndex)) {
-						map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
+		private WritableMap getMetadata(Uri uri) {
+			Context context = weakContext.get();
+			if (context == null) {
+				return Arguments.createMap();
+			}
+			ContentResolver contentResolver = context.getContentResolver();
+			WritableMap map = Arguments.createMap();
+			map.putString(FIELD_URI, uri.toString());
+			map.putString(FIELD_TYPE, contentResolver.getType(uri));
+			try (Cursor cursor = contentResolver.query(uri, null, null, null, null, null)) {
+				if (cursor != null && cursor.moveToFirst()) {
+					int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+					if (!cursor.isNull(displayNameIndex)) {
+						String fileName = cursor.getString(displayNameIndex);
+						map.putString(FIELD_NAME, fileName);
+					}
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+						int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
+						if (!cursor.isNull(mimeIndex)) {
+							map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
+						}
+					}
+					int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+					if (!cursor.isNull(sizeIndex)) {
+						map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
 					}
 				}
+			}
 
-				int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-				if (!cursor.isNull(sizeIndex)) {
-					map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
+			prepareFileUri(context, map, uri);
+			return map;
+		}
+
+		private void prepareFileUri(Context context, WritableMap map, Uri uri) {
+			if (copyTo != null) {
+				File dir = context.getCacheDir();
+				if (copyTo.equals("documentDirectory")) {
+					dir = context.getFilesDir();
 				}
+				String fileName = map.getString(FIELD_NAME);
+				if (fileName == null) {
+					fileName = System.currentTimeMillis() + "";
+				}
+				try {
+					File destFile = new File(dir, fileName);
+					String path = copyFile(context, uri, destFile);
+					map.putString(FIELD_FILE_COPY_URI, path);
+				} catch (IOException e) {
+					e.printStackTrace();
+					map.putString(FIELD_FILE_COPY_URI, uri.toString());
+					map.putString(FIELD_COPY_ERROR, e.getMessage());
+				}
+			} else {
+				map.putString(FIELD_FILE_COPY_URI, uri.toString());
 			}
 		}
 
-		return map;
+		public static String copyFile(Context context, Uri uri, File destFile) throws IOException {
+			InputStream in = null;
+			FileOutputStream out = null;
+			try {
+				in = context.getContentResolver().openInputStream(uri);
+				if (in != null) {
+					out = new FileOutputStream(destFile);
+					byte[] buffer = new byte[1024];
+					while (in.read(buffer) > 0) {
+						out.write(buffer);
+					}
+					out.close();
+					in.close();
+					return destFile.getAbsolutePath();
+				} else {
+					throw new NullPointerException("Invalid input stream");
+				}
+			} catch (Exception e) {
+				try {
+					if (in != null) {
+						in.close();
+					}
+					if (out != null) {
+						out.close();
+					}
+				} catch (IOException ignored) {}
+				throw e;
+			}
+		}
+	}
+
+	private void sendError(String code, String message) {
+		sendError(code, message, null);
+	}
+
+	private void sendError(String code, String message, Exception e) {
+		if (this.promise != null) {
+			Promise temp = this.promise;
+			this.promise = null;
+			temp.reject(code, message, e);
+		}
 	}
 }
