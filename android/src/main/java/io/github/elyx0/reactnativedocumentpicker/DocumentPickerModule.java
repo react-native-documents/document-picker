@@ -265,8 +265,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				if (in != null) {
 					out = new FileOutputStream(destFile);
 					byte[] buffer = new byte[1024];
-					while (in.read(buffer) > 0) {
-						out.write(buffer);
+					int len;
+					while ((len = in.read(buffer)) > 0) {
+						out.write(buffer, 0, len);
 					}
 					out.close();
 					in.close();
