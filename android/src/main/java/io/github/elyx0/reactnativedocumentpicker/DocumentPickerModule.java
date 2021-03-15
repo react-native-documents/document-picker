@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @see <a href="https://developer.android.com/guide/topics/providers/document-provider.html">android documentation</a>
@@ -239,6 +240,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				if (copyTo.equals("documentDirectory")) {
 					dir = context.getFilesDir();
 				}
+				// we don't want to rename the file so we put it into a unique location
+				dir = new File(dir, UUID.randomUUID().toString());
+				dir.mkdir();
 				String fileName = map.getString(FIELD_NAME);
 				if (fileName == null) {
 					fileName = String.valueOf(System.currentTimeMillis());
