@@ -20,7 +20,7 @@ static NSString *const FIELD_NAME = @"name";
 static NSString *const FIELD_TYPE = @"type";
 static NSString *const FIELD_SIZE = @"size";
 
-@interface RNDocumentPicker () <UIDocumentPickerDelegate>
+@interface RNDocumentPicker () <UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate>
 @end
 
 @implementation RNDocumentPicker {
@@ -74,6 +74,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
     UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:mode];
     documentPicker.delegate = self;
+    documentPicker.presentationController.delegate = self;
     documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
     
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
@@ -233,6 +234,15 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris)
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
+{
+    [self rejectLastSelection];
+}
+
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController {
+    [self rejectLastSelection];
+}
+
+- (void)rejectLastSelection
 {
     RCTPromiseRejectBlock reject = [composeRejecters lastObject];
     [composeResolvers removeLastObject];
