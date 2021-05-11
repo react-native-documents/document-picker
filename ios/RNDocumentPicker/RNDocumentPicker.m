@@ -124,7 +124,9 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
                 CFStringRef extension = (__bridge CFStringRef)[newURL pathExtension];
                 CFStringRef uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension, NULL);
                 CFStringRef mimeType = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType);
-                CFRelease(uti);
+                if (uti) {
+                    CFRelease(uti);
+                }
                 
                 NSString *mimeTypeString = (__bridge_transfer NSString *)mimeType;
                 [result setValue:mimeTypeString forKey:FIELD_TYPE];
