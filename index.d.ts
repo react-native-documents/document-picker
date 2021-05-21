@@ -78,6 +78,10 @@ declare module 'react-native-document-picker' {
     name: string;
     size: number;
   }
+  interface DirectoryPickerResponse {
+    uri: string,
+    path?: string
+  }
   type Platform = 'ios' | 'android' | 'windows';
   export default class DocumentPicker<OS extends keyof PlatformTypes = Platform> {
     static types: PlatformTypes['ios'] | PlatformTypes['android'] | PlatformTypes['windows'];
@@ -88,6 +92,6 @@ declare module 'react-native-document-picker' {
       options: DocumentPickerOptions<OS>
     ): Promise<DocumentPickerResponse[]>;
     static isCancel<IError extends { code?: string }>(err?: IError): boolean;
-    static releaseSecureAccess(uris: Array<string>): void;
+    static pickDirectory(): Promise<DirectoryPickerResponse>
   }
 }
