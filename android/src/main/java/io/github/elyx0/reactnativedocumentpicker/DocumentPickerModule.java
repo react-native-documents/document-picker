@@ -51,7 +51,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
 
 	private static final String OPTION_TYPE = "type";
-	private static final String OPTION_MULIPLE = "multiple";
+	private static final String OPTION_MULTIPLE = "multiple";
 	private static final String OPTION_COPYTO = "copyTo";
 
 	private static final String FIELD_URI = "uri";
@@ -126,7 +126,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				}
 			}
 
-			boolean multiple = !args.isNull(OPTION_MULIPLE) && args.getBoolean(OPTION_MULIPLE);
+			boolean multiple = !args.isNull(OPTION_MULTIPLE) && args.getBoolean(OPTION_MULTIPLE);
 			intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
 
 			currentActivity.startActivityForResult(Intent.createChooser(intent, null), READ_REQUEST_CODE, Bundle.EMPTY);
