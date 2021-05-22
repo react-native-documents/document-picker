@@ -107,6 +107,22 @@ The file size of the document. _On Android some DocumentProviders may not provid
 
 The base64 encoded content of the picked file if the option `readContent` was set to `true`.
 
+
+#### [Android only] `DocumentPicker.pickDirectory(options)`
+
+Open a system directory picker. Returns a promise that resolves to the directory selected by user.
+
+### Result
+
+##### `uri`:
+
+The URI of the selected directory. Usually it will be a content URI.
+
+##### `path`:
+
+Actual path to the selected directory. May not be set if the dir picker could not translate the URI to a path.
+
+
 ### `DocumentPicker.types.*`
 
 `DocumentPicker.types.*` provides a few common types for use as `type` values, these types will use the correct format for each platform (MIME types on Android, UTIs on iOS).
