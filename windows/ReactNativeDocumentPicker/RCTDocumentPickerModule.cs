@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
-using ReactNative.Bridge;
+
 using System;
 using System.Linq;
 using System.Collections.Generic;
@@ -10,65 +10,44 @@ using Windows.Storage.Pickers;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.IO;
+using Microsoft.ReactNative.Managed;
 
 namespace RNDocumentPicker
 {
-    class RCTDocumentPickerModule : ReactContextNativeModuleBase, ILifecycleEventListener
+    [ReactModule]
+    internal sealed class RCTDocumentPickerModule
     {
         private FileOpenPicker _pendingPicker;
         private bool _isInForeground;
 
-	private static readonly String E_FAILED_TO_SHOW_PICKER = "FAILED_TO_SHOW_PICKER";
-	private static readonly String E_DOCUMENT_PICKER_CANCELED = "DOCUMENT_PICKER_CANCELED";
-    private static readonly String E_FOLDER_PICKER_CANCELED = "FOLDER_PICKER_CANCELED";
+	    private static readonly string E_FAILED_TO_SHOW_PICKER = "FAILED_TO_SHOW_PICKER";
+	    private static readonly string E_DOCUMENT_PICKER_CANCELED = "DOCUMENT_PICKER_CANCELED";
+        private static readonly string E_FOLDER_PICKER_CANCELED = "FOLDER_PICKER_CANCELED";
 
-        private static readonly String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
+        private static readonly string E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
 
-	private static readonly String OPTION_TYPE = "type";
-    private static readonly String CACHE_TYPE = "cache";
-    private static readonly String OPTION_MULIPLE = "multiple";
-    private static readonly String OPTION_READ_CONTENT = "readContent";
-    private static readonly String FIELD_URI = "uri";
-    private static readonly String FIELD_FILE_COPY_URI = "fileCopyUri";
-	private static readonly String FIELD_NAME = "name";
-	private static readonly String FIELD_TYPE = "type";
-	private static readonly String FIELD_SIZE = "size";
-    private static readonly String FIELD_CONTENT = "content";
+	    private static readonly string OPTION_TYPE = "type";
+        private static readonly string CACHE_TYPE = "cache";
+        private static readonly string OPTION_MULIPLE = "multiple";
+        private static readonly string OPTION_READ_CONTENT = "readContent";
+        private static readonly string FIELD_URI = "uri";
+        private static readonly string FIELD_FILE_COPY_URI = "fileCopyUri";
+	    private static readonly string FIELD_NAME = "name";
+	    private static readonly string FIELD_TYPE = "type";
+	    private static readonly string FIELD_SIZE = "size";
+        private static readonly string FIELD_CONTENT = "content";
 
-        public RCTDocumentPickerModule(ReactContext reactContext)
-            : base(reactContext)
+        private ReactContext _reactContext;
+
+        [ReactInitializer]
+        public void Initialize(ReactContext reactContext)
         {
+            _reactContext = reactContext;
         }
 
-        public override string Name
-        {
-            get
-            {
-                return "RNDocumentPicker";
-            }
-        }
-
-        public override void Initialize()
-        {
-            Context.AddLifecycleEventListener(this);
-        }
-
-        public void OnSuspend()
-        {
-            _isInForeground = false;
-        }
-
-        public void OnResume()
-        {
-            _isInForeground = true;
-        }
-
-        public void OnDestroy()
-        {
-        }
 
         [ReactMethod]
-        public void pick(JObject options, IPromise promise)
+        public void pick(JObject options, IReactPromise<JArray> promise)
         {
             try
             {
@@ -130,7 +109,14 @@ namespace RNDocumentPicker
                         }
                         catch (Exception ex)
                         {
-                            promise.Reject(E_FAILED_TO_SHOW_PICKER, ex.Message);
+                            ReactError error = new ReactError
+                            {
+                                Code = E_FAILED_TO_SHOW_PICKER,
+                                Message = ex.Message,
+                                Exception = ex
+                            };
+
+                            promise.Reject(error);
                         }
                     });
                 }
@@ -160,17 +146,31 @@ namespace RNDocumentPicker
                         }
                         catch (Exception ex)
                         {
-                            promise.Reject(E_FAILED_TO_SHOW_PICKER, ex.Message);
+                            ReactError error = new ReactError
+                            {
+                                Code = E_FAILED_TO_SHOW_PICKER,
+                                Message = ex.Message,
+                                Exception = ex
+                            };
+
+                            promise.Reject(error);
                         }
                     });
                 }
             }
-            catch (Exception ex) {
-                promise.Reject(E_UNEXPECTED_EXCEPTION, ex.Message);
+            catch (Exception ex) 
+            {
+                ReactError error = new ReactError
+                {
+                    Code = E_UNEXPECTED_EXCEPTION,
+                    Message = ex.Message,
+                    Exception = ex
+                };
+                promise.Reject(error);
             }
         }
 
-        private async Task<JObject> PrepareFile(StorageFile file, Boolean cache, Boolean readContent)
+        private async Task<JObject> PrepareFile(StorageFile file, bool cache, bool readContent)
         {
             String base64Content = null;
             if (readContent)
@@ -215,7 +215,7 @@ namespace RNDocumentPicker
             }
         }
 
-        private async Task<bool> PickMultipleFileAsync(FileOpenPicker picker, Boolean cache, Boolean readContent, IPromise promise) {
+        private async Task<bool> PickMultipleFileAsync(FileOpenPicker picker, Boolean cache, Boolean readContent, IReactPromise<JArray> promise) {
             IReadOnlyList<StorageFile> files = await picker.PickMultipleFilesAsync().AsTask().ConfigureAwait(false);
             if (files.Count > 0)
             {
@@ -227,13 +227,19 @@ namespace RNDocumentPicker
             }
             else
             {
-                promise.Reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
+                ReactError error = new ReactError
+                {
+                    Code = E_DOCUMENT_PICKER_CANCELED,
+                    Message = "User canceled document picker"
+                };
+
+                promise.Reject(error);
             }
 
             return true;
         }
 
-        private async Task<bool> PickSingleFileAsync(FileOpenPicker picker, Boolean cache, Boolean readContent, IPromise promise) {
+        private async Task<bool> PickSingleFileAsync(FileOpenPicker picker, Boolean cache, Boolean readContent, IReactPromise<JArray> promise) {
             var file = await picker.PickSingleFileAsync().AsTask().ConfigureAwait(false);
             if (file != null)
             {
@@ -243,7 +249,13 @@ namespace RNDocumentPicker
             }
             else
             {
-                promise.Reject(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
+                ReactError error = new ReactError
+                {
+                    Code = E_DOCUMENT_PICKER_CANCELED,
+                    Message = "User canceled document picker"
+                };
+
+                promise.Reject(error);
             }
 
             return true;
@@ -263,7 +275,7 @@ namespace RNDocumentPicker
             };
         }
 		
-        private async Task<bool> PickFolderAsync(FolderPicker picker, IPromise promise)
+        private async Task<bool> PickFolderAsync(FolderPicker picker, IReactPromise<JArray> promise)
         {
             var folder = await picker.PickSingleFolderAsync().AsTask().ConfigureAwait(false);
             if (folder != null)
@@ -274,14 +286,16 @@ namespace RNDocumentPicker
             }
             else
             {
-                promise.Reject(E_FOLDER_PICKER_CANCELED, "User canceled document picker");
+                ReactError error = new ReactError
+                {
+                    Code = E_FOLDER_PICKER_CANCELED,
+                    Message = "User canceled document picker"
+
+                };
+                promise.Reject(error);
             }
 
             return true;
-        }
-        private void OnInvoked(Object error, Object success, ICallback callback)
-        {
-            callback.Invoke(error, success);
         }
 
         private static async void RunOnDispatcher(DispatchedHandler action)
