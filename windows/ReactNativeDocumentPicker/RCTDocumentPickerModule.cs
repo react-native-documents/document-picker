@@ -1,178 +1,110 @@
-﻿using Newtonsoft.Json.Linq;
-
+﻿using Microsoft.ReactNative.Managed;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Core;
-using Windows.Storage;
-using Windows.Storage.Pickers;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.IO;
-using Microsoft.ReactNative.Managed;
+using Windows.ApplicationModel.Core;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.UI.Core;
 
 namespace RNDocumentPicker
 {
-    [ReactModule]
+    [ReactModule("RNDocumentPicker")]
     internal sealed class RCTDocumentPickerModule
     {
-        private FileOpenPicker _pendingPicker;
-        private bool _isInForeground;
-
-	    private static readonly string E_FAILED_TO_SHOW_PICKER = "FAILED_TO_SHOW_PICKER";
-	    private static readonly string E_DOCUMENT_PICKER_CANCELED = "DOCUMENT_PICKER_CANCELED";
-        private static readonly string E_FOLDER_PICKER_CANCELED = "FOLDER_PICKER_CANCELED";
-
-        private static readonly string E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
-
-	    private static readonly string OPTION_TYPE = "type";
+        private static readonly string OPTION_TYPE = "type";
         private static readonly string CACHE_TYPE = "cache";
         private static readonly string OPTION_MULIPLE = "multiple";
         private static readonly string OPTION_READ_CONTENT = "readContent";
         private static readonly string FIELD_URI = "uri";
         private static readonly string FIELD_FILE_COPY_URI = "fileCopyUri";
-	    private static readonly string FIELD_NAME = "name";
-	    private static readonly string FIELD_TYPE = "type";
-	    private static readonly string FIELD_SIZE = "size";
+        private static readonly string FIELD_NAME = "name";
+        private static readonly string FIELD_TYPE = "type";
+        private static readonly string FIELD_SIZE = "size";
         private static readonly string FIELD_CONTENT = "content";
 
-        private ReactContext _reactContext;
 
-        [ReactInitializer]
-        public void Initialize(ReactContext reactContext)
+        [ReactMethod("pick")]
+        public async Task<List<JSValueObject>> Pick(JSValue options)
         {
-            _reactContext = reactContext;
-        }
+            FileOpenPicker openPicker = new FileOpenPicker();
+            openPicker.ViewMode = PickerViewMode.Thumbnail;
+            openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
 
+            // Get file type array options
 
-        [ReactMethod]
-        public void pick(JObject options, IReactPromise<JArray> promise)
-        {
-            try
+            var fileTypeArray = options.AsObject()[OPTION_TYPE][0].AsString();
+            bool cache = false;
+            if (options.AsObject().ContainsKey(CACHE_TYPE))
             {
-                FileOpenPicker openPicker = new FileOpenPicker();
-                openPicker.ViewMode = PickerViewMode.Thumbnail;
-                openPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-                // Get file type array options
-                var fileTypeArray = options.Value<JArray>(OPTION_TYPE);
-                var cache = options.Value<Boolean>(CACHE_TYPE);
+                cache = options.AsObject()[CACHE_TYPE][0].AsBoolean();
+            }
 
-                //if pick called to launch folder picker.
-                bool isFolderPicker = false;
+            var isMultiple = options.AsObject()[OPTION_MULIPLE].AsBoolean();
+            bool readContent = false;
+            if (options.AsObject().ContainsKey(OPTION_READ_CONTENT))
+            {
+                readContent = options.AsObject()[OPTION_READ_CONTENT].AsBoolean();
+            }
 
-                // Init file type filter
-                if (fileTypeArray != null && fileTypeArray.Count > 0)
+            //if pick called to launch folder picker.
+            bool isFolderPicker = false;
+
+            // Init file type filter
+            if (fileTypeArray != null)
+            {
+                if (fileTypeArray.Contains("folder"))
                 {
-                    foreach (String typeString in fileTypeArray)
-                    {
-                        if(typeString == "folder"){
-                            isFolderPicker = true;
-                            break;
-                        }
+                    isFolderPicker = true;
+                }
 
-                        List<String> types = typeString.Split(' ').ToList();
-                        foreach (String type in types)
-                        {
-                            if (Regex.Match(type, "(^[.]+[A-Za-z0-9]*$)|(^[*]$)").Success)
-                            {
-                                openPicker.FileTypeFilter.Add(type);
-                            }
-                        }
+                List<string> types = fileTypeArray.Split(' ').ToList();
+                foreach (string type in types)
+                {
+                    if (Regex.Match(type, "(^[.]+[A-Za-z0-9]*$)|(^[*]$)").Success)
+                    {
+                        openPicker.FileTypeFilter.Add(type);
                     }
                 }
-                else
-                {
-                    openPicker.FileTypeFilter.Add("*");
-                }
-
-                if(isFolderPicker)
-                {
-                    var openFolderPicker = new FolderPicker();
-
-                    RunOnDispatcher(async () =>
-                    {
-                        try
-                        {
-                            if (_isInForeground)
-                            {
-                                openFolderPicker.ViewMode = PickerViewMode.List;
-                                openFolderPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-                                openFolderPicker.FileTypeFilter.Add("*");
-
-                                await PickFolderAsync(openFolderPicker, promise);
-                            }
-                            else
-                            {
-                                _pendingPicker = openPicker;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            ReactError error = new ReactError
-                            {
-                                Code = E_FAILED_TO_SHOW_PICKER,
-                                Message = ex.Message,
-                                Exception = ex
-                            };
-
-                            promise.Reject(error);
-                        }
-                    });
-                }
-                else
-                {
-                    RunOnDispatcher(async () =>
-                    {
-                        try
-                        {
-                            if (_isInForeground)
-                            {
-                                var isMultiple = options.Value<bool>(OPTION_MULIPLE);
-                                var readContent = options.Value<bool>(OPTION_READ_CONTENT);
-                                if (isMultiple)
-                                {
-                                    await PickMultipleFileAsync(openPicker, cache, readContent, promise);
-                                }
-                                else
-                                {
-                                    await PickSingleFileAsync(openPicker, cache, readContent, promise);
-                                }
-                            }
-                            else
-                            {
-                                _pendingPicker = openPicker;
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            ReactError error = new ReactError
-                            {
-                                Code = E_FAILED_TO_SHOW_PICKER,
-                                Message = ex.Message,
-                                Exception = ex
-                            };
-
-                            promise.Reject(error);
-                        }
-                    });
-                }
             }
-            catch (Exception ex) 
+            else
             {
-                ReactError error = new ReactError
-                {
-                    Code = E_UNEXPECTED_EXCEPTION,
-                    Message = ex.Message,
-                    Exception = ex
-                };
-                promise.Reject(error);
+                openPicker.FileTypeFilter.Add("*");
             }
+
+            List<JSValueObject> result;
+            if (isFolderPicker)
+            {
+                var openFolderPicker = new FolderPicker();
+
+                openFolderPicker.ViewMode = PickerViewMode.List;
+                openFolderPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+                openFolderPicker.FileTypeFilter.Add("*");
+
+                result = await PickFolderAsync(openFolderPicker, cache, readContent);
+
+            }
+            else
+            {
+                if (isMultiple)
+                {
+                    result = await PickMultipleFileAsync(openPicker, cache, readContent);
+                }
+                else
+                {
+                    result = await PickSingleFileAsync(openPicker, cache, readContent);
+                }
+            }
+
+            return result;
         }
 
-        private async Task<JObject> PrepareFile(StorageFile file, bool cache, bool readContent)
+        private async Task<JSValueObject> PrepareFile(StorageFile file, bool cache, bool readContent)
         {
-            String base64Content = null;
+            string base64Content = null;
             if (readContent)
             {
                 var fileStream = await file.OpenReadAsync();
@@ -180,7 +112,7 @@ namespace RNDocumentPicker
                 {
                     using (var memstream = new MemoryStream())
                     {
-                        reader.BaseStream.CopyTo(memstream);
+                        await reader.BaseStream.CopyToAsync(memstream);
                         var bytes = memstream.ToArray();
                         base64Content = Convert.ToBase64String(bytes);
                     }
@@ -189,22 +121,11 @@ namespace RNDocumentPicker
 
             if (cache == true)
             {
-                var fileInCache = await file.CopyAsync(ApplicationData.Current.TemporaryFolder, file.Name.ToString(), NameCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
+                var fileInCache = await file.CopyAsync(ApplicationData.Current.TemporaryFolder, file.Name.ToString(), NameCollisionOption.ReplaceExisting);
                 var basicProperties = await fileInCache.GetBasicPropertiesAsync();
 
-                return new JObject {
-                    { FIELD_URI, fileInCache.Path },
-                    { FIELD_FILE_COPY_URI, fileInCache.Path },
-                    { FIELD_TYPE, fileInCache.ContentType },
-                    { FIELD_NAME, fileInCache.Name },
-                    { FIELD_SIZE, basicProperties.Size},
-                    { FIELD_CONTENT, base64Content }
-                };
-            }
-            else {
-                var basicProperties = await file.GetBasicPropertiesAsync();
-
-                return new JObject {
+                JSValueObject result = new JSValueObject
+                {
                     { FIELD_URI, file.Path },
                     { FIELD_FILE_COPY_URI, file.Path },
                     { FIELD_TYPE, file.ContentType },
@@ -212,95 +133,95 @@ namespace RNDocumentPicker
                     { FIELD_SIZE, basicProperties.Size},
                     { FIELD_CONTENT, base64Content }
                 };
+
+                return result;
+            }
+            else
+            {
+                var basicProperties = await file.GetBasicPropertiesAsync();
+
+                JSValueObject result = new JSValueObject
+                {
+                    { FIELD_URI, file.Path },
+                    { FIELD_FILE_COPY_URI, file.Path },
+                    { FIELD_TYPE, file.ContentType },
+                    { FIELD_NAME, file.Name },
+                    { FIELD_SIZE, basicProperties.Size},
+                    { FIELD_CONTENT, base64Content }
+                };
+
+                return result;
             }
         }
 
-        private async Task<bool> PickMultipleFileAsync(FileOpenPicker picker, Boolean cache, Boolean readContent, IReactPromise<JArray> promise) {
-            IReadOnlyList<StorageFile> files = await picker.PickMultipleFilesAsync().AsTask().ConfigureAwait(false);
-            if (files.Count > 0)
+        private async Task<List<JSValueObject>> PickMultipleFileAsync(FileOpenPicker picker, bool cache, bool readContent)
+        {
+            TaskCompletionSource<List<JSValueObject>> tcs = new TaskCompletionSource<List<JSValueObject>>();
+
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                JArray jarrayObj = new JArray();
-                foreach (var file in files) {
-                    jarrayObj.Add(PrepareFile(file, cache, readContent).Result);
+                IReadOnlyList<StorageFile> files = await picker.PickMultipleFilesAsync();
+                if (files.Count > 0)
+                {
+                    List<JSValueObject> jarrayObj = new List<JSValueObject>();
+                    foreach (var file in files)
+                    {
+                        var processedFile = await PrepareFile(file, cache, readContent);
+                        jarrayObj.Add(processedFile);
+                    }
+
+                    tcs.SetResult(jarrayObj);
                 }
-                promise.Resolve(jarrayObj);
-            }
-            else
-            {
-                ReactError error = new ReactError
-                {
-                    Code = E_DOCUMENT_PICKER_CANCELED,
-                    Message = "User canceled document picker"
-                };
+            });
 
-                promise.Reject(error);
-            }
-
-            return true;
+            var result = await tcs.Task;
+            return result;
         }
 
-        private async Task<bool> PickSingleFileAsync(FileOpenPicker picker, Boolean cache, Boolean readContent, IReactPromise<JArray> promise) {
-            var file = await picker.PickSingleFileAsync().AsTask().ConfigureAwait(false);
-            if (file != null)
-            {
-                JArray jarrayObj = new JArray();
-                jarrayObj.Add(PrepareFile(file, cache, readContent).Result);
-                promise.Resolve(jarrayObj);
-            }
-            else
-            {
-                ReactError error = new ReactError
-                {
-                    Code = E_DOCUMENT_PICKER_CANCELED,
-                    Message = "User canceled document picker"
-                };
-
-                promise.Reject(error);
-            }
-
-            return true;
-        }
-
-        private async Task<JObject> PrepareFolder(StorageFolder folder)
+        private async Task<List<JSValueObject>> PickSingleFileAsync(FileOpenPicker picker, bool cache, bool readContent)
         {
-            String base64Content = null;
-            var basicProperties = await folder.GetBasicPropertiesAsync();
+            TaskCompletionSource<JSValueObject> tcs = new TaskCompletionSource<JSValueObject>();
 
-            return new JObject {
-                { FIELD_URI, folder.Path },
-                { FIELD_FILE_COPY_URI, folder.Path },
-                { FIELD_NAME, folder.Name },
-                { FIELD_SIZE, basicProperties.Size},
-                { FIELD_CONTENT, base64Content }
-            };
-        }
-		
-        private async Task<bool> PickFolderAsync(FolderPicker picker, IReactPromise<JArray> promise)
-        {
-            var folder = await picker.PickSingleFolderAsync().AsTask().ConfigureAwait(false);
-            if (folder != null)
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                JArray jarrayObj = new JArray();
-                jarrayObj.Add(PrepareFolder(folder).Result);
-                promise.Resolve(jarrayObj);
-            }
-            else
-            {
-                ReactError error = new ReactError
+                var file = await picker.PickSingleFileAsync();
+                if (file != null)
                 {
-                    Code = E_FOLDER_PICKER_CANCELED,
-                    Message = "User canceled document picker"
+                    var processedFile = await PrepareFile(file, cache, readContent);
+                    tcs.SetResult(processedFile);
+                }
+            });
 
-                };
-                promise.Reject(error);
-            }
+            var result = await tcs.Task;
 
-            return true;
+            List<JSValueObject> list = new List<JSValueObject>() { result };
+
+            return list;
         }
 
-        private static async void RunOnDispatcher(DispatchedHandler action)
+        private async Task<List<JSValueObject>> PickFolderAsync(FolderPicker picker, bool cache, bool readContent)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, action).AsTask().ConfigureAwait(false);
+            TaskCompletionSource<List<JSValueObject>> tcs = new TaskCompletionSource<List<JSValueObject>>();
+
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                var folder = await picker.PickSingleFolderAsync();
+                if (folder != null)
+                {
+                    List<JSValueObject> jarrayObj = new List<JSValueObject>();
+                    var files = await folder.GetFilesAsync();
+                    foreach (var file in files)
+                    {
+                        var preparedFile = await PrepareFile(file, cache, readContent);
+                        jarrayObj.Add(preparedFile);
+                    }
+
+                    tcs.SetResult(jarrayObj);
+                }
+            });
+
+            var result = await tcs.Task;
+            return result;
         }
     }
 }
