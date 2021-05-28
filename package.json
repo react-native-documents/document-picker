@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "windows": "react-native run-windows"
   },
   "repository": {
     "type": "git",
@@ -34,8 +35,9 @@
     "eslint": "^7.2.0",
     "eslint-plugin-prettier": "^3.1.3",
     "prettier": "^2.0.5",
-    "react": "^16.0.0-beta.5",
-    "react-native": "^0.49.3",
+    "react": "17.0.1",
+    "react-native": "0.64.0",
+    "react-native-windows": "^0.64.9",
     "typescript": "^3.9.5"
   },
   "dependencies": {}
