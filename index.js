@@ -186,6 +186,10 @@ export default class DocumentPicker {
     return err && err.code === E_DOCUMENT_PICKER_CANCELED;
   }
 
+  static releaseSecureAccess(uris) {
+    releaseSecureAccess(uris);    
+  }
+
   static pickDirectory() {
     if (Platform.OS === 'android') {
       return RNDocumentPicker.pickDirectory();
