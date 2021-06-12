@@ -80,7 +80,7 @@ declare module 'react-native-document-picker' {
   }
   interface DirectoryPickerResponse {
     uri: string;
-    path?: string;
+    path: string | null;
   }
   type Platform = 'ios' | 'android' | 'windows';
   export default class DocumentPicker<OS extends keyof PlatformTypes = Platform> {
