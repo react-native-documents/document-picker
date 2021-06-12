@@ -187,7 +187,7 @@ export default class DocumentPicker {
   }
 
   static releaseSecureAccess(uris) {
-    releaseSecureAccess(uris);    
+    releaseSecureAccess(uris);
   }
 
   static pickDirectory() {
