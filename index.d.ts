@@ -93,6 +93,6 @@ declare module 'react-native-document-picker' {
     ): Promise<DocumentPickerResponse[]>;
     static isCancel<IError extends { code?: string }>(err?: IError): boolean;
     static releaseSecureAccess(uris: Array<string>): void;    
-    static pickDirectory(): Promise<DirectoryPickerResponse>;
+    static pickDirectory(): Promise<DirectoryPickerResponse> | null;
   }
 }
