@@ -218,11 +218,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 		WritableMap map = Arguments.createMap();
 		map.putString(FIELD_URI, uri.toString());
-
-		String path = uriToPath(uri);
-		if (path != null) {
-			map.putString(FIELD_PATH, path);
-		}
+		map.putString(FIELD_PATH, uriToPath(uri));
 		promise.resolve(map);
 	}
 
