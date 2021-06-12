@@ -73,9 +73,9 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 				return;
 			}
 			if (requestCode == READ_REQUEST_CODE) {
-					onShowActivityResult(resultCode, data, promise);
+				onShowActivityResult(resultCode, data, promise);
 			} else if (requestCode == PICK_DIR_REQUEST_CODE) {
-					onPickDirectoryResult(resultCode, data, promise);
+				onPickDirectoryResult(resultCode, data, promise);
 			}
 		}
 	};
