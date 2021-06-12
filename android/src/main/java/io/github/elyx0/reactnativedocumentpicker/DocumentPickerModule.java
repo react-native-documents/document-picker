@@ -69,14 +69,13 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
 		@Override
 		public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+			if (promise == null) {
+				return;
+			}
 			if (requestCode == READ_REQUEST_CODE) {
-				if (promise != null) {
 					onShowActivityResult(resultCode, data, promise);
-				}
 			} else if (requestCode == PICK_DIR_REQUEST_CODE) {
-				if (promise != null) {
 					onPickDirectoryResult(resultCode, data, promise);
-				}
 			}
 		}
 	};
