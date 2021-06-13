@@ -17,7 +17,7 @@ namespace RNDocumentPicker
     {
         private static readonly string OPTION_TYPE = "type";
         private static readonly string CACHE_TYPE = "cache";
-        private static readonly string OPTION_MULIPLE = "multiple";
+        private static readonly string OPTION_MULIPLE = "allowMultiSelection";
         private static readonly string OPTION_READ_CONTENT = "readContent";
         private static readonly string FIELD_URI = "uri";
         private static readonly string FIELD_FILE_COPY_URI = "fileCopyUri";

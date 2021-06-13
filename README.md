@@ -10,7 +10,7 @@ A React Native wrapper for:
 - Android's `Intent.ACTION_GET_CONTENT`
 - Windows `Windows.Storage.Pickers`
 
-Requires Android 5.0+ and iOS 10+
+Requires RN >= 0.63, Android 5.0+ and iOS 11+
 
 ### Installation
 
@@ -26,27 +26,37 @@ You need to enable iCloud Documents to access iCloud
 
 <img src="https://camo.githubusercontent.com/ac300ca7e3bbab573a76c151469a89efd8b31e72/68747470733a2f2f33313365353938373731386233343661616638332d66356538323532373066323961383466373838313432333431303338343334322e73736c2e6366312e7261636b63646e2e636f6d2f313431313932303637342d656e61626c652d69636c6f75642d64726976652e706e67" width="600">
 
-#### RN >= 0.60
+#### RN >= 0.63
 
-If you are using RN >= 0.60, only run `pod install` from the ios directory. Then rebuild your project.
-
-#### RN < 0.60 / Manual Instructions
-
-See [this](./install-old.md)
+If you are using RN >= 0.63, only run `pod install` from the ios directory. Then rebuild your project. Older RN versions are not supported.
 
 ## API
+
+#### `DocumentPicker.pickMultiple(options)` / `DocumentPicker.pickSingle(options)` / `DocumentPicker.pick(options)`
+
+⚠️ Breaking in v6: `pick` returns a `Promise<Array<DocumentPickerResponse>>` instead of `Promise<DocumentPickerResponse>`. If you were using `pick`, change those usages to `pickSingle`.
+
+Use `pickMultiple`, `pickSingle` or `pick` to open a document picker for the user to select file(s). All methods return a Promise.
 
 #### [Android only] `DocumentPicker.pickDirectory()`
 
 Open a system directory picker. Returns a promise that resolves to (`{ uri: string }`) of the directory selected by user.
 
 #### `DocumentPicker.pick(options)` and `DocumentPicker.pickMultiple(options)`
+- `pick` is the most universal, you can use `allowMultiSelection` param to control whether or not user can select multiple files (`false` by default). Returns a `Promise<Array<DocumentPickerResponse>>`
 
-Use `pick` or `pickMultiple` to open a document picker for the user to select file(s). Both methods return a Promise. `pick` will only allow a single selection and the Promise will resolve to that single result. `pickMultiple` will allow multiple selection and the Promise returned will always resolve to an array of results.
+`pickSingle` and `pickMultiple` are "sugar functions" on top of `pick`, and they _might be removed_ in a future release for increased API clarity.
+
+- `pickSingle` will only allow a single selection and the Promise will resolve to that single result (same behavior as `pick` in v5)
+- `pickMultiple` will allow multiple selection and the Promise will resolve to an array of results.
 
 ### Options
 
 All of the options are optional
+
+##### `allowMultiSelection`:`boolean`:
+
+Whether or not selecting multiple files is allowed. For `pick`, this is `false` by default. `allowMultiSelection` is `false` for `pickSingle` and `true` for `pickMultiple` and cannot be overridden for those calls.
 
 ##### `type`:`string|Array<string>`:
 
@@ -85,7 +95,7 @@ Defaults to `false`. If `readContent` is set to true the content of the picked f
 
 ### Result
 
-The object a `pick` Promise resolves to or the objects in the array a `pickMultiple` Promise resolves to will contain the following keys.
+The `pick` Promise resolves to an array of objects with the following keys.
 
 ##### `uri`:
 
@@ -149,24 +159,24 @@ In that case Apple is asking you to release the access as soon as you finish usi
 ## Example
 
 ```javascript
-import DocumentPicker from 'react-native-document-picker';
+import DocumentPicker from 'react-native-document-picker'
 
 // Pick a single file
 try {
   const res = await DocumentPicker.pick({
     type: [DocumentPicker.types.images],
-  });
+  })
   console.log(
     res.uri,
     res.type, // mime type
     res.name,
-    res.size
-  );
+    res.size,
+  )
 } catch (err) {
   if (DocumentPicker.isCancel(err)) {
     // User cancelled the picker, exit any dialogs or menus and move on
   } else {
-    throw err;
+    throw err
   }
 }
 
@@ -174,20 +184,20 @@ try {
 try {
   const results = await DocumentPicker.pickMultiple({
     type: [DocumentPicker.types.images],
-  });
+  })
   for (const res of results) {
     console.log(
       res.uri,
       res.type, // mime type
       res.name,
-      res.size
-    );
+      res.size,
+    )
   }
 } catch (err) {
   if (DocumentPicker.isCancel(err)) {
     // User cancelled the picker, exit any dialogs or menus and move on
   } else {
-    throw err;
+    throw err
   }
 }
 ```
@@ -214,25 +224,23 @@ if ([fileData length] == 0) {
 ```
 
 ```javascript
-let url = 'file://whatever/com.bla.bla/file.ext'; //The url you received from the DocumentPicker
+let url = 'file://whatever/com.bla.bla/file.ext' //The url you received from the DocumentPicker
 
 // I STRONGLY RECOMMEND ADDING A SMALL SETTIMEOUT before uploading the url you just got.
-const split = url.split('/');
-const name = split.pop();
-const inbox = split.pop();
-const realPath = `${RNFS.TemporaryDirectoryPath}${inbox}/${name}`;
+const split = url.split('/')
+const name = split.pop()
+const inbox = split.pop()
+const realPath = `${RNFS.TemporaryDirectoryPath}${inbox}/${name}`
 
 const uploadBegin = (response) => {
-  const jobId = response.jobId;
-  console.log('UPLOAD HAS BEGUN! JobId: ' + jobId);
-};
+  const jobId = response.jobId
+  console.log('UPLOAD HAS BEGUN! JobId: ' + jobId)
+}
 
 const uploadProgress = (response) => {
-  const percentage = Math.floor(
-    (response.totalBytesSent / response.totalBytesExpectedToSend) * 100
-  );
-  console.log('UPLOAD IS ' + percentage + '% DONE!');
-};
+  const percentage = Math.floor((response.totalBytesSent / response.totalBytesExpectedToSend) * 100)
+  console.log('UPLOAD IS ' + percentage + '% DONE!')
+}
 
 RNFS.uploadFiles({
   toUrl: uploadUrl,
@@ -253,30 +261,30 @@ RNFS.uploadFiles({
   progress: uploadProgress,
 })
   .then((response) => {
-    console.log(response, '<<< Response');
+    console.log(response, '<<< Response')
     if (response.statusCode == 200) {
       //You might not be getting a statusCode at all. Check
-      console.log('FILES UPLOADED!');
+      console.log('FILES UPLOADED!')
     } else {
-      console.log('SERVER ERROR');
+      console.log('SERVER ERROR')
     }
   })
   .catch((err) => {
     if (err.description) {
       switch (err.description) {
         case 'cancelled':
-          console.log('Upload cancelled');
-          break;
+          console.log('Upload cancelled')
+          break
         case 'empty':
-          console.log('Empty file');
+          console.log('Empty file')
         default:
         //Unknown
       }
     } else {
       //Weird
     }
-    console.log(err);
-  });
+    console.log(err)
+  })
 ```
 
 ## Help wanted: Improvements
