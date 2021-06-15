@@ -194,7 +194,7 @@ export default class DocumentPicker {
     if (Platform.OS === 'android') {
       return RNDocumentPicker.pickDirectory();
     } else {
-      return null;
+      return Promise.resolve(null);
     }
   }
 }
