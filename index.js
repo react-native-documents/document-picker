@@ -189,4 +189,12 @@ export default class DocumentPicker {
   static releaseSecureAccess(uris) {
     releaseSecureAccess(uris);
   }
+
+  static pickDirectory() {
+    if (Platform.OS === 'android') {
+      return RNDocumentPicker.pickDirectory();
+    } else {
+      return Promise.resolve(null);
+    }
+  }
 }
