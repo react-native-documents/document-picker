@@ -9,10 +9,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
-import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -63,7 +61,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 	private static final String FIELD_NAME = "name";
 	private static final String FIELD_TYPE = "type";
 	private static final String FIELD_SIZE = "size";
-	private static final String FIELD_PATH = "path";
 
 
 	private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
@@ -217,35 +214,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
 		WritableMap map = Arguments.createMap();
 		map.putString(FIELD_URI, uri.toString());
-		map.putString(FIELD_PATH, uriToPath(uri));
 		promise.resolve(map);
-	}
-
-	private String uriToPath(Uri uri) {
-		if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
-			File file = new File(uri.getPath());
-			return file.getName();
-		} else if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
-			String name = null;
-
-			// URI examples
-			// internal: content://com.android.externalstorage.documents/tree/primary%3Atest
-			// sd card:  content://com.android.externalstorage.documents/tree/1DEA-0313%3Atest
-			List<String> pathSegments = uri.getPathSegments();
-			if (pathSegments.get(0).equalsIgnoreCase("tree")) {
-				String[] parts = pathSegments.get(1).split(":", 2);
-				if (parts[0].equalsIgnoreCase("primary")) {
-					name = new File(Environment.getExternalStorageDirectory(), parts[1]).getAbsolutePath();
-				} else {
-					name = "/storage/" + parts[0] + "/" + parts[1];
-				}
-			}
-			Log.d(NAME, "Resolved content URI " + uri + " to path " + name);
-			return name;
-		} else {
-			Log.w(NAME, "Unknown URI scheme: " + uri.getScheme());
-			return null;
-		}
 	}
 
 	private static class ProcessDataTask extends GuardedResultAsyncTask<ReadableArray> {
