@@ -118,10 +118,6 @@ Open a system directory picker. Returns a promise that resolves to the directory
 
 The URI of the selected directory. Usually it will be a content URI.
 
-##### `path`:
-
-Actual path to the selected directory. May not be set if the dir picker could not translate the URI to a path.
-
 
 ### `DocumentPicker.types.*`
 
