@@ -3,9 +3,25 @@ import invariant from 'invariant'
 import type { PlatformTypes, SupportedPlatforms } from './fileTypes'
 import { perPlatformTypes } from './fileTypes'
 
+export type DocumentPickerResponse = Array<{
+  uri: string
+  fileCopyUri: string
+  copyError?: string
+  type: string
+  name: string
+  size: number
+}>
+
+export const types = perPlatformTypes[Platform.OS]
+
+export type DirectoryPickerResponse = {
+  uri: string
+}
+
 type DocumentPickerType = {
   pick(options: Record<string, any>): Promise<DocumentPickerResponse[]>
   releaseSecureAccess(uris: string[]): Promise<void>
+  pickDirectory(): Promise<DirectoryPickerResponse>
 }
 
 const RNDocumentPicker: DocumentPickerType = NativeModules.RNDocumentPicker
@@ -30,16 +46,14 @@ type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   allowMultiSelection?: boolean
 }
 
-export type DocumentPickerResponse = {
-  uri: string
-  fileCopyUri: string
-  copyError?: string
-  type: string
-  name: string
-  size: number
+export function pickDirectory(): Promise<DirectoryPickerResponse | null> {
+  if (Platform.OS === 'android') {
+    return RNDocumentPicker.pickDirectory()
+  } else {
+    // TODO windows impl
+    return Promise.resolve(null)
+  }
 }
-
-export const types = perPlatformTypes[Platform.OS]
 
 export function pickMultiple<OS extends SupportedPlatforms>(
   opts?: DocumentPickerOptions<OS>,
@@ -101,13 +115,11 @@ function doPick<OS extends SupportedPlatforms>(
     '`type` option should not be an empty array, at least one type must be passed if the `type` option is not omitted',
   )
 
-  if (options.type.length > 1) {
-    invariant(
-      // @ts-ignore TS2345: Argument of type 'string' is not assignable to parameter of type 'PlatformTypes[OS][keyof PlatformTypes[OS]]'.
-      !options.type.includes('folder'),
-      'When type array is folder then other options are not supported',
-    )
-  }
+  invariant(
+    // @ts-ignore TS2345: Argument of type 'string' is not assignable to parameter of type 'PlatformTypes[OS][keyof PlatformTypes[OS]]'.
+    !options.type.includes('folder'),
+    'RN document picker: "folder" option was removed, use "pickDirectory()"',
+  )
 
   if ('mode' in options && !['import', 'open'].includes(options.mode ?? '')) {
     throw new TypeError('Invalid mode option: ' + options.mode)
@@ -145,6 +157,7 @@ export function isCancel(err: Error & { code?: string }): boolean {
 export default {
   isCancel,
   releaseSecureAccess,
+  pickDirectory,
   pick,
   pickMultiple,
   pickSingle,

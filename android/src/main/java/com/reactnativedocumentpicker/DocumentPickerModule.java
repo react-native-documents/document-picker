@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
+import android.util.Log;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -40,6 +41,7 @@ import java.util.UUID;
 public class DocumentPickerModule extends ReactContextBaseJavaModule {
   public static final String NAME = "RNDocumentPicker";
   private static final int READ_REQUEST_CODE = 41;
+  private static final int PICK_DIR_REQUEST_CODE = 42;
 
   private static final String E_ACTIVITY_DOES_NOT_EXIST = "ACTIVITY_DOES_NOT_EXIST";
   private static final String E_FAILED_TO_SHOW_PICKER = "FAILED_TO_SHOW_PICKER";
@@ -50,7 +52,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
   private static final String E_UNEXPECTED_EXCEPTION = "UNEXPECTED_EXCEPTION";
 
   private static final String OPTION_TYPE = "type";
-  private static final String OPTION_MULIPLE = "allowMultiSelection";
+  private static final String OPTION_MULTIPLE = "allowMultiSelection";
   private static final String OPTION_COPYTO = "copyTo";
 
   private static final String FIELD_URI = "uri";
@@ -63,10 +65,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
   private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+      if (promise == null) {
+        Log.e(NAME, "promise was null in onActivityResult");
+        return;
+      }
       if (requestCode == READ_REQUEST_CODE) {
-        if (promise != null) {
-          onShowActivityResult(resultCode, data, promise);
-        }
+        onShowActivityResult(resultCode, data, promise);
+      } else if (requestCode == PICK_DIR_REQUEST_CODE) {
+        onPickDirectoryResult(resultCode, data, promise);
       }
     }
   };
@@ -125,7 +131,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
         }
       }
 
-      boolean multiple = !args.isNull(OPTION_MULIPLE) && args.getBoolean(OPTION_MULIPLE);
+      boolean multiple = !args.isNull(OPTION_MULTIPLE) && args.getBoolean(OPTION_MULTIPLE);
       intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
 
       currentActivity.startActivityForResult(Intent.createChooser(intent, null), READ_REQUEST_CODE, Bundle.EMPTY);
@@ -135,6 +141,43 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
       e.printStackTrace();
       sendError(E_FAILED_TO_SHOW_PICKER, e.getLocalizedMessage());
     }
+  }
+
+  @ReactMethod
+  public void pickDirectory(Promise promise) {
+    Activity currentActivity = getCurrentActivity();
+
+    if (currentActivity == null) {
+      promise.reject(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");
+      return;
+    }
+    this.promise = promise;
+    try {
+      Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+      currentActivity.startActivityForResult(intent, PICK_DIR_REQUEST_CODE, null);
+    } catch (Exception e) {
+      sendError(E_FAILED_TO_SHOW_PICKER, "Failed to create directory picker", e);
+    }
+  }
+
+  private void onPickDirectoryResult(int resultCode, Intent data, Promise promise) {
+    if (resultCode == Activity.RESULT_CANCELED) {
+      sendError(E_DOCUMENT_PICKER_CANCELED, "User canceled directory picker");
+      return;
+    } else if (resultCode != Activity.RESULT_OK) {
+      sendError(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
+      return;
+    }
+
+    if (data == null || data.getData() == null) {
+      sendError(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
+      return;
+    }
+    Uri uri = data.getData();
+
+    WritableMap map = Arguments.createMap();
+    map.putString(FIELD_URI, uri.toString());
+    promise.resolve(map);
   }
 
   public void onShowActivityResult(int resultCode, Intent data, Promise promise) {

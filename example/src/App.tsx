@@ -1,10 +1,16 @@
 import * as React from 'react'
 
 import { StyleSheet, View, Text, Button } from 'react-native'
-import DocumentPicker, { DocumentPickerResponse, types } from 'react-native-document-picker'
+import DocumentPicker, {
+  DirectoryPickerResponse,
+  DocumentPickerResponse,
+  types,
+} from 'react-native-document-picker'
 
 export default function App() {
-  const [result, setResult] = React.useState<Array<DocumentPickerResponse> | undefined>()
+  const [result, setResult] = React.useState<
+    Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null
+  >()
 
   const handleError = (err: Error) => {
     if (DocumentPicker.isCancel(err)) {
@@ -50,6 +56,12 @@ export default function App() {
           })
             .then(setResult)
             .catch(handleError)
+        }}
+      />
+      <Button
+        title="open directory picker (android+windows only)"
+        onPress={() => {
+          DocumentPicker.pickDirectory().then(setResult).catch(handleError)
         }}
       />
 

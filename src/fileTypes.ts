@@ -48,7 +48,6 @@ const extensions = Object.freeze({
   xls: '.xls',
   xlsx: '.xlsx',
   zip: '.zip .gz',
-  folder: 'folder',
 } as const)
 
 export type PlatformTypes = {
@@ -69,7 +68,6 @@ export const perPlatformTypes = {
 
 // ensure shapes of platformTypes are the same: https://stackoverflow.com/a/67027347/2070942
 // let me know if there's a nicer way
-type extensionsWithoutFolder = Omit<typeof extensions, 'folder'>
 
 type AssertEqualKeys<T1 extends object, T2 extends object> = [
   keyof T1 extends keyof T2 ? 1 : 0,
@@ -79,5 +77,5 @@ type AssertEqualKeys<T1 extends object, T2 extends object> = [
   : false
 
 const mimesAndUtisAreEqual: AssertEqualKeys<typeof mimeTypes, typeof utis> = true
-const mimesAndExtensionsAreEqual: AssertEqualKeys<typeof mimeTypes, extensionsWithoutFolder> = true
+const mimesAndExtensionsAreEqual: AssertEqualKeys<typeof mimeTypes, typeof extensions> = true
 export const typesAreEqual = mimesAndUtisAreEqual && mimesAndExtensionsAreEqual

@@ -43,6 +43,7 @@ Use `pickMultiple`, `pickSingle` or `pick` to open a document picker for the use
 Open a system directory picker. Returns a promise that resolves to (`{ uri: string }`) of the directory selected by user.
 
 #### `DocumentPicker.pick(options)` and `DocumentPicker.pickMultiple(options)`
+
 - `pick` is the most universal, you can use `allowMultiSelection` param to control whether or not user can select multiple files (`false` by default). Returns a `Promise<Array<DocumentPickerResponse>>`
 
 `pickSingle` and `pickMultiple` are "sugar functions" on top of `pick`, and they _might be removed_ in a future release for increased API clarity.
@@ -120,14 +121,6 @@ The file size of the document. _On Android some DocumentProviders may not provid
 ##### [UWP only] `content`:
 
 The base64 encoded content of the picked file if the option `readContent` was set to `true`.
-
-
-### Result
-
-##### `uri`:
-
-The URI of the selected directory. Usually it will be a content URI.
-
 
 ### `DocumentPicker.types.*`
 
