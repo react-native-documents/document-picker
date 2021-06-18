@@ -102,6 +102,24 @@ namespace RNDocumentPicker
             return result;
         }
 
+        [ReactMethod("pickDirectory")]
+        public async Task<JSValueObject> PickDirectory()
+        {
+            var openFolderPicker = new FolderPicker();
+
+            openFolderPicker.ViewMode = PickerViewMode.List;
+            openFolderPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+            openFolderPicker.FileTypeFilter.Add("*");
+
+            var result = await openFolderPicker.PickSingleFolderAsync();
+            JSValueObject obj = new JSValueObject
+            {
+                { "uri", result.Path }
+            };
+
+            return obj;
+        }
+
         private async Task<JSValueObject> PrepareFile(StorageFile file, bool cache, bool readContent)
         {
             string base64Content = null;
