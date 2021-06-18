@@ -105,19 +105,27 @@ namespace RNDocumentPicker
         [ReactMethod("pickDirectory")]
         public async Task<JSValueObject> PickDirectory()
         {
-            var openFolderPicker = new FolderPicker();
+            TaskCompletionSource<JSValueObject> tcs = new TaskCompletionSource<JSValueObject>();
 
-            openFolderPicker.ViewMode = PickerViewMode.List;
-            openFolderPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
-            openFolderPicker.FileTypeFilter.Add("*");
-
-            var result = await openFolderPicker.PickSingleFolderAsync();
-            JSValueObject obj = new JSValueObject
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                { "uri", result.Path }
-            };
+                var openFolderPicker = new FolderPicker();
 
-            return obj;
+                openFolderPicker.ViewMode = PickerViewMode.List;
+                openFolderPicker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+                openFolderPicker.FileTypeFilter.Add("*");
+
+                var folder = await openFolderPicker.PickSingleFolderAsync();
+                JSValueObject obj = new JSValueObject
+                {
+                    { "uri", folder.Path }
+                };
+
+                tcs.SetResult(obj);
+            });
+
+            var result = await tcs.Task;
+            return result;
         }
 
         private async Task<JSValueObject> PrepareFile(StorageFile file, bool cache, bool readContent)
