@@ -36,7 +36,7 @@ See [this](./install-old.md)
 
 ## API
 
-#### [Android only] `DocumentPicker.pickDirectory()`
+#### [Android and Windows only] `DocumentPicker.pickDirectory()`
 
 Open a system directory picker. Returns a promise that resolves to (`{ uri: string }`) of the directory selected by user.
 
@@ -66,7 +66,7 @@ If specified, the picked file is copied to `NSCachesDirectory` / `NSDocumentDire
 
 This should help if you need to work with the file(s) later on, because by default, [the picked documents are temporary files. They remain available only until your application terminates](https://developer.apple.com/documentation/uikit/uidocumentpickerdelegate/2902364-documentpicker). This may impact performance for large files, so keep this in mind if you expect users to pick particularly large files and your app does not need immediate read access.
 
-##### [UWP only] `readContent`:`boolean`
+##### [Windows only] `readContent`:`boolean`
 
 Defaults to `false`. If `readContent` is set to true the content of the picked file/files will be read and supplied in the result object.
 
@@ -107,7 +107,7 @@ The display name of the file. _This is normally the filename of the file, but An
 
 The file size of the document. _On Android some DocumentProviders may not provide this information for a document._
 
-##### [UWP only] `content`:
+##### [Windows only] `content`:
 
 The base64 encoded content of the picked file if the option `readContent` was set to `true`.
 
