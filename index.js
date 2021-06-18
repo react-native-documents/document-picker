@@ -191,7 +191,7 @@ export default class DocumentPicker {
   }
 
   static pickDirectory() {
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'android' || Platform.OS === 'windows') {
       return RNDocumentPicker.pickDirectory();
     } else {
       return Promise.resolve(null);
