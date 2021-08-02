@@ -17,7 +17,7 @@ namespace RNDocumentPicker
   {
     private static readonly string OPTION_TYPE = "type";
     private static readonly string CACHE_TYPE = "cache";
-    private static readonly string OPTION_MULIPLE = "allowMultiSelection";
+    private static readonly string OPTION_MULTIPLE = "allowMultiSelection";
     private static readonly string OPTION_READ_CONTENT = "readContent";
     private static readonly string FIELD_URI = "uri";
     private static readonly string FIELD_FILE_COPY_URI = "fileCopyUri";
@@ -45,7 +45,7 @@ namespace RNDocumentPicker
         cache = options.AsObject()[CACHE_TYPE][0].AsBoolean();
       }
 
-      var isMultiple = options.AsObject()[OPTION_MULIPLE].AsBoolean();
+      var isMultiple = options.AsObject()[OPTION_MULTIPLE].AsBoolean();
       bool readContent = false;
       if (options.AsObject().ContainsKey(OPTION_READ_CONTENT))
       {
@@ -133,7 +133,7 @@ namespace RNDocumentPicker
         }
         else
         {
-          tcs.SetResult(null);
+          tcs.SetResult(new JSValueObject());
         }
       });
 
