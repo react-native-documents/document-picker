@@ -47,10 +47,10 @@ type DocumentPickerOptions<OS extends SupportedPlatforms> = {
 }
 
 export function pickDirectory(): Promise<DirectoryPickerResponse | null> {
-  if (Platform.OS === 'android') {
+  if (Platform.OS === 'android' || Platform.OS === 'windows') {
     return RNDocumentPicker.pickDirectory()
   } else {
-    // TODO windows impl
+    // TODO iOS impl
     return Promise.resolve(null)
   }
 }
