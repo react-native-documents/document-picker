@@ -1,44 +1,145 @@
 {
   "name": "react-native-document-picker",
   "version": "5.2.0",
-  "description": "A react native interface to access Documents from dropbox google drive, iCloud",
-  "main": "index.js",
+  "description": "A react native interface to access documents from dropbox, google drive, iCloud...",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "windows",
+    "cpp",
+    "react-native-document-picker.podspec",
+    "!lib/typescript/example",
+    "!android/build",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint .",
-    "windows": "react-native run-windows"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/Elyx0/react-native-document-picker.git"
+    "test": "jest",
+    "typescript": "tsc --noEmit",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "prepare": "bob build",
+    "release": "release-it",
+    "example": "yarn --cwd example",
+    "pods": "cd example && pod-install --quiet",
+    "bootstrap": "yarn example && yarn && yarn pods"
   },
   "keywords": [
+    "react-native",
     "document",
     "picker",
     "uidocumentmenuviewcontroller",
-    "react-native",
     "dropbox",
     "google-drive",
     "icloud"
   ],
-  "author": "Elyx0 <elyx00@gmail.com> (@Elyx0)",
+  "repository": "https://github.com/rnmods/react-native-document-picker",
+  "author": "Elyx0 <elyx00@gmail.com> (https://github.com/rnmods), Vojtech Novak (hello@react-native-training.eu)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Elyx0/react-native-document-picker/issues"
+    "url": "https://github.com/rnmods/react-native-document-picker/issues"
   },
-  "homepage": "https://github.com/Elyx0/react-native-document-picker#readme",
-  "peerDependencies": {
-    "react-native": ">= 0.33"
+  "homepage": "https://github.com/rnmods/react-native-document-picker#readme",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
-    "@react-native-community/eslint-config": "^2.0.0",
+    "@commitlint/config-conventional": "^11.0.0",
+    "@react-native-community/eslint-config": "^3.0.0",
+    "@release-it/conventional-changelog": "^2.0.0",
+    "@types/invariant": "^2.2.34",
+    "@types/jest": "^26.0.0",
+    "@types/react": "^17.0.11",
+    "@types/react-native": "0.64.10",
+    "commitlint": "^11.0.0",
     "eslint": "^7.2.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.1.3",
+    "husky": "^4.2.5",
+    "jest": "^27.0.4",
+    "pod-install": "^0.1.0",
     "prettier": "^2.0.5",
-    "react": "17.0.1",
-    "react-native": "0.64.0",
+    "react": "17.0.2",
+    "react-native": "0.64.2",
+    "react-native-builder-bob": "^0.18.0",
     "react-native-windows": "^0.64.9",
-    "typescript": "^3.9.5"
+    "release-it": "^14.9.0",
+    "typescript": "^4.3.3"
   },
-  "dependencies": {}
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-windows": "*"
+  },
+  "jest": {
+    "preset": "react-native",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/node_modules",
+      "<rootDir>/lib/"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-commit": "yarn lint && yarn typescript"
+    }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": "chore: release ${version}",
+      "tagName": "v${version}"
+    },
+    "npm": {
+      "publish": true
+    },
+    "github": {
+      "release": true
+    },
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "angular"
+      }
+    }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@react-native-community",
+      "plugin:prettier/recommended"
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "lib/"
+  ],
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "dependencies": {
+    "invariant": "^2.2.4"
+  }
 }
