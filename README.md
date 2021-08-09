@@ -22,10 +22,6 @@ OR
 yarn add react-native-document-picker
 ```
 
-You need to enable iCloud Documents to access iCloud
-
-<img src="https://camo.githubusercontent.com/ac300ca7e3bbab573a76c151469a89efd8b31e72/68747470733a2f2f33313365353938373731386233343661616638332d66356538323532373066323961383466373838313432333431303338343334322e73736c2e6366312e7261636b63646e2e636f6d2f313431313932303637342d656e61626c652d69636c6f75642d64726976652e706e67" width="600">
-
 #### RN >= 0.63
 
 If you are using RN >= 0.63, only run `pod install` from the ios directory. Then rebuild your project. Older RN versions are not supported.
