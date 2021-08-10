@@ -3,14 +3,14 @@ import invariant from 'invariant'
 import type { PlatformTypes, SupportedPlatforms } from './fileTypes'
 import { perPlatformTypes } from './fileTypes'
 
-export type DocumentPickerResponse = Array<{
+export type DocumentPickerResponse = {
   uri: string
   fileCopyUri: string
   copyError?: string
   type: string
   name: string
   size: number
-}>
+}
 
 export const types = perPlatformTypes[Platform.OS]
 
