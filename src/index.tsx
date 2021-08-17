@@ -36,7 +36,7 @@ if (!RNDocumentPicker) {
   }, 0)
 }
 
-type DocumentPickerOptions<OS extends SupportedPlatforms> = {
+export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   type?:
     | string
     | PlatformTypes[OS][keyof PlatformTypes[OS]]
