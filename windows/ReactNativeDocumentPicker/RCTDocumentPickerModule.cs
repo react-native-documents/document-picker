@@ -210,6 +210,10 @@ namespace RNDocumentPicker
 
           tcs.SetResult(jarrayObj);
         }
+        else
++        {
++              tcs.SetResult(new List<JSValueObject>());
++        }
       });
 
       var result = await tcs.Task;
@@ -228,6 +232,10 @@ namespace RNDocumentPicker
           var processedFile = await PrepareFile(file, cache, readContent);
           tcs.SetResult(processedFile);
         }
+        else
++        {
++            tcs.SetResult(new JSValueObject());
++        }
       });
 
       var result = await tcs.Task;
