@@ -211,9 +211,9 @@ namespace RNDocumentPicker
           tcs.SetResult(jarrayObj);
         }
         else
-+        {
-+              tcs.SetResult(new List<JSValueObject>());
-+        }
+        {
+           tcs.SetResult(new List<JSValueObject>());
+        }
       });
 
       var result = await tcs.Task;
@@ -233,9 +233,9 @@ namespace RNDocumentPicker
           tcs.SetResult(processedFile);
         }
         else
-+        {
-+            tcs.SetResult(new JSValueObject());
-+        }
+        {
+          tcs.SetResult(new JSValueObject());
+        }
       });
 
       var result = await tcs.Task;
