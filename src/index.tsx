@@ -26,16 +26,6 @@ type DocumentPickerType = {
 
 const RNDocumentPicker: DocumentPickerType = NativeModules.RNDocumentPicker
 
-if (!RNDocumentPicker) {
-  // Use a timeout to ensure the warning is displayed in the YellowBox
-  setTimeout(() => {
-    console.warn(
-      'RNDocumentPicker: Native module is not available: Either the native module was not properly installed (please follow readme installation instructions)' +
-        "or you're running in a environment without native modules (eg. JS tests in Node). A module mock is not available at this point, contributions are welcome!",
-    )
-  }, 0)
-}
-
 export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   type?:
     | string
@@ -83,19 +73,22 @@ export function pick<OS extends SupportedPlatforms>(
     type: [types.allFiles],
     ...opts,
   }
-  if (!Array.isArray(options.type)) {
-    options.type = [options.type]
+
+  const newOpts: DoPickParams<OS> = {
+    ...options,
+    type: Array.isArray(options.type) ? options.type : [options.type],
   }
 
-  // @ts-ignore give me a break...
-  return doPick(options)
+  return doPick(newOpts)
+}
+
+type DoPickParams<OS extends SupportedPlatforms> = DocumentPickerOptions<OS> & {
+  type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]] | string>
+  allowMultiSelection: boolean
 }
 
 function doPick<OS extends SupportedPlatforms>(
-  options: DocumentPickerOptions<OS> & {
-    type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]] | string>
-    allowMultiSelection: boolean
-  },
+  options: DoPickParams<OS>,
 ): Promise<DocumentPickerResponse[]> {
   invariant(
     !('filetype' in options),
