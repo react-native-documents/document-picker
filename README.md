@@ -10,7 +10,48 @@ A React Native wrapper for:
 - Android's `Intent.ACTION_GET_CONTENT`
 - Windows `Windows.Storage.Pickers`
 
+
+<table>
+  <tr><td><strong>iOS</strong></td><td><strong>Android</strong></td></tr>
+  <tr>
+    <td><p align="center"><img src="/docs/ios_screenshot.jpeg" height="500"></p></td>
+    <td><p align="center"><img src="/docs/android_screenshot.jpg" height="500"></p></td>
+  </tr>
+</table>
+
 Requires RN >= 0.63, Android 5.0+ and iOS 11+
+
+Table of Contents
+=================
+
+* [react-native-document-picker](#react-native-document-picker)
+  * [Installation](#installation)
+  * [RN &gt;= 0.63](#rn--063)
+  * [API](#api)
+    * [DocumentPicker.pickMultiple(options) / DocumentPicker.pickSingle(options) / DocumentPicker.pick(options)](#documentpickerpickmultipleoptions--documentpickerpicksingleoptions--documentpickerpickoptions)
+    * [[Android and Windows only] DocumentPicker.pickDirectory()](#android-and-windows-only-documentpickerpickdirectory)
+    * [DocumentPicker.pick(options) and DocumentPicker.pickMultiple(options)](#documentpickerpickoptions-and-documentpickerpickmultipleoptions)
+    * [Options](#options)
+      * [allowMultiSelection:boolean:](#allowmultiselectionboolean)
+      * [type:string|Array&lt;string&gt;:](#typestringarraystring)
+      * [[iOS only] presentationStyle:'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen'](#ios-only-presentationstylefullscreen--pagesheet--formsheet--overfullscreen)
+      * [[iOS only] mode:"import" | "open":](#ios-only-modeimport--open)
+      * [[iOS and Android only] copyTo:"cachesDirectory" | "documentDirectory":](#ios-and-android-only-copytocachesdirectory--documentdirectory)
+      * [[Windows only] readContent:boolean](#windows-only-readcontentboolean)
+    * [Result](#result)
+      * [uri:](#uri)
+      * [fileCopyUri:](#filecopyuri)
+      * [type:](#type)
+      * [name:](#name)
+      * [size:](#size)
+      * [[Windows only] content:](#windows-only-content)
+    * [DocumentPicker.types.*](#documentpickertypes)
+      * [DocumentPicker.isCancel(err)](#documentpickeriscancelerr)
+      * [DocumentPicker.isInProgress(err)](#documentpickerisinprogresserr)
+      * [[iOS only] DocumentPicker.releaseSecureAccess(uris: Array&lt;string&gt;)](#ios-only-documentpickerreleasesecureaccessuris-arraystring)
+  * [Example](#example)
+  * [How to upload picked files?](#how-to-upload-picked-files)
+  * [Help wanted: Improvements](#help-wanted-improvements)
 
 ### Installation
 
@@ -202,10 +243,6 @@ try {
   }
 }
 ```
-
-## Here is how it looks:
-
-<img src="./docs/screenshot.jpeg" height="400">
 
 ## How to upload picked files?
 
