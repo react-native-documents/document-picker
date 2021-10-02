@@ -10,7 +10,6 @@ A React Native wrapper for:
 - Android's `Intent.ACTION_GET_CONTENT`
 - Windows `Windows.Storage.Pickers`
 
-
 <table>
   <tr><td><strong>iOS</strong></td><td><strong>Android</strong></td></tr>
   <tr>
@@ -21,37 +20,36 @@ A React Native wrapper for:
 
 Requires RN >= 0.63, Android 5.0+ and iOS 11+
 
-Table of Contents
-=================
+# Table of Contents
 
-* [react-native-document-picker](#react-native-document-picker)
-  * [Installation](#installation)
-  * [RN &gt;= 0.63](#rn--063)
-  * [API](#api)
-    * [DocumentPicker.pickMultiple(options) / DocumentPicker.pickSingle(options) / DocumentPicker.pick(options)](#documentpickerpickmultipleoptions--documentpickerpicksingleoptions--documentpickerpickoptions)
-    * [[Android and Windows only] DocumentPicker.pickDirectory()](#android-and-windows-only-documentpickerpickdirectory)
-    * [DocumentPicker.pick(options) and DocumentPicker.pickMultiple(options)](#documentpickerpickoptions-and-documentpickerpickmultipleoptions)
-    * [Options](#options)
-      * [allowMultiSelection:boolean:](#allowmultiselectionboolean)
-      * [type:string|Array&lt;string&gt;:](#typestringarraystring)
-      * [[iOS only] presentationStyle:'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen'](#ios-only-presentationstylefullscreen--pagesheet--formsheet--overfullscreen)
-      * [[iOS only] mode:"import" | "open":](#ios-only-modeimport--open)
-      * [[iOS and Android only] copyTo:"cachesDirectory" | "documentDirectory":](#ios-and-android-only-copytocachesdirectory--documentdirectory)
-      * [[Windows only] readContent:boolean](#windows-only-readcontentboolean)
-    * [Result](#result)
-      * [uri:](#uri)
-      * [fileCopyUri:](#filecopyuri)
-      * [type:](#type)
-      * [name:](#name)
-      * [size:](#size)
-      * [[Windows only] content:](#windows-only-content)
-    * [DocumentPicker.types.*](#documentpickertypes)
-      * [DocumentPicker.isCancel(err)](#documentpickeriscancelerr)
-      * [DocumentPicker.isInProgress(err)](#documentpickerisinprogresserr)
-      * [[iOS only] DocumentPicker.releaseSecureAccess(uris: Array&lt;string&gt;)](#ios-only-documentpickerreleasesecureaccessuris-arraystring)
-  * [Example](#example)
-  * [How to upload picked files?](#how-to-upload-picked-files)
-  * [Help wanted: Improvements](#help-wanted-improvements)
+- [react-native-document-picker](#react-native-document-picker)
+  - [Installation](#installation)
+  - [RN &gt;= 0.63](#rn--063)
+  - [API](#api)
+    - [DocumentPicker.pickMultiple(options) / DocumentPicker.pickSingle(options) / DocumentPicker.pick(options)](#documentpickerpickmultipleoptions--documentpickerpicksingleoptions--documentpickerpickoptions)
+    - [[Android and Windows only] DocumentPicker.pickDirectory()](#android-and-windows-only-documentpickerpickdirectory)
+    - [DocumentPicker.pick(options) and DocumentPicker.pickMultiple(options)](#documentpickerpickoptions-and-documentpickerpickmultipleoptions)
+    - [Options](#options)
+      - [allowMultiSelection:boolean](#allowmultiselectionboolean)
+      - [type:string|Array&lt;string&gt;](#typestringarraystring)
+      - [[iOS only] presentationStyle:'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen'](#ios-only-presentationstylefullscreen--pagesheet--formsheet--overfullscreen)
+      - [[iOS only] mode:"import" | "open"](#ios-only-modeimport--open)
+      - [[iOS and Android only] copyTo:"cachesDirectory" | "documentDirectory"](#ios-and-android-only-copytocachesdirectory--documentdirectory)
+      - [[Windows only] readContent:boolean](#windows-only-readcontentboolean)
+    - [Result](#result)
+      - [uri](#uri)
+      - [fileCopyUri](#filecopyuri)
+      - [type](#type)
+      - [name](#name)
+      - [size](#size)
+      - [[Windows only] content](#windows-only-content)
+    - [DocumentPicker.types.\*](#documentpickertypes)
+      - [DocumentPicker.isCancel(err)](#documentpickeriscancelerr)
+      - [DocumentPicker.isInProgress(err)](#documentpickerisinprogresserr)
+      - [[iOS only] DocumentPicker.releaseSecureAccess(uris: Array&lt;string&gt;)](#ios-only-documentpickerreleasesecureaccessuris-arraystring)
+  - [Example](#example)
+  - [How to upload picked files?](#how-to-upload-picked-files)
+  - [Help wanted: Improvements](#help-wanted-improvements)
 
 ### Installation
 
@@ -92,11 +90,11 @@ Open a system directory picker. Returns a promise that resolves to (`{ uri: stri
 
 All of the options are optional
 
-##### `allowMultiSelection`:`boolean`:
+##### `allowMultiSelection`:`boolean`
 
 Whether or not selecting multiple files is allowed. For `pick`, this is `false` by default. `allowMultiSelection` is `false` for `pickSingle` and `true` for `pickMultiple` and cannot be overridden for those calls.
 
-##### `type`:`string|Array<string>`:
+##### `type`:`string|Array<string>`
 
 The type or types of documents to allow selection of. May be an array of types as single type string.
 
@@ -108,11 +106,11 @@ The type or types of documents to allow selection of. May be an array of types a
 
 Controls how the picker is presented, eg. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`.
 
-##### [iOS only] `mode`:`"import" | "open"`:
+##### [iOS only] `mode`:`"import" | "open"`
 
 Defaults to `import`. If `mode` is set to `import` the document picker imports the file from outside to inside the sandbox, otherwise if `mode` is set to `open` the document picker opens the file right in place.
 
-##### [iOS and Android only] `copyTo`:`"cachesDirectory" | "documentDirectory"`:
+##### [iOS and Android only] `copyTo`:`"cachesDirectory" | "documentDirectory"`
 
 If specified, the picked file is copied to `NSCachesDirectory` / `NSDocumentDirectory` (iOS) or `getCacheDir` / `getFilesDir` (Android). The uri of the copy will be available in result's `fileCopyUri`. If copying the file fails (eg. due to lack of space), `fileCopyUri` will be the same as `uri`, and more details about the error will be available in `copyError` field in the result.
 
@@ -139,27 +137,27 @@ Defaults to `false`. If `readContent` is set to true the content of the picked f
 
 The `pick` Promise resolves to an array of objects with the following keys.
 
-##### `uri`:
+##### `uri`
 
 The URI representing the document picked by the user. _On iOS this will be a `file://` URI for a temporary file in your app's container if `mode` is not specified or set at `import` otherwise it will be the original `file://` URI. On Android this will be a `content://` URI for a document provided by a DocumentProvider that must be accessed with a ContentResolver._
 
-##### `fileCopyUri`:
+##### `fileCopyUri`
 
 Same as `uri`, but has special meaning if `copyTo` option is specified.
 
-##### `type`:
+##### `type`
 
 The MIME type of the file. _On Android some DocumentProviders may not provide MIME types for their documents. On iOS this MIME type is based on the best MIME type for the file extension according to Apple's internal "Uniform Type Identifiers" database._
 
-##### `name`:
+##### `name`
 
 The display name of the file. _This is normally the filename of the file, but Android does not guarantee that this will be a filename from all DocumentProviders._
 
-##### `size`:
+##### `size`
 
 The file size of the document. _On Android some DocumentProviders may not provide this information for a document._
 
-##### [Windows only] `content`:
+##### [Windows only] `content`
 
 The base64 encoded content of the picked file if the option `readContent` was set to `true`.
 
@@ -250,7 +248,6 @@ Use blob support that is built into react native - [see comment](https://github.
 If you need to track upload progress, use `XMLHttpRequest` [see here](https://gist.github.com/Tamal/9231005f0c62e1a3f23f60dc2f46ae35)
 
 Alternatively, use [https://github.com/johanneslumpe/react-native-fs](https://github.com/johanneslumpe/react-native-fs)
-
 
 ## Help wanted: Improvements
 
