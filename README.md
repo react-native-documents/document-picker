@@ -44,8 +44,8 @@ Open a system directory picker. Returns a promise that resolves to (`{ uri: stri
 
 `pickSingle` and `pickMultiple` are "sugar functions" on top of `pick`, and they _might be removed_ in a future release for increased API clarity.
 
-- `pickSingle` will only allow a single selection and the Promise will resolve to that single result (same behavior as `pick` in v5)
-- `pickMultiple` will allow multiple selection and the Promise will resolve to an array of results.
+- `pickSingle` only allows a single selection and the Promise will resolve to that single result (same behavior as `pick` in v5)
+- `pickMultiple` allows multiple selection and the Promise will resolve to an array of results.
 
 ### Options
 
@@ -62,6 +62,10 @@ The type or types of documents to allow selection of. May be an array of types a
 - On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`. See [common MIME types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types).
 - On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
 - If `type` is omitted it will be treated as `*/*` or `public.item`.
+
+##### [iOS only] `presentationStyle`:`'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen'`
+
+Controls how the picker is presented, eg. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`.
 
 ##### [iOS only] `mode`:`"import" | "open"`:
 

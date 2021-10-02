@@ -1,4 +1,4 @@
-import { Platform, NativeModules } from 'react-native'
+import { Platform, NativeModules, ModalPropsIOS } from 'react-native'
 import invariant from 'invariant'
 import type { PlatformTypes, SupportedPlatforms } from './fileTypes'
 import { perPlatformTypes } from './fileTypes'
@@ -34,7 +34,7 @@ export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   mode?: 'import' | 'open'
   copyTo?: 'cachesDirectory' | 'documentDirectory'
   allowMultiSelection?: boolean
-}
+} & Pick<ModalPropsIOS, 'presentationStyle'>
 
 export function pickDirectory(): Promise<DirectoryPickerResponse | null> {
   if (Platform.OS === 'android' || Platform.OS === 'windows') {
@@ -75,6 +75,7 @@ export function pick<OS extends SupportedPlatforms>(
   }
 
   const newOpts: DoPickParams<OS> = {
+    presentationStyle: 'formSheet',
     ...options,
     type: Array.isArray(options.type) ? options.type : [options.type],
   }
@@ -85,6 +86,7 @@ export function pick<OS extends SupportedPlatforms>(
 type DoPickParams<OS extends SupportedPlatforms> = DocumentPickerOptions<OS> & {
   type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]] | string>
   allowMultiSelection: boolean
+  presentationStyle: NonNullable<ModalPropsIOS['presentationStyle']>
 }
 
 function doPick<OS extends SupportedPlatforms>(
