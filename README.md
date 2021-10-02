@@ -147,6 +147,8 @@ In that case Apple is asking you to release the access as soon as you finish usi
 
 ## Example
 
+See the example app in `example` folder.
+
 ```javascript
 import DocumentPicker from 'react-native-document-picker'
 
@@ -193,88 +195,15 @@ try {
 
 ## Here is how it looks:
 
-<img src="http://i.stack.imgur.com/dv0iQ.png" height="400">
+<img src="./docs/screenshot.jpeg" height="400">
 
-## How to send it back ?
+## How to upload picked files?
 
-Use blob support that is built-in into react natve - [see comment](https://github.com/rnmods/react-native-document-picker/issues/70#issuecomment-384335402).
+Use blob support that is built into react native - [see comment](https://github.com/rnmods/react-native-document-picker/issues/70#issuecomment-384335402).
+If you need to track upload progress, use `XMLHttpRequest` [see here](https://gist.github.com/Tamal/9231005f0c62e1a3f23f60dc2f46ae35)
 
 Alternatively, use [https://github.com/johanneslumpe/react-native-fs](https://github.com/johanneslumpe/react-native-fs)
-I had to modify [Uploader.m](https://gist.github.com/Elyx0/5dc53bef294b42c847f1baea7cc5e911) so it would use `NSFileCoordinator` with `NSFileCoordinatorReadingForUploading` option.
 
-I added a check for file length that would be thrown into RNFS catch block.
-
-```obj-c
-if ([fileData length] == 0) {
-    NSError *errorUp = [NSError errorWithDomain:@"com.whatever.yourapp" code:77 userInfo:[NSDictionary dictionaryWithObject:@"empty" forKey:NSLocalizedDescriptionKey]];
-    _params.errorCallback(errorUp);
-    return;
-}
-```
-
-```javascript
-let url = 'file://whatever/com.bla.bla/file.ext' //The url you received from the DocumentPicker
-
-// I STRONGLY RECOMMEND ADDING A SMALL SETTIMEOUT before uploading the url you just got.
-const split = url.split('/')
-const name = split.pop()
-const inbox = split.pop()
-const realPath = `${RNFS.TemporaryDirectoryPath}${inbox}/${name}`
-
-const uploadBegin = (response) => {
-  const jobId = response.jobId
-  console.log('UPLOAD HAS BEGUN! JobId: ' + jobId)
-}
-
-const uploadProgress = (response) => {
-  const percentage = Math.floor((response.totalBytesSent / response.totalBytesExpectedToSend) * 100)
-  console.log('UPLOAD IS ' + percentage + '% DONE!')
-}
-
-RNFS.uploadFiles({
-  toUrl: uploadUrl,
-  files: [
-    {
-      name,
-      filename: name,
-      filepath: realPath,
-    },
-  ],
-  method: 'POST',
-  headers: {
-    Accept: 'application/json',
-  },
-  begin: uploadBegin,
-  beginCallback: uploadBegin, // Don't ask me, only way I made it work as of 1.5.1
-  progressCallback: uploadProgress,
-  progress: uploadProgress,
-})
-  .then((response) => {
-    console.log(response, '<<< Response')
-    if (response.statusCode == 200) {
-      //You might not be getting a statusCode at all. Check
-      console.log('FILES UPLOADED!')
-    } else {
-      console.log('SERVER ERROR')
-    }
-  })
-  .catch((err) => {
-    if (err.description) {
-      switch (err.description) {
-        case 'cancelled':
-          console.log('Upload cancelled')
-          break
-        case 'empty':
-          console.log('Empty file')
-        default:
-        //Unknown
-      }
-    } else {
-      //Weird
-    }
-    console.log(err)
-  })
-```
 
 ## Help wanted: Improvements
 
