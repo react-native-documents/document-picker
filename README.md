@@ -144,7 +144,7 @@ If the user cancels the document picker without choosing a file (by pressing the
 
 If the user somehow manages to open multiple file pickers (eg. due the app being unresponsive), then only the picked result from the last opened picker will be considered and the promises form previous opened pickers will be rejected with an error that you can check using `DocumentPicker.isInProgress()`.
 
-This behavior might change in future to allow opening only a single picker at a time.
+This behavior might change in future to allow opening only a single picker at a time. The internal logic is currently implemented only on iOS.
 
 #### [iOS only] `DocumentPicker.releaseSecureAccess(uris: Array<string>)`
 
