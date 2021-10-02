@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, Button } from 'react-native'
 import DocumentPicker, {
   DirectoryPickerResponse,
   DocumentPickerResponse,
+  isInProgress,
   types,
 } from 'react-native-document-picker'
 
@@ -16,6 +17,8 @@ export default function App() {
     if (DocumentPicker.isCancel(err)) {
       console.warn('cancelled')
       // User cancelled the picker, exit any dialogs or menus and move on
+    } else if (isInProgress(err)) {
+      console.warn('multiple pickers were opened, only the last will be considered')
     } else {
       throw err
     }
@@ -59,13 +62,23 @@ export default function App() {
         }}
       />
       <Button
+        title="releaseSecureAccess"
+        onPress={() => {
+          DocumentPicker.releaseSecureAccess([])
+            .then(() => {
+              console.warn('releaseSecureAccess: success')
+            })
+            .catch(handleError)
+        }}
+      />
+      <Button
         title="open directory picker (android+windows only)"
         onPress={() => {
           DocumentPicker.pickDirectory().then(setResult).catch(handleError)
         }}
       />
 
-      <Text>Result: {JSON.stringify(result, null, 2)}</Text>
+      <Text selectable>Result: {JSON.stringify(result, null, 2)}</Text>
     </View>
   )
 }
