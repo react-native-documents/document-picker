@@ -13,6 +13,8 @@ import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
@@ -100,6 +102,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
     getReactApplicationContext().removeActivityEventListener(activityEventListener);
   }
 
+  @NonNull
   @Override
   public String getName() {
     return NAME;
@@ -123,11 +126,13 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
       intent.setType("*/*");
       if (!args.isNull(OPTION_TYPE)) {
         ReadableArray types = args.getArray(OPTION_TYPE);
-        if (types != null && types.size() > 1) {
-          String[] mimeTypes = readableArrayToStringArray(types);
-          intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-        } else if (types.size() == 1) {
-          intent.setType(types.getString(0));
+        if (types != null) {
+          if (types.size() > 1) {
+            String[] mimeTypes = readableArrayToStringArray(types);
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+          } else if (types.size() == 1) {
+            intent.setType(types.getString(0));
+          }
         }
       }
 
