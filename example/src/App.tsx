@@ -29,7 +29,9 @@ export default function App() {
       <Button
         title="open picker for single file selection"
         onPress={() => {
-          DocumentPicker.pickSingle()
+          DocumentPicker.pickSingle({
+            presentationStyle: 'fullScreen',
+          })
             .then((pickerResult) => setResult([pickerResult]))
             .catch(handleError)
         }}
