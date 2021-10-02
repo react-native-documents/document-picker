@@ -55,7 +55,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
   private static final String OPTION_TYPE = "type";
   private static final String OPTION_MULTIPLE = "allowMultiSelection";
-  private static final String OPTION_COPYTO = "copyTo";
+  private static final String OPTION_COPY_TO = "copyTo";
 
   private static final String FIELD_URI = "uri";
   private static final String FIELD_FILE_COPY_URI = "fileCopyUri";
@@ -67,14 +67,15 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
   private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-      if (promise == null) {
+      final Promise storedPromise = promise;
+      if (storedPromise == null) {
         Log.e(NAME, "promise was null in onActivityResult");
         return;
       }
       if (requestCode == READ_REQUEST_CODE) {
-        onShowActivityResult(resultCode, data, promise);
+        onShowActivityResult(resultCode, data, storedPromise);
       } else if (requestCode == PICK_DIR_REQUEST_CODE) {
-        onPickDirectoryResult(resultCode, data, promise);
+        onPickDirectoryResult(resultCode, data);
       }
     }
   };
@@ -112,7 +113,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
   public void pick(ReadableMap args, Promise promise) {
     Activity currentActivity = getCurrentActivity();
     this.promise = promise;
-    this.copyTo = args.hasKey(OPTION_COPYTO) ? args.getString(OPTION_COPYTO) : null;
+    this.copyTo = args.hasKey(OPTION_COPY_TO) ? args.getString(OPTION_COPY_TO) : null;
 
     if (currentActivity == null) {
       sendError(E_ACTIVITY_DOES_NOT_EXIST, "Current activity does not exist");
@@ -165,7 +166,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
     }
   }
 
-  private void onPickDirectoryResult(int resultCode, Intent data, Promise promise) {
+  private void onPickDirectoryResult(int resultCode, Intent data) {
     if (resultCode == Activity.RESULT_CANCELED) {
       sendError(E_DOCUMENT_PICKER_CANCELED, "User canceled directory picker");
       return;
@@ -348,8 +349,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
   }
 
   private void sendError(String code, String message, Exception e) {
-    if (this.promise != null) {
-      Promise temp = this.promise;
+    Promise temp = this.promise;
+    if (temp != null) {
       this.promise = null;
       temp.reject(code, message, e);
     }
