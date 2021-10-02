@@ -7,11 +7,16 @@ import DocumentPicker, {
   isInProgress,
   types,
 } from 'react-native-document-picker'
+import { useEffect } from 'react'
 
 export default function App() {
   const [result, setResult] = React.useState<
     Array<DocumentPickerResponse> | DirectoryPickerResponse | undefined | null
   >()
+
+  useEffect(() => {
+    console.log(JSON.stringify(result, null, 2))
+  }, [result])
 
   const handleError = (err: Error) => {
     if (DocumentPicker.isCancel(err)) {
