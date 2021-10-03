@@ -146,11 +146,22 @@ export function releaseSecureAccess(uris: Array<string>): Promise<void> {
 const E_DOCUMENT_PICKER_CANCELED = 'DOCUMENT_PICKER_CANCELED'
 const E_DOCUMENT_PICKER_IN_PROGRESS = 'ASYNC_OP_IN_PROGRESS'
 
-export function isCancel(err: Error & { code?: string }): boolean {
-  return err?.code === E_DOCUMENT_PICKER_CANCELED
+export type NativeModuleErrorShape = Error & { code?: string }
+
+export function isCancel(err: unknown): boolean {
+  return isErrorWithCode(err, E_DOCUMENT_PICKER_CANCELED)
 }
-export function isInProgress(err: Error & { code?: string }): boolean {
-  return err?.code === E_DOCUMENT_PICKER_IN_PROGRESS
+
+export function isInProgress(err: unknown): boolean {
+  return isErrorWithCode(err, E_DOCUMENT_PICKER_IN_PROGRESS)
+}
+
+function isErrorWithCode(err: unknown, errorCode: string): boolean {
+  if (err instanceof Error && 'code' in err) {
+    const nativeModuleErrorInstance = err as NativeModuleErrorShape
+    return nativeModuleErrorInstance?.code === errorCode
+  }
+  return false
 }
 
 export default {
