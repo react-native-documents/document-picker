@@ -18,7 +18,7 @@ export default function App() {
     console.log(JSON.stringify(result, null, 2))
   }, [result])
 
-  const handleError = (err: Error) => {
+  const handleError = (err: unknown) => {
     if (DocumentPicker.isCancel(err)) {
       console.warn('cancelled')
       // User cancelled the picker, exit any dialogs or menus and move on
@@ -33,12 +33,15 @@ export default function App() {
     <View style={styles.container}>
       <Button
         title="open picker for single file selection"
-        onPress={() => {
-          DocumentPicker.pickSingle({
-            presentationStyle: 'fullScreen',
-          })
-            .then((pickerResult) => setResult([pickerResult]))
-            .catch(handleError)
+        onPress={async () => {
+          try {
+            const pickerResult = await DocumentPicker.pickSingle({
+              presentationStyle: 'fullScreen',
+            })
+            setResult([pickerResult])
+          } catch (e) {
+            handleError(e)
+          }
         }}
       />
       <Button
