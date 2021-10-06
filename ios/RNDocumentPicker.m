@@ -7,6 +7,7 @@
 #import <React/RCTUtils.h>
 #import "RNCPromiseWrapper.h"
 
+
 static NSString *const E_DOCUMENT_PICKER_CANCELED = @"DOCUMENT_PICKER_CANCELED";
 static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
 
@@ -87,7 +88,8 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     [promiseWrapper setPromiseWithInProgressCheck:resolve rejecter:reject fromCallSite:@"pick"];
 
     NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
-    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:(NSArray *)allowedUTIs inMode:mode];
+    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:allowedUTIs inMode:mode];
+
     documentPicker.modalPresentationStyle = presentationStyle;
 
     documentPicker.delegate = self;
@@ -126,6 +128,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
         [urlsInOpenMode addObject:url];
     }
     
+    // TODO handle error
     [url startAccessingSecurityScopedResource];
 
     NSFileCoordinator *coordinator = [NSFileCoordinator new];
@@ -158,7 +161,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
         }
 
         if (newURL.pathExtension != nil) {
-            CFStringRef extension = (__bridge CFStringRef)[newURL pathExtension];
+            CFStringRef extension = (__bridge CFStringRef) newURL.pathExtension;
             CFStringRef uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension, NULL);
             CFStringRef mimeType = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType);
             if (uti) {
@@ -238,7 +241,8 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     [self rejectAsUserCancellationError];
 }
 
-- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController {
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController
+{
     [self rejectAsUserCancellationError];
 }
 

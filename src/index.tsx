@@ -36,12 +36,19 @@ export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   allowMultiSelection?: boolean
 } & Pick<ModalPropsIOS, 'presentationStyle'>
 
-export function pickDirectory(): Promise<DirectoryPickerResponse | null> {
-  if (Platform.OS === 'android' || Platform.OS === 'windows') {
-    return RNDocumentPicker.pickDirectory()
+export async function pickDirectory<OS extends SupportedPlatforms>(
+  params?: Pick<DocumentPickerOptions<OS>, 'presentationStyle'>,
+): Promise<DirectoryPickerResponse | null> {
+  if (Platform.OS === 'ios') {
+    const result = await pick({
+      ...params,
+      mode: 'open',
+      allowMultiSelection: false,
+      type: ['public.folder'],
+    })
+    return { uri: result[0].uri }
   } else {
-    // TODO iOS impl
-    return Promise.resolve(null)
+    return RNDocumentPicker.pickDirectory()
   }
 }
 

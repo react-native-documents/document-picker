@@ -27,7 +27,7 @@ Requires RN >= 0.63, Android 5.0+ and iOS 11+
   - [RN &gt;= 0.63](#rn--063)
   - [API](#api)
     - [DocumentPicker.pickMultiple(options) / DocumentPicker.pickSingle(options) / DocumentPicker.pick(options)](#documentpickerpickmultipleoptions--documentpickerpicksingleoptions--documentpickerpickoptions)
-    - [[Android and Windows only] DocumentPicker.pickDirectory()](#android-and-windows-only-documentpickerpickdirectory)
+    - [DocumentPicker.pickDirectory()](#documentpickerpickdirectory)
     - [DocumentPicker.pick(options) and DocumentPicker.pickMultiple(options)](#documentpickerpickoptions-and-documentpickerpickmultipleoptions)
     - [Options](#options)
       - [allowMultiSelection:boolean](#allowmultiselectionboolean)
@@ -73,7 +73,7 @@ If you are using RN >= 0.63, only run `pod install` from the ios directory. Then
 
 Use `pickMultiple`, `pickSingle` or `pick` to open a document picker for the user to select file(s). All methods return a Promise.
 
-#### [Android and Windows only] `DocumentPicker.pickDirectory()`
+#### `DocumentPicker.pickDirectory()`
 
 Open a system directory picker. Returns a promise that resolves to (`{ uri: string }`) of the directory selected by user.
 
