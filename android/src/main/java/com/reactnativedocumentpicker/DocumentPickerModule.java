@@ -300,15 +300,15 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
             fileName = String.valueOf(System.currentTimeMillis());
           }
           File destFile = new File(dir, fileName);
-          String path = copyFile(context, uri, destFile);
-          map.putString(FIELD_FILE_COPY_URI, path);
+          String copyPath = copyFile(context, uri, destFile);
+          map.putString(FIELD_FILE_COPY_URI, copyPath);
         } catch (Exception e) {
           e.printStackTrace();
-          map.putString(FIELD_FILE_COPY_URI, uri.toString());
-          map.putString(FIELD_COPY_ERROR, e.getMessage());
+          map.putNull(FIELD_FILE_COPY_URI);
+          map.putString(FIELD_COPY_ERROR, e.getLocalizedMessage());
         }
       } else {
-        map.putString(FIELD_FILE_COPY_URI, uri.toString());
+        map.putNull(FIELD_FILE_COPY_URI);
       }
     }
 
