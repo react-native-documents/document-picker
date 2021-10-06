@@ -37,6 +37,7 @@ export default function App() {
           try {
             const pickerResult = await DocumentPicker.pickSingle({
               presentationStyle: 'fullScreen',
+              copyTo: 'cachesDirectory',
             })
             setResult([pickerResult])
           } catch (e) {

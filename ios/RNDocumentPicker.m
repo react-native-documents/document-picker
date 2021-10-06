@@ -23,7 +23,7 @@ static NSString *const FIELD_SIZE = @"size";
 @implementation RCTConvert (ModalPresentationStyle)
 
 
-// how to de-duplicate from https://github.com/facebook/react-native/blob/v0.66.0/React/Views/RCTModalHostViewManager.m?
+// TODO how to de-duplicate from https://github.com/facebook/react-native/blob/v0.66.0/React/Views/RCTModalHostViewManager.m?
 RCT_ENUM_CONVERTER(
     UIModalPresentationStyle,
     (@{
@@ -44,7 +44,7 @@ RCT_ENUM_CONVERTER(
     UIDocumentPickerMode mode;
     NSString *copyDestination;
     RNCPromiseWrapper* promiseWrapper;
-    NSMutableArray *urls;
+    NSMutableArray *urlsInOpenMode;
 }
 
 @synthesize bridge = _bridge;
@@ -53,14 +53,14 @@ RCT_ENUM_CONVERTER(
 {
     if ((self = [super init])) {
         promiseWrapper = [RNCPromiseWrapper new];
-        urls = [NSMutableArray new];
+        urlsInOpenMode = [NSMutableArray new];
     }
     return self;
 }
 
 - (void)dealloc
 {
-    for (NSURL *url in urls) {
+    for (NSURL *url in urlsInOpenMode) {
         [url stopAccessingSecurityScopedResource];
     }
 }
@@ -82,7 +82,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     mode = options[@"mode"] && [options[@"mode"] isEqualToString:@"open"] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
-    copyDestination = options[@"copyTo"] ? options[@"copyTo"] : nil;
+    copyDestination = options[@"copyTo"];
     UIModalPresentationStyle presentationStyle = [RCTConvert UIModalPresentationStyle:options[@"presentationStyle"]];
     [promiseWrapper setPromiseWithInProgressCheck:resolve rejecter:reject fromCallSite:@"pick"];
 
@@ -93,63 +93,88 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     documentPicker.delegate = self;
     documentPicker.presentationController.delegate = self;
 
-    if (@available(iOS 11.0, *)) {
-        documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULTIPLE]];
-    }
+    documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULTIPLE]];
 
     UIViewController *rootViewController = RCTPresentedViewController();
 
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
 
+
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
+{
+    NSMutableArray *results = [NSMutableArray array];
+    for (id url in urls) {
+        NSError *error;
+        NSMutableDictionary *result = [self getMetadataForUrl:url error:&error];
+        if (result) {
+            [results addObject:result];
+        } else {
+            [promiseWrapper reject:E_INVALID_DATA_RETURNED withError:error];
+            return;
+        }
+    }
+
+    [promiseWrapper resolve:results];
+}
+
 - (NSMutableDictionary *)getMetadataForUrl:(NSURL *)url error:(NSError **)error
 {
     __block NSMutableDictionary *result = [NSMutableDictionary dictionary];
 
-    if (mode == UIDocumentPickerModeOpen)
-        [urls addObject:url];
+    if (mode == UIDocumentPickerModeOpen) {
+        [urlsInOpenMode addObject:url];
+    }
+    
     [url startAccessingSecurityScopedResource];
 
     NSFileCoordinator *coordinator = [NSFileCoordinator new];
     NSError *fileError;
 
+    // TODO double check this implemenation, see eg. https://developer.apple.com/documentation/foundation/nsfilecoordinator/1412420-prepareforreadingitemsaturls
     [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&fileError byAccessor:^(NSURL *newURL) {
+        // If the coordinated operation fails, then the accessor block never runs
+        result[FIELD_URI] = ((mode == UIDocumentPickerModeOpen) ? url : newURL).absoluteString;
+        
+        NSError *copyError;
+        NSString *maybeFileCopyPath = copyDestination ? [RNDocumentPicker copyToUniqueDestinationFrom:newURL usingDestinationPreset:copyDestination error:copyError].absoluteString : nil;
+        
+        if (!copyError) {
+            result[FIELD_FILE_COPY_URI] = RCTNullIfNil(maybeFileCopyPath);
+        } else {
+            result[FIELD_COPY_ERR] = copyError.localizedDescription;
+            result[FIELD_FILE_COPY_URI] = [NSNull null];
+        }
 
-        if (!fileError) {
-            [result setValue:((mode == UIDocumentPickerModeOpen) ? url : newURL).absoluteString forKey:FIELD_URI];
-            NSError *copyError;
-            NSURL *maybeFileCopyPath = copyDestination ? [RNDocumentPicker copyToUniqueDestinationFrom:newURL usingDestinationPreset:copyDestination error:copyError] : newURL;
-            [result setValue:maybeFileCopyPath.absoluteString forKey:FIELD_FILE_COPY_URI];
-            if (copyError) {
-                [result setValue:copyError.description forKey:FIELD_COPY_ERR];
+        result[FIELD_NAME] = newURL.lastPathComponent;
+
+        NSError *attributesError = nil;
+        NSDictionary *fileAttributes = [NSFileManager.defaultManager attributesOfItemAtPath:newURL.path error:&attributesError];
+        if(!attributesError) {
+            result[FIELD_SIZE] = fileAttributes[NSFileSize];
+        } else {
+            result[FIELD_SIZE] = [NSNull null];
+            NSLog(@"RNDocumentPicker: %@", attributesError);
+        }
+
+        if (newURL.pathExtension != nil) {
+            CFStringRef extension = (__bridge CFStringRef)[newURL pathExtension];
+            CFStringRef uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension, NULL);
+            CFStringRef mimeType = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType);
+            if (uti) {
+                CFRelease(uti);
             }
 
-            [result setValue:[newURL lastPathComponent] forKey:FIELD_NAME];
-
-            NSError *attributesError = nil;
-            NSDictionary *fileAttributes = [[NSFileManager defaultManager] attributesOfItemAtPath:newURL.path error:&attributesError];
-            if(!attributesError) {
-                [result setValue:[fileAttributes objectForKey:NSFileSize] forKey:FIELD_SIZE];
-            } else {
-                NSLog(@"%@", attributesError);
-            }
-
-            if ( newURL.pathExtension != nil ) {
-                CFStringRef extension = (__bridge CFStringRef)[newURL pathExtension];
-                CFStringRef uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension, NULL);
-                CFStringRef mimeType = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassMIMEType);
-                if (uti) {
-                    CFRelease(uti);
-                }
-
-                NSString *mimeTypeString = (__bridge_transfer NSString *)mimeType;
-                [result setValue:mimeTypeString forKey:FIELD_TYPE];
-            }
+            NSString *mimeTypeString = (__bridge_transfer NSString *)mimeType;
+            result[FIELD_TYPE] = mimeTypeString;
+        } else {
+            result[FIELD_TYPE] = [NSNull null];
         }
     }];
 
-    if (mode != UIDocumentPickerModeOpen)
+    if (mode != UIDocumentPickerModeOpen) {
         [url stopAccessingSecurityScopedResource];
+    }
 
     if (fileError) {
         *error = fileError;
@@ -165,7 +190,7 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
 {
     NSMutableArray *discardedItems = [NSMutableArray array];
     for (NSString *uri in uris) {
-        for (NSURL *url in urls) {
+        for (NSURL *url in urlsInOpenMode) {
             if ([url.absoluteString isEqual:uri]) {
                 [url stopAccessingSecurityScopedResource];
                 [discardedItems addObject:url];
@@ -173,19 +198,8 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
             }
         }
     }
-    [urls removeObjectsInArray:discardedItems];
+    [urlsInOpenMode removeObjectsInArray:discardedItems];
     resolve(nil);
-}
-
-+ (NSURL *)getDirectoryForFileCopy:(NSString *)copyToDirectory
-{
-    if ([@"cachesDirectory" isEqualToString:copyToDirectory]) {
-        return [NSFileManager.defaultManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask].firstObject;
-    } else if ([@"documentDirectory" isEqualToString:copyToDirectory]) {
-        return [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
-    }
-    // this should not happen as the value is checked in JS, but we fall back to NSTemporaryDirectory()
-    return [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
 }
 
 + (NSURL *)copyToUniqueDestinationFrom:(NSURL *)url usingDestinationPreset:(NSString *)copyToDirectory error:(NSError *)error
@@ -208,21 +222,15 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     }
 }
 
-- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
++ (NSURL *)getDirectoryForFileCopy:(NSString *)copyToDirectory
 {
-    NSMutableArray *results = [NSMutableArray array];
-    for (id url in urls) {
-        NSError *error;
-        NSMutableDictionary *result = [self getMetadataForUrl:url error:&error];
-        if (result) {
-            [results addObject:result];
-        } else {
-            [promiseWrapper reject:E_INVALID_DATA_RETURNED withError:error];
-            return;
-        }
+    if ([@"cachesDirectory" isEqualToString:copyToDirectory]) {
+        return [NSFileManager.defaultManager URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask].firstObject;
+    } else if ([@"documentDirectory" isEqualToString:copyToDirectory]) {
+        return [NSFileManager.defaultManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
     }
-
-    [promiseWrapper resolve:results];
+    // this should not happen as the value is checked in JS, but we fall back to NSTemporaryDirectory()
+    return [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
 }
 
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller

@@ -5,11 +5,11 @@ import { perPlatformTypes } from './fileTypes'
 
 export type DocumentPickerResponse = {
   uri: string
-  fileCopyUri: string
-  copyError?: string
-  type: string
   name: string
-  size: number
+  copyError?: string
+  fileCopyUri: string | null
+  type: string | null
+  size: number | null
 }
 
 export const types = perPlatformTypes[Platform.OS]
