@@ -83,7 +83,7 @@ export default function App() {
         }}
       />
       <Button
-        title="open directory picker (android+windows only)"
+        title="open directory picker"
         onPress={() => {
           DocumentPicker.pickDirectory().then(setResult).catch(handleError)
         }}
