@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -56,6 +57,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
   private static final String OPTION_TYPE = "type";
   private static final String OPTION_MULTIPLE = "allowMultiSelection";
   private static final String OPTION_COPY_TO = "copyTo";
+  private static final String OPTION_INITIAL_PATH = "initialPath";
 
   private static final String FIELD_URI = "uri";
   private static final String FIELD_FILE_COPY_URI = "fileCopyUri";
@@ -123,16 +125,34 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
     try {
       Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
       intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-      intent.setType("*/*");
-      if (!args.isNull(OPTION_TYPE)) {
-        ReadableArray types = args.getArray(OPTION_TYPE);
-        if (types != null) {
-          if (types.size() > 1) {
-            String[] mimeTypes = readableArrayToStringArray(types);
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-          } else if (types.size() == 1) {
-            intent.setType(types.getString(0));
+      String initialPath = args.getString(OPTION_INITIAL_PATH);
+      File path = new File(Environment.getExternalStorageDirectory() + initialPath);
+      File purePath = new File(initialPath);
+      if (initialPath.length() > 0 && (path.isDirectory() || purePath.isDirectory())) {
+        String openPath = path.isDirectory() ? Environment.getExternalStorageDirectory() + initialPath : initialPath;
+        intent.setDataAndType(Uri.parse(openPath), "*/*");
+        if (!args.isNull(OPTION_TYPE)) {
+          ReadableArray types = args.getArray(OPTION_TYPE);
+          if (types != null) {
+            if (types.size() > 1) {
+              String[] mimeTypes = readableArrayToStringArray(types);
+              intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            } else if (types.size() == 1) {
+              intent.setDataAndType(Uri.parse(openPath), types.getString(0));
+            }
+          }
+        }
+      } else {
+        intent.setType("*/*");
+        if (!args.isNull(OPTION_TYPE)) {
+          ReadableArray types = args.getArray(OPTION_TYPE);
+          if (types != null) {
+            if (types.size() > 1) {
+              String[] mimeTypes = readableArrayToStringArray(types);
+              intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            } else if (types.size() == 1) {
+              intent.setType(types.getString(0));
+            }
           }
         }
       }
@@ -200,7 +220,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
       try {
         List<Uri> uris = new ArrayList<>();
-        // condition order seems to matter: https://github.com/rnmods/react-native-document-picker/issues/317#issuecomment-645222635
+        // condition order seems to matter:
+        // https://github.com/rnmods/react-native-document-picker/issues/317#issuecomment-645222635
         if (clipData != null && clipData.getItemCount() > 0) {
           final int length = clipData.getItemCount();
           for (int i = 0; i < length; ++i) {
@@ -338,7 +359,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
           if (out != null) {
             out.close();
           }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
         throw e;
       }
     }

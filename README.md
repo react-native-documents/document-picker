@@ -135,6 +135,13 @@ Defaults to `false`. If `readContent` is set to true the content of the picked f
 
 - You can use `react-native-fs` on Android and IOS to read the picked file.
 
+##### [iOS and Android only] `initialPath`:`string`
+
+The initialPath is set to specify the starting directory for the document picker. Defaults is the last directory chosen by the user. If you specify a value, the document picker tries to start at the specified directory. Otherwise, it starts with the last directory chosen by the user.
+
+- On iOS is available at iOS 13.0+, but if lower, it will be start at default path.
+
+
 ### Result
 
 The `pick` Promise resolves to an array of objects with the following keys.

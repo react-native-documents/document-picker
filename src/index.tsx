@@ -34,6 +34,7 @@ export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   mode?: 'import' | 'open'
   copyTo?: 'cachesDirectory' | 'documentDirectory'
   allowMultiSelection?: boolean
+  initialPath?: string
 } & Pick<ModalPropsIOS, 'presentationStyle'>
 
 export async function pickDirectory<OS extends SupportedPlatforms>(
@@ -132,6 +133,13 @@ function doPick<OS extends SupportedPlatforms>(
     !['cachesDirectory', 'documentDirectory'].includes(options.copyTo ?? '')
   ) {
     throw new TypeError('Invalid copyTo option: ' + options.copyTo)
+  }
+
+  if (
+    'initialPath' in options &&
+    (!!!options.initialPath || options?.initialPath?.length === 0)
+  ) {
+    throw new TypeError('Invalid initialPath option: ' + options.initialPath)
   }
 
   return RNDocumentPicker.pick(options)

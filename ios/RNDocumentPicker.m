@@ -13,6 +13,7 @@ static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
 
 static NSString *const OPTION_TYPE = @"type";
 static NSString *const OPTION_MULTIPLE = @"allowMultiSelection";
+static NSString *const OPTION_INITIAL_PATH = @"initialPath";
 
 static NSString *const FIELD_URI = @"uri";
 static NSString *const FIELD_FILE_COPY_URI = @"fileCopyUri";
@@ -46,6 +47,8 @@ RCT_ENUM_CONVERTER(
     NSString *copyDestination;
     RNCPromiseWrapper* promiseWrapper;
     NSMutableArray *urlsInOpenMode;
+    UIModalPresentationStyle presentationStyle;
+    NSArray *allowedUTIs;
 }
 
 @synthesize bridge = _bridge;
@@ -88,6 +91,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     [promiseWrapper setPromiseWithInProgressCheck:resolve rejecter:reject fromCallSite:@"pick"];
 
     NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
+    
     UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:allowedUTIs inMode:mode];
 
     documentPicker.modalPresentationStyle = presentationStyle;
@@ -97,11 +101,23 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
     documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULTIPLE]];
 
+    if (@available(iOS 13, *)) {
+        if(options[OPTION_INITIAL_PATH] && [[RCTConvert NSString:options[OPTION_INITIAL_PATH]] length] > 0) {
+            NSString *initialPath = [RCTConvert NSString:options[OPTION_INITIAL_PATH]];
+            BOOL isExistPath = [self checkIfDirectoryAlreadyExists:initialPath];
+            if(isExistPath) {
+                documentPicker.directoryURL = [NSURL fileURLWithPath:initialPath];
+            } else {
+                documentPicker.directoryURL = nil;
+            }
+        } else {
+            documentPicker.directoryURL = nil;
+        }
+    }
     UIViewController *rootViewController = RCTPresentedViewController();
 
     [rootViewController presentViewController:documentPicker animated:YES completion:nil];
 }
-
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 {
@@ -251,6 +267,17 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     // TODO make error nullable?
     NSError* error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSUserCancelledError userInfo:nil];
     [promiseWrapper reject:@"user canceled the document picker" withCode:E_DOCUMENT_PICKER_CANCELED withError:error];
+}
+
+- (BOOL)checkIfDirectoryAlreadyExists:(NSString *)filePath
+{
+    BOOL isDir;
+    if (filePath != nil) {
+        if ([NSFileManager.defaultManager fileExistsAtPath:filePath isDirectory:&isDir] && isDir) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 @end
