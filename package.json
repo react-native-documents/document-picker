@@ -27,7 +27,7 @@
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
-    "release": "release-it",
+    "release": "yarn prepare && release-it",
     "example": "yarn --cwd example",
     "pods": "cd example && pod-install --quiet",
     "bootstrap": "yarn example && yarn && yarn pods"
@@ -78,6 +78,11 @@
     "react": "*",
     "react-native": "*",
     "react-native-windows": "*"
+  },
+  "peerDependenciesMeta": {
+    "react-native-windows": {
+      "optional": true
+    }
   },
   "jest": {
     "preset": "react-native",
