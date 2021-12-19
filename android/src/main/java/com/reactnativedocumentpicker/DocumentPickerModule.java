@@ -56,6 +56,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
   private static final String OPTION_TYPE = "type";
   private static final String OPTION_MULTIPLE = "allowMultiSelection";
+  private static final String OPTION_TITLE = "title";
   private static final String OPTION_COPY_TO = "copyTo";
 
   private static final String FIELD_URI = "uri";
@@ -75,10 +76,10 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
       }
       if (requestCode == READ_REQUEST_CODE) {
         onShowActivityResult(resultCode, data, storedPromise);
-      } else if (requestCode == WRITE_REQUEST_CODE) {
-        onShowActivityResult(resultCode, data, storedPromise);
       } else if (requestCode == PICK_DIR_REQUEST_CODE) {
         onPickDirectoryResult(resultCode, data);
+      } else if (requestCode == WRITE_REQUEST_CODE) {
+        onStoreResult(resultCode, data);
       }
     }
   };
@@ -180,9 +181,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
         }
       }
 
-     
+      String title = "";
+      if (!args.isNull(OPTION_TITLE)) {
+        title = args.getString(OPTION_TITLE);
+        
+      }
+      intent.putExtra(Intent.EXTRA_TITLE, title);
 
-      currentActivity.startActivityForResult(Intent.createChooser(intent, null), WRITE_REQUEST_CODE, Bundle.EMPTY);
+      currentActivity.startActivityForResult(intent, WRITE_REQUEST_CODE, null);
     } catch (ActivityNotFoundException e) {
       sendError(E_UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
     } catch (Exception e) {
@@ -190,7 +196,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
       sendError(E_FAILED_TO_SHOW_PICKER, e.getLocalizedMessage());
     }
   }
-  
+
   @ReactMethod
   public void pickDirectory(Promise promise) {
     Activity currentActivity = getCurrentActivity();
@@ -228,6 +234,26 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
     promise.resolve(map);
   }
 
+  private void onStoreResult(int resultCode, Intent data) {
+    if (resultCode == Activity.RESULT_CANCELED) {
+      sendError(E_DOCUMENT_PICKER_CANCELED, "User canceled document store");
+      return;
+    } else if (resultCode != Activity.RESULT_OK) {
+      sendError(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
+      return;
+    }
+
+    if (data == null || data.getData() == null) {
+      sendError(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
+      return;
+    }
+    Uri uri = data.getData();
+
+    WritableMap map = Arguments.createMap();
+    map.putString(FIELD_URI, uri.toString());
+    promise.resolve(map);
+  }
+
   public void onShowActivityResult(int resultCode, Intent data, Promise promise) {
     if (resultCode == Activity.RESULT_CANCELED) {
       sendError(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
@@ -242,7 +268,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
       try {
         List<Uri> uris = new ArrayList<>();
-        // condition order seems to matter: https://github.com/rnmods/react-native-document-picker/issues/317#issuecomment-645222635
+        // condition order seems to matter:
+        // https://github.com/rnmods/react-native-document-picker/issues/317#issuecomment-645222635
         if (clipData != null && clipData.getItemCount() > 0) {
           final int length = clipData.getItemCount();
           for (int i = 0; i < length; ++i) {
@@ -380,7 +407,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
           if (out != null) {
             out.close();
           }
-        } catch (IOException ignored) {}
+        } catch (IOException ignored) {
+        }
         throw e;
       }
     }
