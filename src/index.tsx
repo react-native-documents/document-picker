@@ -35,6 +35,7 @@ export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   mode?: 'import' | 'open'
   copyTo?: 'cachesDirectory' | 'documentDirectory'
   allowMultiSelection?: boolean
+  title?: string
 } & Pick<ModalPropsIOS, 'presentationStyle'>
 
 export async function pickDirectory<OS extends SupportedPlatforms>(
@@ -101,7 +102,9 @@ export function store<OS extends SupportedPlatforms>(
 
   const newOpts: DoPickParams<OS> = {
     presentationStyle: 'formSheet',
+    title: '',
     ...options,
+
     type: Array.isArray(options.type) ? options.type : [options.type],
   }
   return doStore(newOpts)
@@ -160,11 +163,11 @@ function doStore<OS extends SupportedPlatforms>(
 ): Promise<DocumentPickerResponse[]> {
   invariant(
     !('filetype' in options),
-    'A `filetype` option was passed to DocumentPicker.pick, the correct option is `type`',
+    'A `filetype` option was passed to DocumentPicker.store, the correct option is `type`',
   )
   invariant(
     !('types' in options),
-    'A `types` option was passed to DocumentPicker.pick, the correct option is `type`',
+    'A `types` option was passed to DocumentPicker.store, the correct option is `type`',
   )
 
   invariant(
