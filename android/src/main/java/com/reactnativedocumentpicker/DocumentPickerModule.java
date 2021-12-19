@@ -43,6 +43,7 @@ import java.util.UUID;
 public class DocumentPickerModule extends ReactContextBaseJavaModule {
   public static final String NAME = "RNDocumentPicker";
   private static final int READ_REQUEST_CODE = 41;
+  private static final int WRITE_REQUEST_CODE = 101;
   private static final int PICK_DIR_REQUEST_CODE = 42;
 
   private static final String E_ACTIVITY_DOES_NOT_EXIST = "ACTIVITY_DOES_NOT_EXIST";
@@ -179,7 +180,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
 
      
 
-      currentActivity.startActivityForResult(Intent.createChooser(intent, null), REQUEST_OUTPUT, Bundle.EMPTY);
+      currentActivity.startActivityForResult(Intent.createChooser(intent, null), WRITE_REQUEST_CODE, Bundle.EMPTY);
     } catch (ActivityNotFoundException e) {
       sendError(E_UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
     } catch (Exception e) {
