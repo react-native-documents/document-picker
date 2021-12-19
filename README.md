@@ -86,9 +86,18 @@ Open a system directory picker. Returns a promise that resolves to (`{ uri: stri
 - `pickSingle` only allows a single selection and the Promise will resolve to that single result (same behavior as `pick` in v5)
 - `pickMultiple` allows multiple selection and the Promise will resolve to an array of results.
 
+#### [Android only] `DocumentPicker.store()`
+
+Open a system store intent. Returns a promise that resolves to (`{ uri: string }`) of the new file selected by user.
+
 ### Options
 
 All of the options are optional
+
+
+##### [Android only] `title`:`String`
+
+For `store`, Callers can provide an initial display name through `title`, but the user may change this value before creating the file. 
 
 ##### `allowMultiSelection`:`boolean`
 
