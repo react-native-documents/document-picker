@@ -35,7 +35,6 @@ export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   mode?: 'import' | 'open'
   copyTo?: 'cachesDirectory' | 'documentDirectory'
   allowMultiSelection?: boolean
-  title?: string
 } & Pick<ModalPropsIOS, 'presentationStyle'>
 
 export async function pickDirectory<OS extends SupportedPlatforms>(
