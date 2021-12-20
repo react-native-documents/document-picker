@@ -34,6 +34,7 @@ export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
     | Array<PlatformTypes[OS][keyof PlatformTypes[OS]] | string>
   mode?: 'import' | 'open'
   copyTo?: 'cachesDirectory' | 'documentDirectory'
+  title?: string
   allowMultiSelection?: boolean
 } & Pick<ModalPropsIOS, 'presentationStyle'>
 
