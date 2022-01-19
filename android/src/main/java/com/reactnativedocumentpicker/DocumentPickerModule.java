@@ -326,7 +326,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
           }
           out.close();
           in.close();
-          return destFile.getAbsolutePath();
+          return destFile.toURI().toString();
         } else {
           throw new NullPointerException("Invalid input stream");
         }
