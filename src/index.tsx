@@ -134,7 +134,18 @@ function doPick<OS extends SupportedPlatforms>(
     throw new TypeError('Invalid copyTo option: ' + options.copyTo)
   }
 
-  return RNDocumentPicker.pick(options)
+  return RNDocumentPicker.pick(options).then((pickerDocuments) => {
+    if (Platform.OS === 'ios') {
+      return pickerDocuments.map((pickerDocument) => ({
+        ...pickerDocument,
+        fileCopyUri: pickerDocument.fileCopyUri
+          ? decodeURIComponent(pickerDocument.fileCopyUri)
+          : null,
+        uri: decodeURIComponent(pickerDocument.uri),
+      }))
+    }
+    return pickerDocuments
+  })
 }
 
 export function releaseSecureAccess(uris: Array<string>): Promise<void> {
