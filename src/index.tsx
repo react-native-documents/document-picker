@@ -136,13 +136,12 @@ function doPick<OS extends SupportedPlatforms>(
 
   return RNDocumentPicker.pick(options).then((pickerDocuments) => {
     if (Platform.OS === 'ios') {
-      return pickerDocuments.map((pickerDocument) => ({
-        ...pickerDocument,
-        fileCopyUri: pickerDocument.fileCopyUri
-          ? decodeURIComponent(pickerDocument.fileCopyUri)
-          : null,
-        uri: decodeURIComponent(pickerDocument.uri),
-      }))
+      pickerDocuments.forEach((document) => {
+        document.uri = decodeURIComponent(document.uri)
+        if (document.fileCopyUri) {
+          document.fileCopyUri = decodeURIComponent(document.fileCopyUri)
+        }
+      })
     }
     return pickerDocuments
   })
