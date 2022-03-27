@@ -37,6 +37,19 @@ RCT_ENUM_CONVERTER(
     integerValue)
 @end
 
+@implementation RCTConvert (ModalTransitionStyle)
+
+RCT_ENUM_CONVERTER(
+    UIModalTransitionStyle,
+    (@{
+      @"coverVertical" : @(UIModalTransitionStyleCoverVertical),
+      @"flipHorizontal" : @(UIModalTransitionStyleFlipHorizontal),
+      @"crossDissolve" : @(UIModalTransitionStyleCrossDissolve),
+      @"partialCurl" : @(UIModalTransitionStylePartialCurl),
+    }),
+    UIModalTransitionStyleCoverVertical,
+    integerValue)
+@end
 
 @interface RNDocumentPicker () <UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate>
 @end
@@ -85,12 +98,14 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     mode = options[@"mode"] && [options[@"mode"] isEqualToString:@"open"] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
     copyDestination = options[@"copyTo"];
     UIModalPresentationStyle presentationStyle = [RCTConvert UIModalPresentationStyle:options[@"presentationStyle"]];
+    UIModalTransitionStyle transitionStyle = [RCTConvert UIModalTransitionStyle:options[@"transitionStyle"]];
     [promiseWrapper setPromiseWithInProgressCheck:resolve rejecter:reject fromCallSite:@"pick"];
 
     NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
     UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:allowedUTIs inMode:mode];
 
     documentPicker.modalPresentationStyle = presentationStyle;
+    documentPicker.modalTransitionStyle = transitionStyle;
 
     documentPicker.delegate = self;
     documentPicker.presentationController.delegate = self;

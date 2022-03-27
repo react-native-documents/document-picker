@@ -33,6 +33,7 @@ Requires RN >= 0.63, Android 5.0+ and iOS 11+
       - [allowMultiSelection:boolean](#allowmultiselectionboolean)
       - [type:string|Array&lt;string&gt;](#typestringarraystring)
       - [[iOS only] presentationStyle:'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen'](#ios-only-presentationstylefullscreen--pagesheet--formsheet--overfullscreen)
+      - [[iOS only] transitionStyle:'coverVertical' | 'flipHorizontal' | 'crossDissolve' | 'partialCurl'](#ios-only-transitionstylecoververtical--fliphorizontal--crossdissolve--partialcurl)
       - [[iOS only] mode:"import" | "open"](#ios-only-modeimport--open)
       - [[iOS and Android only] copyTo:"cachesDirectory" | "documentDirectory"](#ios-and-android-only-copytocachesdirectory--documentdirectory)
       - [[Windows only] readContent:boolean](#windows-only-readcontentboolean)
@@ -105,6 +106,10 @@ The type or types of documents to allow selection of. May be an array of types a
 ##### [iOS only] `presentationStyle`:`'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen'`
 
 Controls how the picker is presented, eg. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`.
+
+##### [iOS only] `transitionStyle`:`'coverVertical' | 'flipHorizontal' | 'crossDissolve' | 'partialCurl'`
+
+Configure the transition style of the picker. Defaults to `coverVertical`, when the picker is presented, its view slides up from the bottom of the screen.
 
 ##### [iOS only] `mode`:`"import" | "open"`
 
