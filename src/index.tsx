@@ -26,7 +26,7 @@ type DocumentPickerType = {
 
 const RNDocumentPicker: DocumentPickerType = NativeModules.RNDocumentPicker
 
-type TransitionStyle = 'coverVertical' | 'flipHorizontal' | 'crossDissolve' | 'partialCurl'
+export type TransitionStyle = 'coverVertical' | 'flipHorizontal' | 'crossDissolve' | 'partialCurl'
 
 export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   type?:
