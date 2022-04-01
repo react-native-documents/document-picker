@@ -26,6 +26,8 @@ type DocumentPickerType = {
 
 const RNDocumentPicker: DocumentPickerType = NativeModules.RNDocumentPicker
 
+export type TransitionStyle = 'coverVertical' | 'flipHorizontal' | 'crossDissolve' | 'partialCurl'
+
 export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   type?:
     | string
@@ -34,10 +36,11 @@ export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
   mode?: 'import' | 'open'
   copyTo?: 'cachesDirectory' | 'documentDirectory'
   allowMultiSelection?: boolean
+  transitionStyle?: TransitionStyle
 } & Pick<ModalPropsIOS, 'presentationStyle'>
 
 export async function pickDirectory<OS extends SupportedPlatforms>(
-  params?: Pick<DocumentPickerOptions<OS>, 'presentationStyle'>,
+  params?: Pick<DocumentPickerOptions<OS>, 'presentationStyle' | 'transitionStyle'>,
 ): Promise<DirectoryPickerResponse | null> {
   if (Platform.OS === 'ios') {
     const result = await pick({
@@ -83,6 +86,7 @@ export function pick<OS extends SupportedPlatforms>(
 
   const newOpts: DoPickParams<OS> = {
     presentationStyle: 'formSheet',
+    transitionStyle: 'coverVertical',
     ...options,
     type: Array.isArray(options.type) ? options.type : [options.type],
   }
@@ -94,6 +98,7 @@ type DoPickParams<OS extends SupportedPlatforms> = DocumentPickerOptions<OS> & {
   type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]] | string>
   allowMultiSelection: boolean
   presentationStyle: NonNullable<ModalPropsIOS['presentationStyle']>
+  transitionStyle: TransitionStyle
 }
 
 function doPick<OS extends SupportedPlatforms>(
