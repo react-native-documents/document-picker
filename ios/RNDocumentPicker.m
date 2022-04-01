@@ -6,7 +6,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTUtils.h>
 #import "RNCPromiseWrapper.h"
-
+#import "RCTConvert+RNDocumentPicker.h"
 
 static NSString *const E_DOCUMENT_PICKER_CANCELED = @"DOCUMENT_PICKER_CANCELED";
 static NSString *const E_INVALID_DATA_RETURNED = @"INVALID_DATA_RETURNED";
@@ -21,35 +21,6 @@ static NSString *const FIELD_NAME = @"name";
 static NSString *const FIELD_TYPE = @"type";
 static NSString *const FIELD_SIZE = @"size";
 
-@implementation RCTConvert (ModalPresentationStyle)
-
-
-// TODO how to de-duplicate from https://github.com/facebook/react-native/blob/v0.66.0/React/Views/RCTModalHostViewManager.m?
-RCT_ENUM_CONVERTER(
-    UIModalPresentationStyle,
-    (@{
-      @"fullScreen" : @(UIModalPresentationFullScreen),
-      @"pageSheet" : @(UIModalPresentationPageSheet),
-      @"formSheet" : @(UIModalPresentationFormSheet),
-      @"overFullScreen" : @(UIModalPresentationOverFullScreen),
-    }),
-    UIModalPresentationFullScreen,
-    integerValue)
-@end
-
-@implementation RCTConvert (ModalTransitionStyle)
-
-RCT_ENUM_CONVERTER(
-    UIModalTransitionStyle,
-    (@{
-      @"coverVertical" : @(UIModalTransitionStyleCoverVertical),
-      @"flipHorizontal" : @(UIModalTransitionStyleFlipHorizontal),
-      @"crossDissolve" : @(UIModalTransitionStyleCrossDissolve),
-      @"partialCurl" : @(UIModalTransitionStylePartialCurl),
-    }),
-    UIModalTransitionStyleCoverVertical,
-    integerValue)
-@end
 
 @interface RNDocumentPicker () <UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate>
 @end
