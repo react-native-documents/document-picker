@@ -54,6 +54,8 @@ Requires RN >= 0.63, Android 5.0+ and iOS 11+
 
 ### Installation
 
+#### React Native
+
 ```bash
 npm i --save react-native-document-picker
 
@@ -61,6 +63,23 @@ OR
 
 yarn add react-native-document-picker
 ```
+
+#### Expo
+
+This package is supported in Expo managed workflow through the usage of [custom development clients](https://docs.expo.dev/development/getting-started/).
+
+```bash
+expo install react-native-document-picker
+
+# Create a development build (provided you have expo-dev-client installed and set up)
+eas build
+
+# Or run it locally
+expo prebuild
+expo run:ios
+expo run:android
+```
+
 
 #### RN >= 0.63
 
