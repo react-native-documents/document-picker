@@ -204,6 +204,7 @@ The base64 encoded content of the picked file if the option `readContent` was se
 - `DocumentPicker.types.pptx`: pptx files
 - `DocumentPicker.types.xls`: xls files
 - `DocumentPicker.types.xlsx`: xlsx files
+- `DocumentPicker.types.vcard`: vCard files
 
 #### `DocumentPicker.isCancel(err)`
 
