@@ -131,6 +131,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
           if (types.size() > 1) {
             String[] mimeTypes = readableArrayToStringArray(types);
             intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            intent.setType(String.join("|",mimeTypes));
           } else if (types.size() == 1) {
             intent.setType(types.getString(0));
           }
