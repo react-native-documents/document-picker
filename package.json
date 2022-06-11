@@ -68,6 +68,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^4.2.5",
     "jest": "^27.2.4",
+    "metro-react-native-babel-preset": "^0.71.1",
     "pod-install": "^0.1.28",
     "prettier": "^2.4.1",
     "react": "17.0.2",
@@ -148,7 +149,6 @@
     ]
   },
   "dependencies": {
-    "invariant": "^2.2.4",
-    "metro-react-native-babel-preset": "^0.71.1"
+    "invariant": "^2.2.4"
   }
 }
