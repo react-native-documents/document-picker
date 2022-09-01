@@ -1,6 +1,6 @@
 #import <React/RCTBridgeModule.h>
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 @interface RNDocumentPicker : NSObject <RCTBridgeModule>
 

@@ -1,7 +1,8 @@
-import { Platform, NativeModules, ModalPropsIOS } from 'react-native'
+import { Platform, ModalPropsIOS } from 'react-native'
 import invariant from 'invariant'
 import type { PlatformTypes, SupportedPlatforms } from './fileTypes'
 import { perPlatformTypes } from './fileTypes'
+import { NativeDocumentPicker } from './NativeModule'
 
 export type DocumentPickerResponse = {
   uri: string
@@ -18,13 +19,7 @@ export type DirectoryPickerResponse = {
   uri: string
 }
 
-type DocumentPickerType = {
-  pick(options: Record<string, any>): Promise<DocumentPickerResponse[]>
-  releaseSecureAccess(uris: string[]): Promise<void>
-  pickDirectory(): Promise<DirectoryPickerResponse>
-}
-
-const RNDocumentPicker: DocumentPickerType = NativeModules.RNDocumentPicker
+const RNDocumentPicker = NativeDocumentPicker
 
 export type TransitionStyle = 'coverVertical' | 'flipHorizontal' | 'crossDissolve' | 'partialCurl'
 

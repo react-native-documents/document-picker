@@ -1,5 +1,5 @@
 #import <React/RCTConvert.h>
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 @interface RCTConvert(RNDocumentPicker)
 
