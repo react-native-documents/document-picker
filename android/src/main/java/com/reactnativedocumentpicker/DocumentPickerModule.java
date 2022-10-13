@@ -261,7 +261,8 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
       WritableMap map = Arguments.createMap();
       map.putString(FIELD_URI, uri.toString());
       map.putString(FIELD_TYPE, contentResolver.getType(uri));
-      try (Cursor cursor = contentResolver.query(uri, null, null, null, null, null)) {
+      Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
+      try {
         if (cursor != null && cursor.moveToFirst()) {
           int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
           if (!cursor.isNull(displayNameIndex)) {
@@ -276,6 +277,10 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
           if (!cursor.isNull(sizeIndex)) {
             map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
           }
+        }
+      } finally {
+        if(cursor != null) {
+          cursor.close();
         }
       }
 
