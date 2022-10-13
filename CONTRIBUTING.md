@@ -17,19 +17,19 @@ While developing, you can run the [example app](/example/) to test your changes.
 To start the packager:
 
 ```sh
-yarn example start
+yarn start
 ```
 
 To run the example app on Android:
 
 ```sh
-yarn example android
+yarn android
 ```
 
 To run the example app on iOS:
 
 ```sh
-yarn example ios
+yarn ios
 ```
 
 Make sure your code passes TypeScript and ESLint. Run the following to verify:
