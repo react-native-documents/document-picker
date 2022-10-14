@@ -38,6 +38,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import android.text.TextUtils;
 
 @ReactModule(name = DocumentPickerModule.NAME)
 public class DocumentPickerModule extends ReactContextBaseJavaModule {
@@ -131,7 +132,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
           if (types.size() > 1) {
             String[] mimeTypes = readableArrayToStringArray(types);
             intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-            intent.setType(String.join("|",mimeTypes));
+            intent.setType(TextUtils.join("|",mimeTypes));
           } else if (types.size() == 1) {
             intent.setType(types.getString(0));
           }
