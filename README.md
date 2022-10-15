@@ -119,7 +119,7 @@ Whether selecting multiple files is allowed. For `pick`, this is `false` by defa
 The type or types of documents to allow selection of. May be an array of types as single type string.
 
 - On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`. See [common MIME types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types).
-- On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html)"
+- On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/documentation/uniformtypeidentifiers/system-declared_uniform_type_identifiers?language=objc)"
 - If `type` is omitted it will be treated as `*/*` or `public.item`.
 
 #### [iOS only] `presentationStyle`:`'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen'`
