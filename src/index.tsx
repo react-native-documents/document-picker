@@ -5,7 +5,7 @@ import { perPlatformTypes } from './fileTypes'
 
 export type DocumentPickerResponse = {
   uri: string
-  name: string
+  name: string | null
   copyError?: string
   fileCopyUri: string | null
   type: string | null
