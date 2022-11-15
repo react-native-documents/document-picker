@@ -40,7 +40,7 @@
     "type": "modules",
     "jsSrcsDir": "src",
     "android": {
-      "javaPackageName": "com.rnnewarchitecturelibrary"
+      "javaPackageName": "com.rndocumentpicker"
     }
   },
   "keywords": [

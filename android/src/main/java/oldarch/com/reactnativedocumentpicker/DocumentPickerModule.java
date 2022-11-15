@@ -1,4 +1,4 @@
-package com.reactnativedocumentpicker;
+package oldarch.com.reactnativedocumentpicker;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;

@@ -1,4 +1,6 @@
-
+def isNewArchitectureEnabled() {
+   return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true"
+}
 buildscript {
     if (project == rootProject) {
         repositories {
@@ -6,28 +8,39 @@ buildscript {
             mavenCentral()
         }
 
-        dependencies {
-            classpath 'com.android.tools.build:gradle:3.5.3'
-        }
+//        dependencies {
+//            classpath 'com.android.tools.build:gradle:7.2.2'
+//        }
     }
 }
 
 apply plugin: 'com.android.library'
+if (isNewArchitectureEnabled()) {
+  apply(plugin: "com.facebook.react")
+}
 
 def safeExtGet(prop, fallback) {
     rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
 android {
-    compileSdkVersion safeExtGet('compileSdkVersion', 29)
-    buildToolsVersion safeExtGet('buildToolsVersion', '29.0.2')
+    compileSdkVersion safeExtGet('compileSdkVersion', 30)
+    buildToolsVersion safeExtGet('buildToolsVersion', '30.0.3')
     defaultConfig {
         minSdkVersion safeExtGet('minSdkVersion', 21)
-        targetSdkVersion safeExtGet('targetSdkVersion', 29)
-        versionCode 1
-        versionName "1.0"
+        targetSdkVersion safeExtGet('targetSdkVersion', 30)
+        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
     }
 
+    sourceSets {
+      main {
+        if (isNewArchitectureEnabled()) {
+          java.srcDirs += ['src/newarch']
+        } else {
+          java.srcDirs += ['src/oldarch']
+        }
+      }
+    }
     buildTypes {
         release {
             minifyEnabled false
