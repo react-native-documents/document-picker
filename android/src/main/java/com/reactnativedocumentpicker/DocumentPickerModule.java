@@ -231,7 +231,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
     private final Promise promise;
 
     protected ProcessDataTask(ReactContext reactContext, List<Uri> uris, String copyTo, Promise promise) {
-      super(reactContext);
+      super(reactContext.getExceptionHandler());
       this.weakContext = new WeakReference<>(reactContext.getApplicationContext());
       this.uris = uris;
       this.copyTo = copyTo;
