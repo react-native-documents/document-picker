@@ -275,10 +275,10 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
             map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
           }
           int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-          if (!cursor.isNull(sizeIndex)) {
-            map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
-          } else {
+          if (cursor.isNull(sizeIndex)) {
             map.putNull(FIELD_SIZE);
+          } else {
+            map.putDouble(FIELD_SIZE, cursor.getLong(sizeIndex));
           }
         }
       }
