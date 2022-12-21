@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
 
   s.ios.deployment_target = '11.0'
   # s.tvos.deployment_target = '9.2'
-  s.osx.deployment_target = '10.10'
+  s.osx.deployment_target = '10.5'
 
   s.source       = { :git => "https://github.com/rnmods/react-native-document-picker.git", :tag => "v#{s.version}" }
 

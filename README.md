@@ -19,7 +19,7 @@ A React Native wrapper for:
   </tr>
 </table>
 
-Requires RN >= 0.63, Android 5.0+ and iOS 11+
+Requires RN >= 0.63, Android 5.0+, iOS 11+ and OSX 10.5
 
 # Table of Contents
 
