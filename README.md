@@ -6,7 +6,8 @@ If you want to ask questions, we opened [GH discussions](https://github.com/rnmo
 
 A React Native wrapper for:
 
-- Apple's `UIDocumentPickerViewController`
+- iOS `UIDocumentPickerViewController`
+- OSX `NSOpenPanel`
 - Android's `Intent.ACTION_GET_CONTENT`
 - Windows `Windows.Storage.Pickers`
 
