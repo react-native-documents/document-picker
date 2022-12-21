@@ -76,15 +76,16 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
+    
+    copyDestination = options[@"copyTo"];
+    NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
 
     #if __has_include(<UIKit/UIKit.h>)
         mode = options[@"mode"] && [options[@"mode"] isEqualToString:@"open"] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
-        copyDestination = options[@"copyTo"];
         UIModalPresentationStyle presentationStyle = [RCTConvert UIModalPresentationStyle:options[@"presentationStyle"]];
         UIModalTransitionStyle transitionStyle = [RCTConvert UIModalTransitionStyle:options[@"transitionStyle"]];
         [promiseWrapper setPromiseWithInProgressCheck:resolve rejecter:reject fromCallSite:@"pick"];
 
-        NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
         UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:allowedUTIs inMode:mode];
 
         documentPicker.modalPresentationStyle = presentationStyle;
@@ -92,8 +93,6 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
         documentPicker.delegate = self;
         documentPicker.presentationController.delegate = self;
-
-        documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULTIPLE]];
 
         UIViewController *rootViewController = RCTPresentedViewController();
 
@@ -103,6 +102,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
         NSOpenPanel *op = [NSOpenPanel openPanel];
         op.canChooseFiles = YES;
         op.canChooseDirectories = YES;
+        op.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULTIPLE]];
         [op runModal];
 
         NSMutableArray *results = [NSMutableArray array];
@@ -139,9 +139,8 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     // TODO double check this implemenation, see eg. https://developer.apple.com/documentation/foundation/nsfilecoordinator/1412420-prepareforreadingitemsaturls
     [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&fileError byAccessor:^(NSURL *newURL) {
         // If the coordinated operation fails, then the accessor block never runs
-#if __has_include(<UIKit/UIKit.h>)
-        result[FIELD_URI] = ((mode == UIDocumentPickerModeOpen) ? url : newURL).absoluteString;
         
+        result[FIELD_URI] = url.absoluteString;
         NSError *copyError;
         NSString *maybeFileCopyPath = copyDestination ? [RNDocumentPicker copyToUniqueDestinationFrom:newURL usingDestinationPreset:copyDestination error:copyError].absoluteString : nil;
         
@@ -151,8 +150,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
             result[FIELD_COPY_ERR] = copyError.localizedDescription;
             result[FIELD_FILE_COPY_URI] = [NSNull null];
         }
-        
-#endif
+      
         result[FIELD_NAME] = newURL.lastPathComponent;
 
         NSError *attributesError = nil;
@@ -210,6 +208,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
     [promiseWrapper resolve:results];
 }
+#endif
 
 
 RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
@@ -261,6 +260,7 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     return [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
 }
 
+#if __has_include(<UIKit/UIKit.h>)
 - (void)documentPickerWasCancelled:(UIDocumentPickerViewController *)controller
 {
     [self rejectAsUserCancellationError];
@@ -270,6 +270,7 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
 {
     [self rejectAsUserCancellationError];
 }
+#endif
 
 - (void)rejectAsUserCancellationError
 {
@@ -278,6 +279,5 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     [promiseWrapper reject:@"user canceled the document picker" withCode:E_DOCUMENT_PICKER_CANCELED withError:error];
 }
 
-#endif
 @end
 
