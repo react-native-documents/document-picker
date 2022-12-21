@@ -99,40 +99,38 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 
         [rootViewController presentViewController:documentPicker animated:YES completion:nil];
     #else
+        [promiseWrapper setPromiseWithInProgressCheck:resolve rejecter:reject fromCallSite:@"pick"];
         NSOpenPanel *op = [NSOpenPanel openPanel];
         op.canChooseFiles = YES;
         op.canChooseDirectories = YES;
         [op runModal];
-        // self.txtFilePath.stringValue = [op.URLs firstObject];
-    #endif
-}
 
-
-#if __has_include(<UIKit/UIKit.h>)
-- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
-{
-    NSMutableArray *results = [NSMutableArray array];
-    for (id url in urls) {
-        NSError *error;
-        NSMutableDictionary *result = [self getMetadataForUrl:url error:&error];
-        if (result) {
-            [results addObject:result];
-        } else {
-            [promiseWrapper reject:E_INVALID_DATA_RETURNED withError:error];
-            return;
+        NSMutableArray *results = [NSMutableArray array];
+        for (id url in op.URLs) {
+            NSError *error;
+            NSMutableDictionary *result = [self getMetadataForUrl:url error:&error];
+            if (result) {
+                [results addObject:result];
+            } else {
+                [promiseWrapper reject:E_INVALID_DATA_RETURNED withError:error];
+                return;
+            }
         }
-    }
-
-    [promiseWrapper resolve:results];
+//        NSLog(url);
+        [promiseWrapper resolve:results];
+        // self.txtFilePath.stringValue = ;
+    #endif
 }
 
 - (NSMutableDictionary *)getMetadataForUrl:(NSURL *)url error:(NSError **)error
 {
     __block NSMutableDictionary *result = [NSMutableDictionary dictionary];
 
-    if (mode == UIDocumentPickerModeOpen) {
-        [urlsInOpenMode addObject:url];
-    }
+#if __has_include(<UIKit/UIKit.h>)
+        if (mode == UIDocumentPickerModeOpen) {
+            [urlsInOpenMode addObject:url];
+        }
+#endif
     
     // TODO handle error
     [url startAccessingSecurityScopedResource];
@@ -143,6 +141,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
     // TODO double check this implemenation, see eg. https://developer.apple.com/documentation/foundation/nsfilecoordinator/1412420-prepareforreadingitemsaturls
     [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&fileError byAccessor:^(NSURL *newURL) {
         // If the coordinated operation fails, then the accessor block never runs
+#if __has_include(<UIKit/UIKit.h>)
         result[FIELD_URI] = ((mode == UIDocumentPickerModeOpen) ? url : newURL).absoluteString;
         
         NSError *copyError;
@@ -154,7 +153,8 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
             result[FIELD_COPY_ERR] = copyError.localizedDescription;
             result[FIELD_FILE_COPY_URI] = [NSNull null];
         }
-
+        
+#endif
         result[FIELD_NAME] = newURL.lastPathComponent;
 
         NSError *attributesError = nil;
@@ -180,10 +180,12 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
             result[FIELD_TYPE] = [NSNull null];
         }
     }];
-
-    if (mode != UIDocumentPickerModeOpen) {
-        [url stopAccessingSecurityScopedResource];
-    }
+    
+#if __has_include(<UIKit/UIKit.h>)
+        if (mode != UIDocumentPickerModeOpen) {
+            [url stopAccessingSecurityScopedResource];
+        }
+#endif
 
     if (fileError) {
         *error = fileError;
@@ -192,6 +194,25 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
         return result;
     }
 }
+
+#if __has_include(<UIKit/UIKit.h>)
+- (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
+{
+    NSMutableArray *results = [NSMutableArray array];
+    for (id url in urls) {
+        NSError *error;
+        NSMutableDictionary *result = [self getMetadataForUrl:url error:&error];
+        if (result) {
+            [results addObject:result];
+        } else {
+            [promiseWrapper reject:E_INVALID_DATA_RETURNED withError:error];
+            return;
+        }
+    }
+
+    [promiseWrapper resolve:results];
+}
+
 
 RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
                   resolver:(RCTPromiseResolveBlock)resolve
