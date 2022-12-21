@@ -1,5 +1,6 @@
 #import "RCTConvert+RNDocumentPicker.h"
 
+#if __has_include(<UIKit/UIKit.h>)
 @implementation RCTConvert (RNDocumentPicker)
 // TODO how to de-duplicate from https://github.com/facebook/react-native/blob/v0.66.0/React/Views/RCTModalHostViewManager.m?
 RCT_ENUM_CONVERTER(
@@ -26,3 +27,5 @@ RCT_ENUM_CONVERTER(
     integerValue)
 
 @end
+
+#endif

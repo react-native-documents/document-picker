@@ -1,6 +1,8 @@
 #import "RNDocumentPicker.h"
 
+#if __has_include(<UIKit/UIKit.h>)
 #import <MobileCoreServices/MobileCoreServices.h>
+#endif
 
 #import <React/RCTConvert.h>
 #import <React/RCTBridge.h>
@@ -22,11 +24,19 @@ static NSString *const FIELD_TYPE = @"type";
 static NSString *const FIELD_SIZE = @"size";
 
 
+#if __has_include(<UIKit/UIKit.h>)
 @interface RNDocumentPicker () <UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate>
 @end
+#else
+@interface RNDocumentPicker ()
+@end
+
+#endif
 
 @implementation RNDocumentPicker {
+#if __has_include(<UIKit/UIKit.h>)
     UIDocumentPickerMode mode;
+#endif
     NSString *copyDestination;
     RNCPromiseWrapper* promiseWrapper;
     NSMutableArray *urlsInOpenMode;
@@ -66,29 +76,39 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    mode = options[@"mode"] && [options[@"mode"] isEqualToString:@"open"] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
-    copyDestination = options[@"copyTo"];
-    UIModalPresentationStyle presentationStyle = [RCTConvert UIModalPresentationStyle:options[@"presentationStyle"]];
-    UIModalTransitionStyle transitionStyle = [RCTConvert UIModalTransitionStyle:options[@"transitionStyle"]];
-    [promiseWrapper setPromiseWithInProgressCheck:resolve rejecter:reject fromCallSite:@"pick"];
 
-    NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
-    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:allowedUTIs inMode:mode];
+    #if __has_include(<UIKit/UIKit.h>)
+        mode = options[@"mode"] && [options[@"mode"] isEqualToString:@"open"] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
+        copyDestination = options[@"copyTo"];
+        UIModalPresentationStyle presentationStyle = [RCTConvert UIModalPresentationStyle:options[@"presentationStyle"]];
+        UIModalTransitionStyle transitionStyle = [RCTConvert UIModalTransitionStyle:options[@"transitionStyle"]];
+        [promiseWrapper setPromiseWithInProgressCheck:resolve rejecter:reject fromCallSite:@"pick"];
 
-    documentPicker.modalPresentationStyle = presentationStyle;
-    documentPicker.modalTransitionStyle = transitionStyle;
+        NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
+        UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:allowedUTIs inMode:mode];
 
-    documentPicker.delegate = self;
-    documentPicker.presentationController.delegate = self;
+        documentPicker.modalPresentationStyle = presentationStyle;
+        documentPicker.modalTransitionStyle = transitionStyle;
 
-    documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULTIPLE]];
+        documentPicker.delegate = self;
+        documentPicker.presentationController.delegate = self;
 
-    UIViewController *rootViewController = RCTPresentedViewController();
+        documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULTIPLE]];
 
-    [rootViewController presentViewController:documentPicker animated:YES completion:nil];
+        UIViewController *rootViewController = RCTPresentedViewController();
+
+        [rootViewController presentViewController:documentPicker animated:YES completion:nil];
+    #else
+        NSOpenPanel *op = [NSOpenPanel openPanel];
+        op.canChooseFiles = YES;
+        op.canChooseDirectories = YES;
+        [op runModal];
+        // self.txtFilePath.stringValue = [op.URLs firstObject];
+    #endif
 }
 
 
+#if __has_include(<UIKit/UIKit.h>)
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
 {
     NSMutableArray *results = [NSMutableArray array];
@@ -239,4 +259,6 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     [promiseWrapper reject:@"user canceled the document picker" withCode:E_DOCUMENT_PICKER_CANCELED withError:error];
 }
 
+#endif
 @end
+
