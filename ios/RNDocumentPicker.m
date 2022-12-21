@@ -116,9 +116,7 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
                 return;
             }
         }
-//        NSLog(url);
         [promiseWrapper resolve:results];
-        // self.txtFilePath.stringValue = ;
     #endif
 }
 
