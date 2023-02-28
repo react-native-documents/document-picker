@@ -141,7 +141,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
       boolean multiple = !args.isNull(OPTION_MULTIPLE) && args.getBoolean(OPTION_MULTIPLE);
       intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
 
-      currentActivity.startActivityForResult(Intent.createChooser(intent, null), READ_REQUEST_CODE, Bundle.EMPTY);
+      currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
     } catch (ActivityNotFoundException e) {
       sendError(E_UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
     } catch (Exception e) {
