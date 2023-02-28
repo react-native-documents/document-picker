@@ -1,10 +1,5 @@
 #import "RNDocumentPicker.h"
 
-// Thanks to this guard, we won't import this header when we build for the old architecture.
-#ifdef RCT_NEW_ARCH_ENABLED
-#import "RNDocumentPickerSpec.h"
-#endif
-
 #import <MobileCoreServices/MobileCoreServices.h>
 
 #import <React/RCTConvert.h>
@@ -27,7 +22,7 @@ static NSString *const FIELD_TYPE = @"type";
 static NSString *const FIELD_SIZE = @"size";
 
 
-@interface RNDocumentPicker () <NativeDocumentPickerSpec, UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate>
+@interface RNDocumentPicker () <UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate>
 @end
 
 @implementation RNDocumentPicker {
@@ -36,8 +31,6 @@ static NSString *const FIELD_SIZE = @"size";
     RNCPromiseWrapper* promiseWrapper;
     NSMutableArray *urlsInOpenMode;
 }
-
-@synthesize bridge = _bridge;
 
 - (instancetype)init
 {
@@ -67,31 +60,31 @@ static NSString *const FIELD_SIZE = @"size";
 
 RCT_EXPORT_MODULE()
 
-//RCT_EXPORT_METHOD(pick:(NSDictionary *)options
-//                  resolver:(RCTPromiseResolveBlock)resolve
-//                  rejecter:(RCTPromiseRejectBlock)reject)
-//{
-//    mode = options[@"mode"] && [options[@"mode"] isEqualToString:@"open"] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
-//    copyDestination = options[@"copyTo"];
-//    UIModalPresentationStyle presentationStyle = [RCTConvert UIModalPresentationStyle:options[@"presentationStyle"]];
-//    UIModalTransitionStyle transitionStyle = [RCTConvert UIModalTransitionStyle:options[@"transitionStyle"]];
-//    [promiseWrapper setPromiseWithInProgressCheck:resolve rejecter:reject fromCallSite:@"pick"];
-//
-//    NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
-//    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:allowedUTIs inMode:mode];
-//
-//    documentPicker.modalPresentationStyle = presentationStyle;
-//    documentPicker.modalTransitionStyle = transitionStyle;
-//
-//    documentPicker.delegate = self;
-//    documentPicker.presentationController.delegate = self;
-//
-//    documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULTIPLE]];
-//
-//    UIViewController *rootViewController = RCTPresentedViewController();
-//
-//    [rootViewController presentViewController:documentPicker animated:YES completion:nil];
-//}
+RCT_EXPORT_METHOD(pick:(NSDictionary *)options
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
+{
+    mode = options[@"mode"] && [options[@"mode"] isEqualToString:@"open"] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
+    copyDestination = options[@"copyTo"];
+    UIModalPresentationStyle presentationStyle = [RCTConvert UIModalPresentationStyle:options[@"presentationStyle"]];
+    UIModalTransitionStyle transitionStyle = [RCTConvert UIModalTransitionStyle:options[@"transitionStyle"]];
+    [promiseWrapper setPromiseWithInProgressCheck:resolve rejecter:reject fromCallSite:@"pick"];
+
+    NSArray *allowedUTIs = [RCTConvert NSArray:options[OPTION_TYPE]];
+    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc] initWithDocumentTypes:allowedUTIs inMode:mode];
+
+    documentPicker.modalPresentationStyle = presentationStyle;
+    documentPicker.modalTransitionStyle = transitionStyle;
+
+    documentPicker.delegate = self;
+    documentPicker.presentationController.delegate = self;
+
+    documentPicker.allowsMultipleSelection = [RCTConvert BOOL:options[OPTION_MULTIPLE]];
+
+    UIViewController *rootViewController = RCTPresentedViewController();
+
+    [rootViewController presentViewController:documentPicker animated:YES completion:nil];
+}
 
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentsAtURLs:(NSArray<NSURL *> *)urls
@@ -179,8 +172,8 @@ RCT_EXPORT_MODULE()
 }
 
 RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 {
     NSMutableArray *discardedItems = [NSMutableArray array];
     for (NSString *uri in uris) {
@@ -194,6 +187,10 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     }
     [urlsInOpenMode removeObjectsInArray:discardedItems];
     resolve(nil);
+}
+
+- (void)pickDirectory:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    reject(@"RNDocumentPicker:pickDirectory", @"pickDirectory is not supported on iOS", nil);
 }
 
 + (NSURL *)copyToUniqueDestinationFrom:(NSURL *)url usingDestinationPreset:(NSString *)copyToDirectory error:(NSError *)error
@@ -252,18 +249,5 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     return std::make_shared<facebook::react::NativeDocumentPickerSpecJSI>(params);
 }
 #endif
-
-
-- (void)pick:(JS::NativeDocumentPicker::DocumentPickerOptions &)options resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
-  // TODO?
-}
-
-- (void)pickDirectory:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
-  // TODO?
-}
-
-- (void)releaseSecureAccess:(NSArray *)uris resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
-  // TODO?
-}
 
 @end
