@@ -1,4 +1,4 @@
-package oldarch.com.reactnativedocumentpicker;
+package com.reactnativedocumentpicker;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -22,13 +22,11 @@ import com.facebook.react.bridge.GuardedResultAsyncTask;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.module.annotations.ReactModule;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,8 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@ReactModule(name = DocumentPickerModule.NAME)
-public class DocumentPickerModule extends ReactContextBaseJavaModule {
+public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
   public static final String NAME = "RNDocumentPicker";
   private static final int READ_REQUEST_CODE = 41;
   private static final int PICK_DIR_REQUEST_CODE = 42;
@@ -63,6 +60,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
   private static final String FIELD_NAME = "name";
   private static final String FIELD_TYPE = "type";
   private static final String FIELD_SIZE = "size";
+
+  private Promise promise;
+  private String copyTo;
+
+  public RNDocumentPickerModule(ReactApplicationContext reactContext) {
+    super(reactContext);
+    reactContext.addActivityEventListener(activityEventListener);
+  }
 
   private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
     @Override
@@ -87,14 +92,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
       array[i] = readableArray.getString(i);
     }
     return array;
-  }
-
-  private Promise promise;
-  private String copyTo;
-
-  public DocumentPickerModule(ReactApplicationContext reactContext) {
-    super(reactContext);
-    reactContext.addActivityEventListener(activityEventListener);
   }
 
   @Override
@@ -165,6 +162,11 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
     } catch (Exception e) {
       sendError(E_FAILED_TO_SHOW_PICKER, "Failed to create directory picker", e);
     }
+  }
+
+  @Override
+  public void releaseSecureAccess(ReadableArray uris, Promise promise) {
+    promise.reject("RNDocumentPicker:releaseSecureAccess", "releaseSecureAccess is not supported on Android");
   }
 
   private void onPickDirectoryResult(int resultCode, Intent data) {
@@ -267,8 +269,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
           if (!cursor.isNull(displayNameIndex)) {
             String fileName = cursor.getString(displayNameIndex);
             map.putString(FIELD_NAME, fileName);
-          } else {
-            map.putNull(FIELD_NAME);
           }
           int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
           if (!cursor.isNull(mimeIndex)) {
@@ -277,8 +277,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
           int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
           if (!cursor.isNull(sizeIndex)) {
             map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
-          } else {
-            map.putNull(FIELD_SIZE);
           }
         }
       }
@@ -288,48 +286,63 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
     }
 
     private void prepareFileUri(Context context, WritableMap map, Uri uri) {
-      if (copyTo == null) {
-        map.putNull(FIELD_FILE_COPY_URI);
+      if (copyTo != null) {
+        File dir = context.getCacheDir();
+        if (copyTo.equals("documentDirectory")) {
+          dir = context.getFilesDir();
+        }
+        // we don't want to rename the file so we put it into a unique location
+        dir = new File(dir, UUID.randomUUID().toString());
+        try {
+          boolean didCreateDir = dir.mkdir();
+          if (!didCreateDir) {
+            throw new IOException("failed to create directory at " + dir.getAbsolutePath());
+          }
+          String fileName = map.getString(FIELD_NAME);
+          if (fileName == null) {
+            fileName = String.valueOf(System.currentTimeMillis());
+          }
+          File destFile = new File(dir, fileName);
+          String copyPath = copyFile(context, uri, destFile);
+          map.putString(FIELD_FILE_COPY_URI, copyPath);
+        } catch (Exception e) {
+          e.printStackTrace();
+          map.putNull(FIELD_FILE_COPY_URI);
+          map.putString(FIELD_COPY_ERROR, e.getLocalizedMessage());
+        }
       } else {
-        copyFileToLocalStorage(context, map, uri);
-      }
-    }
-
-    private void copyFileToLocalStorage(Context context, WritableMap map, Uri uri) {
-      File dir = context.getCacheDir();
-      if (copyTo.equals("documentDirectory")) {
-        dir = context.getFilesDir();
-      }
-      // we don't want to rename the file so we put it into a unique location
-      dir = new File(dir, UUID.randomUUID().toString());
-      try {
-        boolean didCreateDir = dir.mkdir();
-        if (!didCreateDir) {
-          throw new IOException("failed to create directory at " + dir.getAbsolutePath());
-        }
-        String fileName = map.getString(FIELD_NAME);
-        if (fileName == null) {
-          fileName = String.valueOf(System.currentTimeMillis());
-        }
-        File destFile = new File(dir, fileName);
-        Uri copyPath = copyFile(context, uri, destFile);
-        map.putString(FIELD_FILE_COPY_URI, copyPath.toString());
-      } catch (Exception e) {
-        e.printStackTrace();
         map.putNull(FIELD_FILE_COPY_URI);
-        map.putString(FIELD_COPY_ERROR, e.getLocalizedMessage());
       }
     }
 
-    public static Uri copyFile(Context context, Uri uri, File destFile) throws IOException {
-      try(InputStream inputStream = context.getContentResolver().openInputStream(uri);
-          FileOutputStream outputStream = new FileOutputStream(destFile)) {
-        byte[] buf = new byte[8192];
-        int len;
-        while ((len = inputStream.read(buf)) > 0) {
-          outputStream.write(buf, 0, len);
+    public static String copyFile(Context context, Uri uri, File destFile) throws IOException {
+      InputStream in = null;
+      FileOutputStream out = null;
+      try {
+        in = context.getContentResolver().openInputStream(uri);
+        if (in != null) {
+          out = new FileOutputStream(destFile);
+          byte[] buffer = new byte[1024];
+          int len;
+          while ((len = in.read(buffer)) > 0) {
+            out.write(buffer, 0, len);
+          }
+          out.close();
+          in.close();
+          return destFile.toURI().toString();
+        } else {
+          throw new NullPointerException("Invalid input stream");
         }
-        return Uri.fromFile(destFile);
+      } catch (Exception e) {
+        try {
+          if (in != null) {
+            in.close();
+          }
+          if (out != null) {
+            out.close();
+          }
+        } catch (IOException ignored) {}
+        throw e;
       }
     }
   }

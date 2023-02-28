@@ -1,4 +1,4 @@
-package newarch.com.reactnativedocumentpicker;
+package com.reactnativedocumentpicker;
 
 import androidx.annotation.Nullable;
 
@@ -7,8 +7,6 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.module.model.ReactModuleInfo;
 import com.facebook.react.module.model.ReactModuleInfoProvider;
-import com.reactnativedocumentpicker.BuildConfig;
-import com.reactnativedocumentpicker.RNDocumentPickerModuleImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +16,7 @@ public class RNDocumentPickerPackage extends TurboReactPackage {
   @Nullable
   @Override
   public NativeModule getModule(String name, ReactApplicationContext reactContext) {
-    if (name.equals(RNDocumentPickerModuleImpl.NAME)) {
+    if (name.equals(RNDocumentPickerModule.NAME)) {
       return new RNDocumentPickerModule(reactContext);
     } else {
       return null;
