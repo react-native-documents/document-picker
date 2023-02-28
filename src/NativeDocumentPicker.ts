@@ -10,15 +10,6 @@ export type DocumentPickerResponse = {
   size: number | null
 }
 
-type DocumentPickerOptions = {
-  type?: Array<string>
-  mode?: string
-  copyTo?: string
-  allowMultiSelection?: boolean
-  transitionStyle?: string
-  presentationStyle?: string
-}
-
 export type DirectoryPickerResponse = {
   uri: string
 }
@@ -26,7 +17,9 @@ export type DirectoryPickerResponse = {
 export interface Spec extends TurboModule {
   readonly getConstants: () => {}
 
-  pick(options: DocumentPickerOptions): Promise<DocumentPickerResponse[]>
+  // we use "Object" to still have backwards compability with already
+  // present methods on iOS, which use NSDictionary
+  pick(options: Object): Promise<DocumentPickerResponse[]>
   releaseSecureAccess(uris: string[]): Promise<void>
   pickDirectory(): Promise<DirectoryPickerResponse>
 }
