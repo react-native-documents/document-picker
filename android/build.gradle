@@ -86,8 +86,12 @@ android {
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
     }
 
-    if (!isNewArchitectureEnabled()) {
-        srcDirs += 'src/paper/java'
+    sourceSets.main {
+        java {
+            if (!isNewArchitectureEnabled()) {
+                srcDirs += 'src/paper/java'
+            }
+        }
     }
 
     buildTypes {
