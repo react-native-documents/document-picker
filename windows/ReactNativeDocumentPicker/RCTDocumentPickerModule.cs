@@ -130,6 +130,9 @@ namespace RNDocumentPicker
                 };
 
           tcs.SetResult(obj);
+          // TODO: Replace with a more principled solution
+          Windows.Storage.AccessCache.StorageApplicationPermissions.
+                            FutureAccessList.AddOrReplace("pickedFolderToken", folder);
         }
         else
         {
@@ -212,7 +215,7 @@ namespace RNDocumentPicker
         }
         else
         {
-           tcs.SetResult(new List<JSValueObject>());
+          tcs.SetResult(new List<JSValueObject>());
         }
       });
 
