@@ -43,6 +43,8 @@ Requires RN >= 0.63, Android 5.0+ and iOS 11+
       - [type](#type)
       - [name](#name)
       - [size](#size)
+      - [latitude](#latitude)
+      - [longitude](#longitude)
       - [[Windows only] content](#windows-only-content)
     - [DocumentPicker.types.\*](#documentpickertypes)
       - [DocumentPicker.isCancel(err)](#documentpickeriscancelerr)
@@ -184,6 +186,14 @@ The display name of the file. _This is normally the filename of the file, but An
 #### `size`
 
 The file size of the document. _On Android some DocumentProviders may not provide this information for a document._
+
+#### `latitude`
+
+Get geolocation latitude metadata of the image if avaliable, return `null` if not exist.
+
+#### `longitude`
+
+Get geolocation longitude metadata of the image if avaliable, return `null` if not exist.
 
 #### [Windows only] `content`
 
