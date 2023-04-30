@@ -10,6 +10,8 @@ export type DocumentPickerResponse = {
   fileCopyUri: string | null
   type: string | null
   size: number | null
+  latitude: string | null
+  longitude: string | null
 }
 
 export const types = perPlatformTypes[Platform.OS]
