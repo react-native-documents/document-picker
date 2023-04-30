@@ -14,6 +14,7 @@ import android.provider.OpenableColumns;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -281,6 +282,25 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
             map.putDouble(FIELD_SIZE, cursor.getLong(sizeIndex));
           }
         }
+      }
+
+      try {
+        InputStream inputStream = contentResolver.openInputStream(uri);
+        ExifInterface exif = new ExifInterface(inputStream);
+
+        double[] latLong = exif.getLatLong();
+        if (latLong != null) {
+          map.putDouble("latitude", latLong[0]);
+          map.putDouble("longitude", latLong[1]);
+        } else {
+          map.putNull("latitude");
+          map.putNull("longitude");
+        }
+        inputStream.close();
+      }
+      catch (Exception e){
+        map.putNull("latitude");
+        map.putNull("longitude");
       }
 
       prepareFileUri(context, map, uri);
