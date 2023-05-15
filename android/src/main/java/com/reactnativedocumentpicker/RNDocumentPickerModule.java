@@ -72,14 +72,22 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
   private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
     @Override
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+      boolean isForeignResult = requestCode != READ_REQUEST_CODE && requestCode != PICK_DIR_REQUEST_CODE;
+      if (isForeignResult) {
+        return;
+      }
       final Promise storedPromise = promise;
       if (storedPromise == null) {
         Log.e(NAME, "promise was null in onActivityResult");
         return;
       }
+      if (resultCode == Activity.RESULT_CANCELED) {
+        sendError(E_DOCUMENT_PICKER_CANCELED, "User canceled directory picker");
+        return;
+      }
       if (requestCode == READ_REQUEST_CODE) {
         onShowActivityResult(resultCode, data, storedPromise);
-      } else if (requestCode == PICK_DIR_REQUEST_CODE) {
+      } else {
         onPickDirectoryResult(resultCode, data);
       }
     }
@@ -96,8 +104,8 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
 
   @Override
   public void onCatalystInstanceDestroy() {
-    super.onCatalystInstanceDestroy();
     getReactApplicationContext().removeActivityEventListener(activityEventListener);
+    super.onCatalystInstanceDestroy();
   }
 
   @NonNull
@@ -170,10 +178,7 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
   }
 
   private void onPickDirectoryResult(int resultCode, Intent data) {
-    if (resultCode == Activity.RESULT_CANCELED) {
-      sendError(E_DOCUMENT_PICKER_CANCELED, "User canceled directory picker");
-      return;
-    } else if (resultCode != Activity.RESULT_OK) {
+    if (resultCode != Activity.RESULT_OK) {
       sendError(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
       return;
     }
@@ -190,39 +195,37 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
   }
 
   public void onShowActivityResult(int resultCode, Intent data, Promise promise) {
-    if (resultCode == Activity.RESULT_CANCELED) {
-      sendError(E_DOCUMENT_PICKER_CANCELED, "User canceled document picker");
-    } else if (resultCode == Activity.RESULT_OK) {
-      Uri uri = null;
-      ClipData clipData = null;
-
-      if (data != null) {
-        uri = data.getData();
-        clipData = data.getClipData();
-      }
-
-      try {
-        List<Uri> uris = new ArrayList<>();
-        // condition order seems to matter: https://github.com/rnmods/react-native-document-picker/issues/317#issuecomment-645222635
-        if (clipData != null && clipData.getItemCount() > 0) {
-          final int length = clipData.getItemCount();
-          for (int i = 0; i < length; ++i) {
-            ClipData.Item item = clipData.getItemAt(i);
-            uris.add(item.getUri());
-          }
-        } else if (uri != null) {
-          uris.add(uri);
-        } else {
-          sendError(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
-          return;
-        }
-
-        new ProcessDataTask(getReactApplicationContext(), uris, copyTo, promise).execute();
-      } catch (Exception e) {
-        sendError(E_UNEXPECTED_EXCEPTION, e.getLocalizedMessage(), e);
-      }
-    } else {
+    if (resultCode != Activity.RESULT_OK) {
       sendError(E_UNKNOWN_ACTIVITY_RESULT, "Unknown activity result: " + resultCode);
+      return;
+    }
+    Uri uri = null;
+    ClipData clipData = null;
+
+    if (data != null) {
+      uri = data.getData();
+      clipData = data.getClipData();
+    }
+
+    try {
+      List<Uri> uris = new ArrayList<>();
+      // condition order seems to matter: https://github.com/rnmods/react-native-document-picker/issues/317#issuecomment-645222635
+      if (clipData != null && clipData.getItemCount() > 0) {
+        final int length = clipData.getItemCount();
+        for (int i = 0; i < length; ++i) {
+          ClipData.Item item = clipData.getItemAt(i);
+          uris.add(item.getUri());
+        }
+      } else if (uri != null) {
+        uris.add(uri);
+      } else {
+        sendError(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
+        return;
+      }
+
+      new ProcessDataTask(getReactApplicationContext(), uris, copyTo, promise).execute();
+    } catch (Exception e) {
+      sendError(E_UNEXPECTED_EXCEPTION, e.getLocalizedMessage(), e);
     }
   }
 

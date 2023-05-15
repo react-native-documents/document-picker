@@ -26,7 +26,7 @@ New architecture is supported.
 
 - [react-native-document-picker](#react-native-document-picker)
   - [Installation](#installation)
-  - [RN &gt;= 0.69](#rn--063)
+  - [RN &gt;= 0.69](#rn--069)
   - [API](#api)
     - [pickSingle(options) / pick(options)](#picksingleoptions--pickoptions)
     - [pickDirectory()](#pickdirectory)
