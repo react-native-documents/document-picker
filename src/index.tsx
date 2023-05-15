@@ -164,7 +164,7 @@ export function isInProgress(err: unknown): boolean {
 }
 
 function isErrorWithCode(err: unknown, errorCode: string): boolean {
-  if (err instanceof Error && 'code' in err) {
+  if (err && 'code' in err) {
     const nativeModuleErrorInstance = err as NativeModuleErrorShape
     return nativeModuleErrorInstance?.code === errorCode
   }
