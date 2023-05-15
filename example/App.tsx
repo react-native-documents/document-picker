@@ -4,6 +4,7 @@ import { StyleSheet, View, Text, Button } from 'react-native'
 import DocumentPicker, {
   DirectoryPickerResponse,
   DocumentPickerResponse,
+  isCancel,
   isInProgress,
   types,
 } from 'react-native-document-picker'
@@ -19,7 +20,7 @@ export default function App() {
   }, [result])
 
   const handleError = (err: unknown) => {
-    if (DocumentPicker.isCancel(err)) {
+    if (isCancel(err)) {
       console.warn('cancelled')
       // User cancelled the picker, exit any dialogs or menus and move on
     } else if (isInProgress(err)) {
@@ -48,7 +49,7 @@ export default function App() {
       <Button
         title="open picker for multi file selection"
         onPress={() => {
-          DocumentPicker.pickMultiple().then(setResult).catch(handleError)
+          DocumentPicker.pick({ allowMultiSelection: true }).then(setResult).catch(handleError)
         }}
       />
       <Button
