@@ -1,7 +1,8 @@
-import { Platform, NativeModules, ModalPropsIOS } from 'react-native'
+import { Platform, ModalPropsIOS } from 'react-native'
 import invariant from 'invariant'
 import type { PlatformTypes, SupportedPlatforms } from './fileTypes'
 import { perPlatformTypes } from './fileTypes'
+import { NativeDocumentPicker } from './NativeDocumentPicker'
 
 export type DocumentPickerResponse = {
   uri: string
@@ -17,14 +18,6 @@ export const types = perPlatformTypes[Platform.OS]
 export type DirectoryPickerResponse = {
   uri: string
 }
-
-type DocumentPickerType = {
-  pick(options: Record<string, any>): Promise<DocumentPickerResponse[]>
-  releaseSecureAccess(uris: string[]): Promise<void>
-  pickDirectory(): Promise<DirectoryPickerResponse>
-}
-
-const RNDocumentPicker: DocumentPickerType = NativeModules.RNDocumentPicker
 
 export type TransitionStyle = 'coverVertical' | 'flipHorizontal' | 'crossDissolve' | 'partialCurl'
 
@@ -51,7 +44,7 @@ export async function pickDirectory<OS extends SupportedPlatforms>(
     })
     return { uri: result[0].uri }
   } else {
-    return RNDocumentPicker.pickDirectory()
+    return NativeDocumentPicker.pickDirectory()
   }
 }
 
@@ -139,7 +132,7 @@ function doPick<OS extends SupportedPlatforms>(
     throw new TypeError('Invalid copyTo option: ' + options.copyTo)
   }
 
-  return RNDocumentPicker.pick(options)
+  return NativeDocumentPicker.pick(options)
 }
 
 export function releaseSecureAccess(uris: Array<string>): Promise<void> {
@@ -152,7 +145,7 @@ export function releaseSecureAccess(uris: Array<string>): Promise<void> {
     `"uris" should be an array of strings, was ${uris}`,
   )
 
-  return RNDocumentPicker.releaseSecureAccess(uris)
+  return NativeDocumentPicker.releaseSecureAccess(uris)
 }
 
 const E_DOCUMENT_PICKER_CANCELED = 'DOCUMENT_PICKER_CANCELED'

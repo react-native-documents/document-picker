@@ -24,4 +24,4 @@ export interface Spec extends TurboModule {
   pickDirectory(): Promise<DirectoryPickerResponse>
 }
 
-export default TurboModuleRegistry.get<Spec>('RNDocumentPicker')
+export const NativeDocumentPicker = TurboModuleRegistry.getEnforcing<Spec>('RNDocumentPicker')
