@@ -124,10 +124,10 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
         result[FIELD_URI] = ((mode == UIDocumentPickerModeOpen) ? url : newURL).absoluteString;
         
         NSError *copyError;
-        NSString *maybeFileCopyPath = copyDestination ? [RNDocumentPicker copyToUniqueDestinationFrom:newURL usingDestinationPreset:copyDestination error:copyError].absoluteString : nil;
+        NSURL *maybeFileCopyPath = copyDestination ? [RNDocumentPicker copyToUniqueDestinationFrom:newURL usingDestinationPreset:copyDestination error:&copyError] : nil;
         
         if (!copyError) {
-            result[FIELD_FILE_COPY_URI] = RCTNullIfNil(maybeFileCopyPath);
+            result[FIELD_FILE_COPY_URI] = RCTNullIfNil(maybeFileCopyPath.absoluteString);
         } else {
             result[FIELD_COPY_ERR] = copyError.localizedDescription;
             result[FIELD_FILE_COPY_URI] = [NSNull null];
@@ -193,7 +193,7 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     reject(@"RNDocumentPicker:pickDirectory", @"pickDirectory is not supported on iOS", nil);
 }
 
-+ (NSURL *)copyToUniqueDestinationFrom:(NSURL *)url usingDestinationPreset:(NSString *)copyToDirectory error:(NSError *)error
++ (NSURL *)copyToUniqueDestinationFrom:(NSURL *)url usingDestinationPreset:(NSString *)copyToDirectory error:(NSError **)error
 {
     NSURL *destinationRootDir = [self getDirectoryForFileCopy:copyToDirectory];
     // we don't want to rename the file so we put it into a unique location
@@ -201,13 +201,13 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     NSURL *destinationDir = [destinationRootDir URLByAppendingPathComponent:[NSString stringWithFormat:@"%@/", uniqueSubDirName]];
     NSURL *destinationUrl = [destinationDir URLByAppendingPathComponent:[NSString stringWithFormat:@"%@", url.lastPathComponent]];
 
-    [NSFileManager.defaultManager createDirectoryAtURL:destinationDir withIntermediateDirectories:YES attributes:nil error:&error];
-    if (error) {
-        return url;
+    [NSFileManager.defaultManager createDirectoryAtURL:destinationDir withIntermediateDirectories:YES attributes:nil error:error];
+    if (*error) {
+        return nil;
     }
-    [NSFileManager.defaultManager copyItemAtURL:url toURL:destinationUrl error:&error];
-    if (error) {
-        return url;
+    [NSFileManager.defaultManager copyItemAtURL:url toURL:destinationUrl error:error];
+    if (*error) {
+        return nil;
     } else {
         return destinationUrl;
     }
