@@ -48,15 +48,6 @@ export async function pickDirectory<OS extends SupportedPlatforms>(
   }
 }
 
-export function pickMultiple<OS extends SupportedPlatforms>(
-  opts?: DocumentPickerOptions<OS>,
-): Promise<DocumentPickerResponse[]> {
-  const options = {
-    ...opts,
-    allowMultiSelection: true,
-  }
-  return pick(options)
-}
 export function pickSingle<OS extends SupportedPlatforms>(
   opts?: DocumentPickerOptions<OS>,
 ): Promise<DocumentPickerResponse> {
@@ -116,7 +107,6 @@ function doPick<OS extends SupportedPlatforms>(
   )
 
   invariant(
-    // @ts-ignore TS2345: Argument of type 'string' is not assignable to parameter of type 'PlatformTypes[OS][keyof PlatformTypes[OS]]'.
     !options.type.includes('folder'),
     'RN document picker: "folder" option was removed, use "pickDirectory()"',
   )
@@ -171,10 +161,10 @@ function isErrorWithCode(err: unknown, errorCode: string): boolean {
 
 export default {
   isCancel,
+  isInProgress,
   releaseSecureAccess,
   pickDirectory,
   pick,
-  pickMultiple,
   pickSingle,
   types,
   perPlatformTypes,

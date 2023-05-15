@@ -26,18 +26,17 @@ New architecture is supported.
 
 - [react-native-document-picker](#react-native-document-picker)
   - [Installation](#installation)
-  - [RN &gt;= 0.63](#rn--063)
+  - [RN &gt;= 0.69](#rn--063)
   - [API](#api)
-    - [DocumentPicker.pickMultiple(options) / DocumentPicker.pickSingle(options) / DocumentPicker.pick(options)](#documentpickerpickmultipleoptions--documentpickerpicksingleoptions--documentpickerpickoptions)
-    - [DocumentPicker.pickDirectory()](#documentpickerpickdirectory)
-    - [DocumentPicker.pick(options) and DocumentPicker.pickMultiple(options)](#documentpickerpickoptions-and-documentpickerpickmultipleoptions)
+    - [pickSingle(options) / pick(options)](#picksingleoptions--pickoptions)
+    - [pickDirectory()](#pickdirectory)
     - [Options](#options)
       - [allowMultiSelection:boolean](#allowmultiselectionboolean)
       - [type:string|Array&lt;string&gt;](#typestringarraystring)
+      - [[iOS and Android only] copyTo:"cachesDirectory" | "documentDirectory"](#ios-and-android-only-copytocachesdirectory--documentdirectory)
       - [[iOS only] presentationStyle:'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen'](#ios-only-presentationstylefullscreen--pagesheet--formsheet--overfullscreen)
       - [[iOS only] transitionStyle:'coverVertical' | 'flipHorizontal' | 'crossDissolve' | 'partialCurl'](#ios-only-transitionstylecoververtical--fliphorizontal--crossdissolve--partialcurl)
       - [[iOS only] mode:"import" | "open"](#ios-only-modeimport--open)
-      - [[iOS and Android only] copyTo:"cachesDirectory" | "documentDirectory"](#ios-and-android-only-copytocachesdirectory--documentdirectory)
       - [[Windows only] readContent:boolean](#windows-only-readcontentboolean)
     - [Result](#result)
       - [uri](#uri)
@@ -46,10 +45,10 @@ New architecture is supported.
       - [name](#name)
       - [size](#size)
       - [[Windows only] content](#windows-only-content)
-    - [DocumentPicker.types.\*](#documentpickertypes)
-      - [DocumentPicker.isCancel(err)](#documentpickeriscancelerr)
-      - [DocumentPicker.isInProgress(err)](#documentpickerisinprogresserr)
-      - [[iOS only] DocumentPicker.releaseSecureAccess(uris: Array&lt;string&gt;)](#ios-only-documentpickerreleasesecureaccessuris-arraystring)
+    - [types.\*](#types)
+      - [isCancel(err)](#iscancelerr)
+      - [isInProgress(err)](#isinprogresserr)
+      - [[iOS only] releaseSecureAccess(uris: Array&lt;string&gt;)](#ios-only-releasesecureaccessuris-arraystring)
   - [Example](#example)
   - [How to upload picked files?](#how-to-upload-picked-files)
   - [Help wanted: Improvements](#help-wanted-improvements)
@@ -64,6 +63,10 @@ npm i --save react-native-document-picker
 OR
 
 yarn add react-native-document-picker
+```
+
+```ts
+import DocumentPicker from 'react-native-document-picker'
 ```
 
 #### Expo
@@ -83,30 +86,26 @@ expo run:android
 ```
 
 
-#### RN >= 0.63
+#### RN >= 0.69
 
-If you are using RN >= 0.63, only run `pod install` from the ios directory. Then rebuild your project. Older RN versions are not supported.
+If you are using RN >= 0.69, only run `pod install` from the ios directory. Then rebuild your project. Older RN versions are not supported.
 
 ## API
 
-### `DocumentPicker.pickMultiple(options)` / `DocumentPicker.pickSingle(options)` / `DocumentPicker.pick(options)`
+#### `pickSingle(options)` / `pick(options)`
 
 ⚠️ Breaking in v6: `pick` returns a `Promise<Array<DocumentPickerResponse>>` instead of `Promise<DocumentPickerResponse>`. If you were using `pick`, change those usages to `pickSingle`.
 
-Use `pickMultiple`, `pickSingle` or `pick` to open a document picker for the user to select file(s). All methods return a Promise.
+Use `pickSingle` or `pick` to open a document picker for the user to select file(s).
 
-### `DocumentPicker.pickDirectory()`
+- with `pick`, you can use `allowMultiSelection` param to control whether user can select multiple files (`false` by default). Returns a `Promise<Array<DocumentPickerResponse>>`
+
+- `pickSingle` is "sugar function" on top of `pick` and only allows a single selection returns `Promise<DocumentPickerResponse>`
+
+
+#### `pickDirectory()`
 
 Open a system directory picker. Returns a promise that resolves to (`{ uri: string }`) of the directory selected by user.
-
-### `DocumentPicker.pick(options)` and `DocumentPicker.pickMultiple(options)`
-
-- `pick` is the most universal, you can use `allowMultiSelection` param to control whether or not user can select multiple files (`false` by default). Returns a `Promise<Array<DocumentPickerResponse>>`
-
-`pickSingle` and `pickMultiple` are "sugar functions" on top of `pick`, and they _might be removed_ in a future release for increased API clarity.
-
-- `pickSingle` only allows a single selection and the Promise will resolve to that single result (same behavior as `pick` in v5)
-- `pickMultiple` allows multiple selection and the Promise will resolve to an array of results.
 
 ## Options
 
@@ -114,19 +113,27 @@ All of the options are optional
 
 #### `allowMultiSelection`:`boolean`
 
-Whether selecting multiple files is allowed. For `pick`, this is `false` by default. `allowMultiSelection` is `false` for `pickSingle` and `true` for `pickMultiple` and cannot be overridden for those calls.
+Whether selecting multiple files is allowed. For `pick`, this is `false` by default. `allowMultiSelection` is `false` for `pickSingle` and cannot be overridden.
 
 #### `type`:`string|Array<string>`
 
-The type or types of documents to allow selection of. May be an array of types as single type string.
+The type or types of documents to allow selection of. An array of strings or single string.
 
-- On Android these are MIME types such as `text/plain` or partial MIME types such as `image/*`. See [common MIME types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types).
-- On iOS these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/documentation/uniformtypeidentifiers/system-declared_uniform_type_identifiers?language=objc)"
+- On Android, these are MIME types such as `text/plain` or partial MIME types such as `image/*`. See [common MIME types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types).
+- On iOS, these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/documentation/uniformtypeidentifiers/system-declared_uniform_type_identifiers?language=objc)"
 - If `type` is omitted it will be treated as `*/*` or `public.item`.
+
+#### [iOS and Android only] `copyTo`:`"cachesDirectory" | "documentDirectory"`
+
+If specified, the picked file is copied to `NSCachesDirectory` / `NSDocumentDirectory` (iOS) or `getCacheDir` / `getFilesDir` (Android). The uri of the copy will be available in result's `fileCopyUri`. If copying the file fails (e.g. due to lack of free space), `fileCopyUri` will be `null`, and more details about the error will be available in `copyError` field in the result.
+
+This should help if you need to work with the file(s) later on, because by default, [the picked documents are temporary files. They remain available only until your application terminates](https://developer.apple.com/documentation/uikit/uidocumentpickerdelegate/2902364-documentpicker). This may impact performance for large files, so keep this in mind if you expect users to pick particularly large files and your app does not need immediate read access.
+
+On Android, this can be used to obtain local, on-device copy of the file (e.g. if user picks a document from Google Drive, this will download it locally to the phone).
 
 #### [iOS only] `presentationStyle`:`'fullScreen' | 'pageSheet' | 'formSheet' | 'overFullScreen'`
 
-Controls how the picker is presented, eg. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`.
+Controls how the picker is presented, e.g. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`.
 
 #### [iOS only] `transitionStyle`:`'coverVertical' | 'flipHorizontal' | 'crossDissolve' | 'partialCurl'`
 
@@ -134,22 +141,14 @@ Configure the transition style of the picker. Defaults to `coverVertical`, when 
 
 #### [iOS only] `mode`:`"import" | "open"`
 
-Defaults to `import`. If `mode` is set to `import` the document picker imports the file from outside to inside the sandbox, otherwise if `mode` is set to `open` the document picker opens the file right in place.
-
-#### [iOS and Android only] `copyTo`:`"cachesDirectory" | "documentDirectory"`
-
-If specified, the picked file is copied to `NSCachesDirectory` / `NSDocumentDirectory` (iOS) or `getCacheDir` / `getFilesDir` (Android). The uri of the copy will be available in result's `fileCopyUri`. If copying the file fails (eg. due to lack of free space), `fileCopyUri` will be `null`, and more details about the error will be available in `copyError` field in the result.
-
-This should help if you need to work with the file(s) later on, because by default, [the picked documents are temporary files. They remain available only until your application terminates](https://developer.apple.com/documentation/uikit/uidocumentpickerdelegate/2902364-documentpicker). This may impact performance for large files, so keep this in mind if you expect users to pick particularly large files and your app does not need immediate read access.
-
-On Android, this can be used to obtain local, on-device copy of the file (e.g. if user picks a document from google drive, this will download it locally to the phone).
+Defaults to `import`. If `mode` is set to `import` the document picker imports the file from outside to inside the sandbox, otherwise if `mode` is set to `open` the document picker opens the file in-place.
 
 #### [Windows only] `readContent`:`boolean`
 
 Defaults to `false`. If `readContent` is set to true the content of the picked file/files will be read and supplied in the result object.
 
 - Be aware that this can introduce a huge performance hit in case of big files. (The files are read completely and into the memory and encoded to base64 afterwards to add them to the result object)
-- However reading the file directly from within the Thread which managed the picker can be necessary on Windows: Windows Apps can only read the Downloads folder and their own app folder by default and If a file is outside of these locations it cannot be acessed directly. However if the user picks the file through a file picker permissions to that file are granted implicitly.
+- However, reading the file directly from within the Thread which managed the picker can be necessary on Windows: Windows Apps can only read the Downloads folder and their own app folder by default and If a file is outside of these locations it cannot be acessed directly. However if the user picks the file through a file picker permissions to that file are granted implicitly.
 
   ```
   In addition to the default locations, an app can access additional files and folders by declaring capabilities in the app manifest (see App capability declarations), or by calling a file picker to let the user pick files and folders for the app to access (see Open files and folders with a picker).
@@ -191,7 +190,7 @@ The file size of the document. _On Android some DocumentProviders may not provid
 
 The base64 encoded content of the picked file if the option `readContent` was set to `true`.
 
-## `DocumentPicker.types.*`
+## `types.*`
 
 `DocumentPicker.types.*` provides a few common types for use as `type` values, these types will use the correct format for each platform (MIME types on Android, UTIs on iOS).
 
@@ -209,25 +208,24 @@ The base64 encoded content of the picked file if the option `readContent` was se
 - `DocumentPicker.types.xls`: xls files
 - `DocumentPicker.types.xlsx`: xlsx files
 
-### `DocumentPicker.isCancel(err)`
+#### `isCancel(err)`
 
-If the user cancels the document picker without choosing a file (by pressing the system back button on Android or the Cancel button on iOS) the Promise will be rejected with a cancellation error. You can check for this error using `DocumentPicker.isCancel(err)` allowing you to ignore it and cleanup any parts of your interface that may not be needed anymore.
+If the user cancels the document picker without choosing a file (by pressing the system back button on Android or the Cancel button on iOS), the Promise will be rejected with a cancellation error. You can check for this error using `DocumentPicker.isCancel(err)` allowing you to ignore it and cleanup any parts of your interface that may not be needed anymore.
 
-### `DocumentPicker.isInProgress(err)`
+#### `isInProgress(err)`
 
-If the user somehow manages to open multiple file pickers (eg. due the app being unresponsive), then only the picked result from the last opened picker will be considered and the promises from previous opened pickers will be rejected with an error that you can check using `DocumentPicker.isInProgress()`.
+If the user somehow manages to open multiple file pickers (e.g. due the app being unresponsive), then only the picked result from the last opened picker will be considered and the promises from previous opened pickers will be rejected with an error that you can check using `DocumentPicker.isInProgress()`.
 
 This behavior might change in future to allow opening only a single picker at a time. The internal logic is currently implemented only on iOS.
 
-### [iOS only] `DocumentPicker.releaseSecureAccess(uris: Array<string>)`
+#### [iOS only] `releaseSecureAccess(uris: Array<string>)`
 
-If `mode` is set to `open` iOS is giving you secure access to a file located outside from your sandbox.
+If `mode` is set to `open`, iOS is giving you secure access to a file located outside from your sandbox.
 In that case Apple is asking you to release the access as soon as you finish using the resource.
 
 ## Example
 
 See the example app in `example` folder.
-
 
 ## How to upload picked files?
 
