@@ -138,7 +138,7 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
       boolean multiple = !args.isNull(OPTION_MULTIPLE) && args.getBoolean(OPTION_MULTIPLE);
       intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple);
 
-      currentActivity.startActivityForResult(Intent.createChooser(intent, null), READ_REQUEST_CODE, Bundle.EMPTY);
+      currentActivity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY);
     } catch (ActivityNotFoundException e) {
       sendError(E_UNABLE_TO_OPEN_FILE_TYPE, e.getLocalizedMessage());
     } catch (Exception e) {
@@ -277,10 +277,10 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
             map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
           }
           int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-          if (!cursor.isNull(sizeIndex)) {
-            map.putInt(FIELD_SIZE, cursor.getInt(sizeIndex));
-          } else {
+          if (cursor.isNull(sizeIndex)) {
             map.putNull(FIELD_SIZE);
+          } else {
+            map.putDouble(FIELD_SIZE, cursor.getLong(sizeIndex));
           }
         }
       }
