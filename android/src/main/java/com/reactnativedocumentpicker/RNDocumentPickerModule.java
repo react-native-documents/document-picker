@@ -22,13 +22,11 @@ import com.facebook.react.bridge.GuardedResultAsyncTask;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.module.annotations.ReactModule;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,8 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@ReactModule(name = DocumentPickerModule.NAME)
-public class DocumentPickerModule extends ReactContextBaseJavaModule {
+public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
   public static final String NAME = "RNDocumentPicker";
   private static final int READ_REQUEST_CODE = 41;
   private static final int PICK_DIR_REQUEST_CODE = 42;
@@ -63,6 +60,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
   private static final String FIELD_NAME = "name";
   private static final String FIELD_TYPE = "type";
   private static final String FIELD_SIZE = "size";
+
+  private Promise promise;
+  private String copyTo;
+
+  public RNDocumentPickerModule(ReactApplicationContext reactContext) {
+    super(reactContext);
+    reactContext.addActivityEventListener(activityEventListener);
+  }
 
   private final ActivityEventListener activityEventListener = new BaseActivityEventListener() {
     @Override
@@ -87,14 +92,6 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
       array[i] = readableArray.getString(i);
     }
     return array;
-  }
-
-  private Promise promise;
-  private String copyTo;
-
-  public DocumentPickerModule(ReactApplicationContext reactContext) {
-    super(reactContext);
-    reactContext.addActivityEventListener(activityEventListener);
   }
 
   @Override
@@ -165,6 +162,11 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
     } catch (Exception e) {
       sendError(E_FAILED_TO_SHOW_PICKER, "Failed to create directory picker", e);
     }
+  }
+
+  @Override
+  public void releaseSecureAccess(ReadableArray uris, Promise promise) {
+    promise.reject("RNDocumentPicker:releaseSecureAccess", "releaseSecureAccess is not supported on Android");
   }
 
   private void onPickDirectoryResult(int resultCode, Intent data) {

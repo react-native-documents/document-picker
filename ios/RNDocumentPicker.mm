@@ -32,8 +32,6 @@ static NSString *const FIELD_SIZE = @"size";
     NSMutableArray *urlsInOpenMode;
 }
 
-@synthesize bridge = _bridge;
-
 - (instancetype)init
 {
     if ((self = [super init])) {
@@ -63,8 +61,8 @@ static NSString *const FIELD_SIZE = @"size";
 RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(pick:(NSDictionary *)options
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 {
     mode = options[@"mode"] && [options[@"mode"] isEqualToString:@"open"] ? UIDocumentPickerModeOpen : UIDocumentPickerModeImport;
     copyDestination = options[@"copyTo"];
@@ -174,8 +172,8 @@ RCT_EXPORT_METHOD(pick:(NSDictionary *)options
 }
 
 RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                  resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)
 {
     NSMutableArray *discardedItems = [NSMutableArray array];
     for (NSString *uri in uris) {
@@ -189,6 +187,10 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     }
     [urlsInOpenMode removeObjectsInArray:discardedItems];
     resolve(nil);
+}
+
+- (void)pickDirectory:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject {
+    reject(@"RNDocumentPicker:pickDirectory", @"pickDirectory is not supported on iOS", nil);
 }
 
 + (NSURL *)copyToUniqueDestinationFrom:(NSURL *)url usingDestinationPreset:(NSString *)copyToDirectory error:(NSError *)error
@@ -238,5 +240,14 @@ RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray<NSString *> *)uris
     NSError* error = [NSError errorWithDomain:NSCocoaErrorDomain code:NSUserCancelledError userInfo:nil];
     [promiseWrapper reject:@"user canceled the document picker" withCode:E_DOCUMENT_PICKER_CANCELED withError:error];
 }
+
+// Thanks to this guard, we won't compile this code when we build for the old architecture.
+#ifdef RCT_NEW_ARCH_ENABLED
+- (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
+    (const facebook::react::ObjCTurboModule::InitParams &)params
+{
+    return std::make_shared<facebook::react::NativeDocumentPickerSpecJSI>(params);
+}
+#endif
 
 @end

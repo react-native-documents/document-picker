@@ -1,5 +1,5 @@
 const path = require('path')
-const { androidManifestPath, iosProjectPath } = require('react-native-test-app')
+const { androidManifestPath } = require('react-native-test-app')
 
 const project = (() => {
   try {
@@ -9,7 +9,7 @@ const project = (() => {
         manifestPath: androidManifestPath(path.join(__dirname, 'example', 'android')),
       },
       ios: {
-        project: iosProjectPath('example/ios'),
+        sourceDir: path.join('example', 'ios'),
       },
     }
   } catch (e) {
