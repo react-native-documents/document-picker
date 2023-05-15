@@ -92,7 +92,7 @@ If you are using RN >= 0.69, only run `pod install` from the ios directory. Then
 
 ## API
 
-### `pickSingle(options)` / `pick(options)`
+#### `pickSingle(options)` / `pick(options)`
 
 ⚠️ Breaking in v6: `pick` returns a `Promise<Array<DocumentPickerResponse>>` instead of `Promise<DocumentPickerResponse>`. If you were using `pick`, change those usages to `pickSingle`.
 
@@ -103,7 +103,7 @@ Use `pickSingle` or `pick` to open a document picker for the user to select file
 - `pickSingle` is "sugar function" on top of `pick` and only allows a single selection returns `Promise<DocumentPickerResponse>`
 
 
-### `pickDirectory()`
+#### `pickDirectory()`
 
 Open a system directory picker. Returns a promise that resolves to (`{ uri: string }`) of the directory selected by user.
 
@@ -208,17 +208,17 @@ The base64 encoded content of the picked file if the option `readContent` was se
 - `DocumentPicker.types.xls`: xls files
 - `DocumentPicker.types.xlsx`: xlsx files
 
-### `isCancel(err)`
+#### `isCancel(err)`
 
 If the user cancels the document picker without choosing a file (by pressing the system back button on Android or the Cancel button on iOS), the Promise will be rejected with a cancellation error. You can check for this error using `DocumentPicker.isCancel(err)` allowing you to ignore it and cleanup any parts of your interface that may not be needed anymore.
 
-### `isInProgress(err)`
+#### `isInProgress(err)`
 
 If the user somehow manages to open multiple file pickers (e.g. due the app being unresponsive), then only the picked result from the last opened picker will be considered and the promises from previous opened pickers will be rejected with an error that you can check using `DocumentPicker.isInProgress()`.
 
 This behavior might change in future to allow opening only a single picker at a time. The internal logic is currently implemented only on iOS.
 
-### [iOS only] `releaseSecureAccess(uris: Array<string>)`
+#### [iOS only] `releaseSecureAccess(uris: Array<string>)`
 
 If `mode` is set to `open`, iOS is giving you secure access to a file located outside from your sandbox.
 In that case Apple is asking you to release the access as soon as you finish using the resource.
