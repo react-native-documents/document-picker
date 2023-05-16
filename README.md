@@ -20,8 +20,6 @@ A React Native wrapper for:
 
 Requires RN >= 0.69, Android 5.0+ and iOS 11+
 
-New architecture is supported.
-
 # Table of Contents
 
 - [react-native-document-picker](#react-native-document-picker)
@@ -85,10 +83,11 @@ expo run:ios
 expo run:android
 ```
 
-
 #### RN >= 0.69
 
 If you are using RN >= 0.69, only run `pod install` from the ios directory. Then rebuild your project. Older RN versions are not supported.
+
+New architecture is supported with RN >= 71.
 
 ## API
 
@@ -101,7 +100,6 @@ Use `pickSingle` or `pick` to open a document picker for the user to select file
 - with `pick`, you can use `allowMultiSelection` param to control whether user can select multiple files (`false` by default). Returns a `Promise<Array<DocumentPickerResponse>>`
 
 - `pickSingle` is "sugar function" on top of `pick` and only allows a single selection returns `Promise<DocumentPickerResponse>`
-
 
 #### `pickDirectory()`
 
@@ -120,7 +118,7 @@ Whether selecting multiple files is allowed. For `pick`, this is `false` by defa
 The type or types of documents to allow selection of. An array of strings or single string.
 
 - On Android, these are MIME types such as `text/plain` or partial MIME types such as `image/*`. See [common MIME types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types).
-- On iOS, these must be Apple "[Uniform Type Identifiers](https://developer.apple.com/documentation/uniformtypeidentifiers/system-declared_uniform_type_identifiers?language=objc)"
+- On iOS, these must be Apple [Uniform Type Identifiers](https://developer.apple.com/documentation/uniformtypeidentifiers/system-declared_uniform_type_identifiers?language=objc)
 - If `type` is omitted it will be treated as `*/*` or `public.item`.
 
 #### [iOS and Android only] `copyTo`:`"cachesDirectory" | "documentDirectory"`
@@ -193,6 +191,14 @@ The base64 encoded content of the picked file if the option `readContent` was se
 ## `types.*`
 
 `DocumentPicker.types.*` provides a few common types for use as `type` values, these types will use the correct format for each platform (MIME types on Android, UTIs on iOS).
+
+If you need to provide your own file type filtering:
+
+For Android, see [common MIME types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types).
+
+For iOS [Uniform Type Identifiers](https://developer.apple.com/documentation/uniformtypeidentifiers/system-declared_uniform_type_identifiers?language=objc).
+
+Also, searching Google usually helps.
 
 - `DocumentPicker.types.allFiles`: All document types, on Android this is `*/*`, on iOS is `public.item`
 - `DocumentPicker.types.images`: All image types
