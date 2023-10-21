@@ -8936,9 +8936,9 @@ rc@^1.2.8:
     strip-json-comments "~2.0.1"
 
 react-devtools-core@^4.26.1:
-  version "4.27.7"
-  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.27.7.tgz#458a6541483078d60a036c75bf88f54c478086ec"
-  integrity sha512-12N0HrhCPbD76Z7SkyJdGdXdPGouUsgV6tlEsbSpAnLDO06tjXZP+irht4wPdYwJAJRQ85DxL48eQoz7UmrSuQ==
+  version "4.28.4"
+  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.28.4.tgz#fb8183eada77093f4c2f9830e664bf22255abe27"
+  integrity sha512-IUZKLv3CimeM07G3vX4H4loxVpByrzq3HvfTX7v9migalwvLs9ZY5D3S3pKR33U+GguYfBBdMMZyToFhsSE/iQ==
   dependencies:
     shell-quote "^1.6.1"
     ws "^7"
