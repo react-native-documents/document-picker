@@ -24,6 +24,10 @@ if (isNewArchitectureEnabled()) {
 
 
 android {
+    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
+    if (apgVersion.tokenize('.')[0].toInteger() >= 7) {
+      namespace "com.reactnativedocumentpicker"
+    }
     compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
 
     // Used to override the NDK path/version on internal CI or by allowing
