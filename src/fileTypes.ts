@@ -1,7 +1,7 @@
 const mimeTypes = Object.freeze({
   allFiles: '*/*',
   audio: 'audio/*',
-  csv: 'text/csv',
+  csv: 'text/comma-separated-values',
   doc: 'application/msword',
   docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   images: 'image/*',
