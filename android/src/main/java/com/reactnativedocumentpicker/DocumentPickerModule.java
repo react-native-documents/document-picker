@@ -311,7 +311,7 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
         if (fileName == null) {
           fileName = String.valueOf(System.currentTimeMillis());
         }
-        File destFile = new File(dir, fileName);
+        File destFile = safeGetDestination(new File(dir, fileName), dir.getCanonicalPath());
         Uri copyPath = copyFile(context, uri, destFile);
         map.putString(FIELD_FILE_COPY_URI, copyPath.toString());
       } catch (Exception e) {
@@ -319,6 +319,14 @@ public class DocumentPickerModule extends ReactContextBaseJavaModule {
         map.putNull(FIELD_FILE_COPY_URI);
         map.putString(FIELD_COPY_ERROR, e.getLocalizedMessage());
       }
+    }
+
+    public File safeGetDestination(File destFile, String expectedDir) throws IllegalArgumentException, IOException {
+      String canonicalPath = destFile.getCanonicalPath();
+      if (!canonicalPath.startsWith(expectedDir)) {
+        throw new IllegalArgumentException("The copied file is attempting to write outside of the target directory.");
+      }
+      return destFile;
     }
 
     public static Uri copyFile(Context context, Uri uri, File destFile) throws IOException {
