@@ -1,6 +1,6 @@
 # react-native-document-picker
 
-📣📣 A full rewrite of the library is [DONE](https://github.com/react-native-documents/document-picker/issues/603). 📣📣
+📣📣 A full rewrite of the library is [AVAILABLE](https://github.com/react-native-documents/document-picker/issues/603). 📣📣
 
 See the new [docs here](https://react-native-documents.github.io/).
 
