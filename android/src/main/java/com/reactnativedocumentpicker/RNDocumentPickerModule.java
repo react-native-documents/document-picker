@@ -103,9 +103,9 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
   }
 
   @Override
-  public void onCatalystInstanceDestroy() {
+  public void invalidate() {
     getReactApplicationContext().removeActivityEventListener(activityEventListener);
-    super.onCatalystInstanceDestroy();
+    super.invalidate();
   }
 
   @NonNull
