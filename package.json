@@ -52,13 +52,13 @@
     "google-drive",
     "icloud"
   ],
-  "repository": "https://github.com/rnmods/react-native-document-picker",
+  "repository": "https://github.com/react-native-documents/document-picker",
   "author": "Elyx0 <elyx00@gmail.com> (https://github.com/rnmods), Vojtech Novak (hello@react-native-training.eu)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rnmods/react-native-document-picker/issues"
+    "url": "https://github.com/react-native-documents/document-picker/issues"
   },
-  "homepage": "https://github.com/rnmods/react-native-document-picker#readme",
+  "homepage": "https://github.com/react-native-documents/document-picker#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
