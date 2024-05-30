@@ -53,12 +53,7 @@ const extensions = Object.freeze({
   zip: '.zip .gz',
 } as const)
 
-export type PlatformTypes = {
-  android: typeof mimeTypes
-  ios: typeof utis
-  windows: typeof extensions
-}
-export type SupportedPlatforms = 'ios' | 'android' | 'windows'
+export type PlatformTypes = typeof mimeTypes | typeof utis | typeof extensions
 
 export const perPlatformTypes = {
   android: mimeTypes,

@@ -1,6 +1,6 @@
 import { Platform, ModalPropsIOS } from 'react-native'
 import invariant from 'invariant'
-import type { PlatformTypes, SupportedPlatforms } from './fileTypes'
+import type { PlatformTypes } from './fileTypes'
 import { perPlatformTypes } from './fileTypes'
 import { NativeDocumentPicker } from './NativeDocumentPicker'
 
@@ -21,19 +21,16 @@ export type DirectoryPickerResponse = {
 
 export type TransitionStyle = 'coverVertical' | 'flipHorizontal' | 'crossDissolve' | 'partialCurl'
 
-export type DocumentPickerOptions<OS extends SupportedPlatforms> = {
-  type?:
-    | string
-    | PlatformTypes[OS][keyof PlatformTypes[OS]]
-    | Array<PlatformTypes[OS][keyof PlatformTypes[OS]] | string>
+export type DocumentPickerOptions = {
+  type?: string | Array<PlatformTypes | string>
   mode?: 'import' | 'open'
   copyTo?: 'cachesDirectory' | 'documentDirectory'
   allowMultiSelection?: boolean
   transitionStyle?: TransitionStyle
 } & Pick<ModalPropsIOS, 'presentationStyle'>
 
-export async function pickDirectory<OS extends SupportedPlatforms>(
-  params?: Pick<DocumentPickerOptions<OS>, 'presentationStyle' | 'transitionStyle'>,
+export async function pickDirectory(
+  params?: Pick<DocumentPickerOptions, 'presentationStyle' | 'transitionStyle'>,
 ): Promise<DirectoryPickerResponse | null> {
   if (Platform.OS === 'ios') {
     const result = await pick({
@@ -48,9 +45,7 @@ export async function pickDirectory<OS extends SupportedPlatforms>(
   }
 }
 
-export function pickSingle<OS extends SupportedPlatforms>(
-  opts?: DocumentPickerOptions<OS>,
-): Promise<DocumentPickerResponse> {
+export function pickSingle(opts?: DocumentPickerOptions): Promise<DocumentPickerResponse> {
   const options = {
     ...opts,
     allowMultiSelection: false,
@@ -58,9 +53,7 @@ export function pickSingle<OS extends SupportedPlatforms>(
   return pick(options).then((results) => results[0])
 }
 
-export function pick<OS extends SupportedPlatforms>(
-  opts?: DocumentPickerOptions<OS>,
-): Promise<DocumentPickerResponse[]> {
+export function pick(opts?: DocumentPickerOptions): Promise<DocumentPickerResponse[]> {
   const options = {
     // must be false to maintain old (v5) behavior
     allowMultiSelection: false,
@@ -68,7 +61,7 @@ export function pick<OS extends SupportedPlatforms>(
     ...opts,
   }
 
-  const newOpts: DoPickParams<OS> = {
+  const newOpts: DoPickParams = {
     presentationStyle: 'formSheet',
     transitionStyle: 'coverVertical',
     ...options,
@@ -78,16 +71,14 @@ export function pick<OS extends SupportedPlatforms>(
   return doPick(newOpts)
 }
 
-type DoPickParams<OS extends SupportedPlatforms> = DocumentPickerOptions<OS> & {
-  type: Array<PlatformTypes[OS][keyof PlatformTypes[OS]] | string>
+type DoPickParams = DocumentPickerOptions & {
+  type: Array<PlatformTypes | string>
   allowMultiSelection: boolean
   presentationStyle: NonNullable<ModalPropsIOS['presentationStyle']>
   transitionStyle: TransitionStyle
 }
 
-function doPick<OS extends SupportedPlatforms>(
-  options: DoPickParams<OS>,
-): Promise<DocumentPickerResponse[]> {
+function doPick(options: DoPickParams): Promise<DocumentPickerResponse[]> {
   invariant(
     !('filetype' in options),
     'A `filetype` option was passed to DocumentPicker.pick, the correct option is `type`',
