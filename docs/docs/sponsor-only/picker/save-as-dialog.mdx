@@ -1,0 +1,59 @@
+---
+sidebar_position: 0
+sidebar_label: Save As dialog
+---
+
+# 'Save As' dialog
+
+[`saveDocuments`](/docs/doc-picker-api#savedocuments) presents the user with a dialog to save the provided file(s) to a location of their choice.
+
+<details>
+    <summary>UI screenshots</summary>
+|                             Android                              |                             iOS                              |
+| :--------------------------------------------------------------: | :----------------------------------------------------------: |
+| <img src={'/img/save-as-android.png'} style={{maxWidth: 400}} /> | <img src={'/img/save-as-ios.png'} style={{maxWidth: 400}} /> |
+
+</details>
+
+This is useful if you want to export some user-generated content (or for example a log file you created during development) from within your app to a user-selected location.
+
+On Android, only one file can be saved at a time but on iOS, multiple files can be saved at once. Read more about the [parameters](/docs/doc-picker-api#savedocumentsoptions) of the function.
+
+### How it works
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+<Tabs queryString="current-os" className="unique-tabs">
+    <TabItem value="android" label="Android">
+        Uses [`Intent.ACTION_CREATE_DOCUMENT`](https://developer.android.com/reference/android/content/Intent#ACTION_CREATE_DOCUMENT) internally.
+        This is a two-step process: first, the user provides the target (location and name), then the package copies the source to the selected target.
+
+    </TabItem>
+    <TabItem value="ios" label="iOS">
+        Uses [UIDocumentPickerViewController init(forExporting:)](https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller/3566730-init) internally.
+
+        Note that unlike on Android, your app does not posses any permissions to the target file.
+
+    </TabItem>
+
+</Tabs>
+
+---
+
+```tsx title="Example: opening a 'Save As' dialog"
+import { saveDocuments } from '@react-native-documents/picker'
+return (
+  <Button
+    title="Save some text file to a user-defined location"
+    onPress={async () => {
+      const [{ uri: targetUri }] = await saveDocuments({
+        sourceUris: ['some file uri'],
+        copy: false,
+        mimeType: 'text/plain',
+        title: 'some file name',
+      })
+    }}
+  />
+)
+```

@@ -1,0 +1,131 @@
+---
+sidebar_position: 1
+sidebar_label: Installation & Setup
+---
+
+# Installation
+
+There are two ways to consume the document picker package:
+
+### Premium Version
+
+This version offers many improvements over the public version. Full list of changes is [here](./sponsor-only/intro.md#whats-new-in-the-premium-packages). To mention a few:
+
+✅ New: [`saveDocuments`](./sponsor-only/picker/save-as-dialog) function
+
+✅ New: [`isKnownType`](./sponsor-only/picker/limiting-selectable-files.md#isknowntype) utility
+
+✅ New: `open` mode support for both platforms
+
+✅ New: long-term file access permissions on both platforms
+
+✅ New: `keepLocalCopy` function that separates picking a file and copying it to a local directory, which makes your app more responsive.
+
+... and [more](./sponsor-only/intro.md#whats-new-in-the-premium-packages)
+
+Your support enables continued maintenance and development of the module. Thank you! ❤️
+
+### Public Version
+
+Available on the public npm registry, this version does not include the new features, updates and improvements found in the premium version.
+
+## Accessing the premium version
+
+Access is provided via [GitHub Sponsors](https://github.com/sponsors/vonovak): upon sponsoring you will get access to the private packages and to the private monorepo with the sources and examples (please use specifically the tiers that mention this package!).
+
+Three steps are needed to access the premium packages, which are hosted on [GitHub npm packages registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
+
+1. [Become a sponsor](https://github.com/sponsors/vonovak) and accept private repository invitation - it takes just a few clicks.
+
+2. [Obtain here](https://github.com/settings/tokens) a Personal Access Token with `packages:read` permission.
+
+3. Set up your package manager so that it fetches the packages from the GH packages registry. In this example, we're using an `NPM_TOKEN` environment variable.
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+<Tabs className="unique-tabs">
+  <TabItem value="classic" label="npm / yarn v1">
+    create a `.npmrc` file in your project root with the following content:
+
+```
+//npm.pkg.github.com/:_authToken=${NPM_TOKEN}
+
+@react-native-documents:registry=https://npm.pkg.github.com/
+```
+
+  </TabItem>
+
+  <TabItem value="yarn v3+" label="yarn v3+">
+    create a `.yarnrc.yml` file in your project root with the following content:
+
+```yml
+npmScopes:
+  react-native-documents:
+    npmRegistryServer: https://npm.pkg.github.com
+    npmAuthToken: '${NPM_TOKEN}'
+```
+
+  </TabItem>
+
+</Tabs>
+
+If you use another package manager ([such as bun](https://bun.sh/docs/install/registries)), please refer to its documentation on how to set up a custom registry.
+
+## Installing
+
+<Tabs className="unique-tabs">
+    <TabItem value="premium" label="For sponsors">
+
+        ```bash
+        yarn add @react-native-documents/picker
+        yarn add @react-native-documents/viewer
+        ```
+
+    </TabItem>
+
+    <TabItem value="classic" label="Public package">
+
+        The `viewer` package is not available in the public version.
+
+        ```bash
+        yarn add react-native-document-picker
+        ```
+    </TabItem>
+
+</Tabs>
+
+## Setting up
+
+:::warning
+The premium document picker package requires iOS 14 or later. If you use Expo, use [Expo build properties](https://docs.expo.dev/versions/latest/sdk/build-properties/#example-appjson-with-config-plugin) to update the `deploymentTarget` to `14`.
+
+In regular React Native projects, update the [settings in Xcode](https://stackoverflow.com/a/66798215/2070942).
+:::
+
+### Expo
+
+:::info
+
+This package cannot be used in ["Expo Go"](https://docs.expo.dev/workflow/overview/#development-builds) because it requires custom native code.
+
+However, you can add custom native code to Expo through a [development build](https://docs.expo.dev/workflow/overview/#development-builds). That is the approach taken below.
+
+:::
+
+```bash
+# install the package first
+
+# Build the app locally
+expo prebuild --clean
+expo run:ios
+expo run:android
+```
+
+### React Native
+
+Install the package and then run `pod install` from the ios directory. Then rebuild your project with Xcode.
+
+The packages support last 3 stable releases of RN, but very likely work with RN 0.73 an up.
+
+If you're using the [New Architecture](https://reactnative.dev/docs/new-architecture-intro), it's strongly recommended to use the latest stable release.

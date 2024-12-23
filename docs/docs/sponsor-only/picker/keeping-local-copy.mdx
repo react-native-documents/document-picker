@@ -1,0 +1,73 @@
+---
+sidebar_position: 4
+sidebar_label: Keeping a local file copy
+---
+
+# Keeping a local copy of the picked files {#keepLocalCopy}
+
+[`keepLocalCopy`](/docs/doc-picker-api#keeplocalcopy) makes the file available in the app's storage. The behavior is different on iOS and Android:
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+<Tabs queryString="current-os" className="unique-tabs">
+    <TabItem value="android" label="Android">
+        This method opens an `InputStream` pointing to the picked `content://` uri (from both Open and Import modes) and stores its bytes into a file - i.e. it can be used to "convert" a `content://` Uri into a local file. This file's location is determined by the `destination` parameter.
+
+        It also "converts" [virtual files](./virtual-files.md) (such as Google Docs or sheets) into local files.
+
+    </TabItem>
+    <TabItem value="ios" label="iOS">
+        On iOS, `keepLocalCopy` is only supported for the Import mode at the moment.
+
+       Calling this method is strongly recommended, though not strictly necessary, as the file is already temporarily available in a location in the app's sandbox when it is picked.
+        However, iOS appears to delete the file rather soon after it is returned to your app, hence the recommendation.
+
+        `keepLocalCopy` is useful if you need to prevent / delay the file being deleted by the system (by moving it to the app's Documents / Cache directory, respectively).
+
+        To prevent deletion, call `keepLocalCopy()` and pass `destination: "documentDirectory"`.
+        This moves the file from the temporary location it is in when it is picked, into Documents directory, where the file lives until the app is uninstalled.
+    </TabItem>
+
+</Tabs>
+
+---
+
+:::note
+
+For each call of `keepLocalCopy`, a new unique directory is created in the app's storage, and the files are placed into it.
+
+This way, the files are isolated and subsequent calls to `keepLocalCopy` with the same file names do not overwrite the previous files.
+
+When writing to the filesystem, [path traversal vulnerability](https://owasp.org/www-community/attacks/Path_Traversal) is prevented. Writing files outside the intended destination will error.
+
+:::
+
+```tsx title="Example: keeping a local copy of the picked file"
+import { pick, keepLocalCopy } from '@react-native-documents/picker'
+return (
+  <Button
+    title="single file import, and ensure it is available in the local storage"
+    onPress={async () => {
+      try {
+        const [{ name, uri }] = await pick()
+
+        const [copyResult] = await keepLocalCopy({
+          files: [
+            {
+              uri,
+              fileName: name ?? 'fallback-name',
+            },
+          ],
+          destination: 'documentDirectory',
+        })
+        if (copyResult.status === 'success') {
+          // do something
+        }
+      } catch (err) {
+        // see error handling
+      }
+    }}
+  />
+)
+```

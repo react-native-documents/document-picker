@@ -1,0 +1,95 @@
+---
+sidebar_position: 1
+description: Import mode allows you to pick a file from the user's device and keep your own copy of it
+---
+
+# Import mode
+
+<details>
+  <summary>Video introduction</summary>
+  <iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/CUNDpURFx4U?si=Qw1xpG4d4aNwJgdS&amp;start=65"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  ></iframe>
+</details>
+
+Use import mode when you want to pick a file (from the device, cloud storage, etc.) and keep your own copy of it. That means if the original file changes, the copy you have will not change.
+
+If you instead want to keep a reference to the original picked file, use the [open mode](./open-mode.mdx).
+
+Import mode is the default way to use the module, as in the example below.
+
+```tsx title="picking a file in import mode"
+import { pick } from '@react-native-documents/picker'
+return (
+  <Button
+    title="single file import"
+    onPress={async () => {
+      try {
+        const [pickResult] = await pick()
+        // const [pickResult] = await pick({mode:'import'}) // equivalent
+        // do something with the picked file
+      } catch (err: unknown) {
+        // see error handling
+      }
+    }}
+  />
+)
+```
+
+:::tip
+
+`pick()`, when it resolves, always returns at least one picked document, and TypeScript won't complain about `pickedFile` being `undefined` due to the array destructuring, even with `noUncheckedIndexedAccess: true` in your `tsconfig.json`.
+
+:::
+
+### Next steps
+
+After importing a file, it's likely that you'll want to work with a local copy of it: see [keeping a local copy](./keeping-local-copy.mdx). This is because on Android, the picked files may point to resources that are not present on the device but in some cloud location. On iOS, the picked files are always downloaded by the system, but they are stored as temporary files that are only available for a short time.
+
+### How it works
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+<Tabs queryString="current-os" className="unique-tabs">
+  <TabItem value="android" label="Android">
+    Import mode uses [`Intent.ACTION_GET_CONTENT`](https://developer.android.com/reference/android/content/Intent#ACTION_GET_CONTENT) internally.
+
+    Read more about the difference between the two modes in [Android integration guide](./integrating-on-android.mdx).
+
+    With `ACTION_GET_CONTENT`, the returned uris are file references transient to your activity's current lifecycle. Regardless of the intent type, it is recommended you import a copy that you can read later, using [`keepLocalCopy`](./keeping-local-copy.mdx).
+
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+    Import mode uses [UIDocumentPickerViewController init(forOpeningContentTypes:asCopy:)](https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller/3566733-init) internally.
+
+    In import mode, the picker gives you access to a local copy of the documents. The picked documents are temporary files and remain available only for a short time. Officially it's [until the application terminates](https://developer.apple.com/documentation/uikit/uidocumentpickerdelegate/2902364-documentpicker#discussion) but practically, it appears to be much shorter.
+
+    If you want to access a file longer, you have to use [`keepLocalCopy`](./keeping-local-copy.mdx), or the [open mode](./open-mode.mdx) instead.
+
+  </TabItem>
+</Tabs>
+
+### Import Options
+
+| Name                   | Type                                                                                                                                                               | Description                                                                                                                                                          |
+| :--------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type?`                | `string` \| [`PredefinedFileTypes`](/docs/doc-picker-api#predefinedfiletypes) \| ([`PredefinedFileTypes`](/docs/doc-picker-api#predefinedfiletypes) \| `string`)[] | specify file type(s) that you want to pick. Use `types` for some predefined values.                                                                                  |
+| `allowMultiSelection?` | `boolean`                                                                                                                                                          | Whether to allow multiple files to be picked                                                                                                                         |
+| `allowVirtualFiles?`   | `boolean`                                                                                                                                                          | Android only - Whether to allow [virtual files](./virtual-files.md) (such as Google docs or sheets) to be picked. False by default.                                  |
+| `presentationStyle?`   | [`PresentationStyle`](/docs/doc-picker-api#presentationstyle)                                                                                                      | iOS only - Controls how the picker is presented, e.g. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`.                                     |
+| `transitionStyle?`     | [`TransitionStyle`](/docs/doc-picker-api#transitionstyle)                                                                                                          | iOS only - Configures the transition style of the picker. Defaults to coverVertical, when the picker is presented, its view slides up from the bottom of the screen. |
+
+### Import result
+
+The result of the `pick` function is an array of picked files (the result is the same for both `open` and `import` modes). The array has a length of 1 if `allowMultiSelection` is `false` (the default), and 1 or more if `allowMultiSelection` is `true`.
+
+import PickResultTable from './_pickResultTable.mdx'
+
+<PickResultTable />

@@ -1,0 +1,35 @@
+---
+sidebar_position: 10
+---
+
+# Android Usage Notes
+
+:::tip
+The TL;DR version is: the Open and Import modes on Android aren't too different in practice, and you can usually use either one, often combined with [`keepLocalCopy`](./keeping-local-copy.mdx).
+:::
+
+### Screenshots
+
+Sometimes pictures are worth a thousand words. Here are some example screenshots of the Open and Import modes on Android.
+
+Notice that in the "Import Mode (unrestricted file types)" case, the list is taller than the screen.
+
+import Image from '@theme/IdealImage'
+
+|                         Open Mode (unrestricted file types)                         |                         Import Mode (unrestricted file types)                         |
+| :---------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------: |
+| <Image img={require('/img/modes/open-unrestricted.jpg')} style={{maxWidth: 400}} /> | <Image img={require('/img/modes/import-unrestricted.jpg')} style={{maxWidth: 400}} /> |
+
+|                   Open Mode (restricted to picking pdf)                    |                   Import Mode (restricted to picking pdf)                    |
+| :------------------------------------------------------------------------: | :--------------------------------------------------------------------------: |
+| <Image img={require('/img/modes/open-pdf.jpg')} style={{maxWidth: 400}} /> | <Image img={require('/img/modes/import-pdf.jpg')} style={{maxWidth: 400}} /> |
+
+### Resources
+
+Assorted links to relevant resources:
+
+- [`Intent.ACTION_GET_CONTENT` (used in Import mode)](https://developer.android.com/reference/android/content/Intent#ACTION_GET_CONTENT)
+- [`Intent.ACTION_OPEN_DOCUMENT` (used in Open mode)](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT)
+- [Open a specific type of file](https://developer.android.com/guide/components/intents-common#OpenFile)
+- [What is the real difference between ACTION_GET_CONTENT and ACTION_OPEN_DOCUMENT?](https://stackoverflow.com/questions/36182134/what-is-the-real-difference-between-action-get-content-and-action-open-document)
+- [note in "Write a client app"](https://developer.android.com/guide/topics/providers/document-provider.html#client)

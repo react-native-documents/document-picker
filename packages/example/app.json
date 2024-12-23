@@ -1,0 +1,56 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/react-native-test-app/trunk/schema.json",
+  "name": "document-picker-example",
+  "displayName": "document-picker-example",
+  "components": [
+    {
+      "appKey": "importingExample",
+      "displayName": "importingExample"
+    },
+    {
+      "appKey": "openingExample",
+      "displayName": "openingExample"
+    },
+    {
+      "appKey": "utilsExample",
+      "displayName": "utilsExample"
+    },
+    {
+      "appKey": "saveAsExample",
+      "displayName": "saveAsExample"
+    }
+  ],
+  "ios": {
+     "bundleIdentifier": "com.rndocpicker.example",
+     "developmentTeam": "W7TL7C2BKQ"
+  },
+  "android": {
+    "package": "com.rndocpicker.example",
+    "signingConfigs": {
+      "release": {
+        "keyAlias": "androiddebugkey",
+        "keyPassword": "android",
+        "storeFile": "debug.keystore",
+        "storePassword": "android"
+      }
+    }
+  },
+  "resources": {
+    "android": [
+      "dist/res",
+      "dist/main.android.jsbundle"
+    ],
+    "ios": [
+      "dist/assets",
+      "dist/main.ios.jsbundle"
+    ],
+    "macos": [
+      "dist/assets",
+      "dist/main.macos.jsbundle"
+    ],
+    "windows": [
+      "dist/assets",
+      "dist/main.windows.bundle"
+    ]
+  }
+}

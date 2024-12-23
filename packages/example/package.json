@@ -1,0 +1,77 @@
+{
+  "name": "react-native-documents-example",
+  "version": "1.0.0",
+  "description": "An example app for react-native-documents",
+  "react-native": "src/index",
+  "source": "src/index",
+  "files": [],
+  "scripts": {
+    "start": "react-native start --port 8081 --reset-cache",
+    "android": "react-native run-android",
+    "build:android": "npm run mkdist && react-native bundle --entry-file index.js --platform android --dev true --bundle-output dist/main.android.jsbundle --assets-dest dist/res",
+    "build:ios": "npm run mkdist && react-native bundle --entry-file index.js --platform ios --dev true --bundle-output dist/main.ios.jsbundle --assets-dest dist",
+    "build:macos": "npm run mkdist && react-native bundle --entry-file index.js --platform macos --dev true --bundle-output dist/main.macos.jsbundle --assets-dest dist",
+    "bundle:android": "mkdir -p dist && react-native bundle --platform android --dev false --entry-file index.js --bundle-output dist/main.android.jsbundle --assets-dest dist",
+    "bundle:ios": "mkdir -p dist && react-native bundle --platform ios --dev false --entry-file index.js --bundle-output dist/main.ios.jsbundle --assets-dest dist",
+    "ios": "react-native run-ios",
+    "macos": "react-native run-macos --scheme document-picker-example",
+    "mkdist": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true, mode: 0o755 })\"",
+    "wdio": "wdio ./wdio.conf.ts"
+  },
+  "repository": "https://github.com/react-native-documents/sponsors-only",
+  "author": "Vojtech Novak (hello@react-native-training.eu)",
+  "license": "see LICENSE file",
+  "bugs": {
+    "url": "https://github.com/react-native-documents/sponsors-only/issues"
+  },
+  "homepage": "https://github.com/react-native-documents/sponsors-only#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "devDependencies": {
+    "@react-native-community/cli": "^14.1.1",
+    "@react-native/metro-config": "^0.76.2",
+    "@types/invariant": "^2.2.37",
+    "@types/jasmine": "^5.1.4",
+    "@types/react": "^18.3.3",
+    "@wdio/browserstack-service": "^8.36.1",
+    "@wdio/cli": "^8.36.1",
+    "@wdio/jasmine-framework": "^8.36.1",
+    "@wdio/local-runner": "^8.36.1",
+    "@wdio/spec-reporter": "^8.36.1",
+    "appium": "^2.5.4",
+    "appium-uiautomator2-driver": "^3.1.0",
+    "pod-install": "^0.2.2",
+    "react-native-test-app": "^4.0.4",
+    "semantic-release": "^22.0.12",
+    "ts-node": "^10.9.2",
+    "wdio-wait-for": "^3.0.11"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "jest": {
+    "preset": "react-native",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/lib/"
+    ]
+  },
+  "engines": {
+    "node": ">= 19.0.0"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "packageManager": "yarn@4.5.1",
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.1.0",
+    "@react-native-segmented-control/segmented-control": "^2.5.5",
+    "invariant": "^2.2.4",
+    "react": "18.3.1",
+    "react-native": "^0.75.4",
+    "react-native-uitextview": "^1.4.0"
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "name": "@react-native-documents/viewer",
+  "version": "1.3.0",
+  "description": "A react native interface to preview documents",
+  "main": "lib/commonjs/index",
+  "module": "lib/module/index",
+  "types": "lib/typescript/index.d.ts",
+  "react-native": "src/index",
+  "source": "src/index",
+  "files": [
+    "src",
+    "lib",
+    "android",
+    "ios",
+    "windows",
+    "cpp",
+    "LICENSE.md",
+    "react-native-document-viewer.podspec",
+    "!lib/typescript/example",
+    "!android/build",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "jest/build"
+  ],
+  "scripts": {
+    "build:mock": "tsc --build jest",
+    "prepare": "bob build && yarn build:mock",
+    "release": "yarn prepare && npx semantic-release"
+  },
+  "codegenConfig": {
+    "name": "rndocumentviewerCGen",
+    "type": "modules",
+    "jsSrcsDir": "src/spec",
+    "android": {
+      "javaPackageName": "com.reactnativedocumentviewer"
+    }
+  },
+  "keywords": [
+    "react-native",
+    "document",
+    "viewer",
+    "preview",
+    "QuickLook"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/react-native-documents/sponsors-only.git"
+  },
+  "author": "Vojtech Novak (hello@react-native-training.eu)",
+  "license": "see LICENSE file",
+  "bugs": {
+    "url": "https://github.com/react-native-documents/sponsors-only/issues"
+  },
+  "homepage": "https://github.com/react-native-documents/sponsors-only#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "restricted"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^18.2.4",
+    "react-native-builder-bob": "^0.30.2",
+    "typescript": "^5.6.2"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "jest": {
+    "preset": "react-native",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/lib/"
+    ]
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      "commonjs",
+      "module",
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "packageManager": "yarn@4.5.1"
+}

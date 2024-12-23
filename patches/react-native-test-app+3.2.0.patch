@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-test-app/ios/ReactTestApp/ReactTestApp.common.xcconfig b/node_modules/react-native-test-app/ios/ReactTestApp/ReactTestApp.common.xcconfig
+index af946f2..df0099b 100644
+--- a/node_modules/react-native-test-app/ios/ReactTestApp/ReactTestApp.common.xcconfig
++++ b/node_modules/react-native-test-app/ios/ReactTestApp/ReactTestApp.common.xcconfig
+@@ -11,7 +11,7 @@ ENABLE_STRICT_OBJC_MSGSEND = YES
+ GCC_C_LANGUAGE_STANDARD = gnu11
+ GCC_NO_COMMON_BLOCKS = YES
+ GCC_TREAT_WARNINGS_AS_ERRORS = YES
+-IPHONEOS_DEPLOYMENT_TARGET = 13.7
++IPHONEOS_DEPLOYMENT_TARGET = 14.0
+ MTL_FAST_MATH = YES
+ OTHER_CFLAGS = $(inherited) -fstack-protector-strong
+ OTHER_LDFLAGS = $(inherited) -fstack-protector-strong

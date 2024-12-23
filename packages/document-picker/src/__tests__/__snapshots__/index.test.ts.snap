@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DocumentPicker mock should have the expected methods 1`] = `
+{
+  "errorCodes": {
+    "IN_PROGRESS": "ASYNC_OP_IN_PROGRESS",
+    "OPERATION_CANCELED": "OPERATION_CANCELED",
+    "UNABLE_TO_OPEN_FILE_TYPE": "UNABLE_TO_OPEN_FILE_TYPE",
+  },
+  "isErrorWithCode": [Function],
+  "isKnownType": [Function],
+  "keepLocalCopy": [Function],
+  "pick": [Function],
+  "pickDirectory": [Function],
+  "releaseLongTermAccess": [Function],
+  "releaseSecureAccess": [Function],
+  "saveDocuments": [Function],
+  "types": {
+    "allFiles": "public.item",
+    "audio": "public.audio",
+    "csv": "public.comma-separated-values-text",
+    "doc": "com.microsoft.word.doc",
+    "docx": "org.openxmlformats.wordprocessingml.document",
+    "images": "public.image",
+    "json": "public.json",
+    "pdf": "com.adobe.pdf",
+    "plainText": "public.plain-text",
+    "ppt": "com.microsoft.powerpoint.ppt",
+    "pptx": "org.openxmlformats.presentationml.presentation",
+    "video": "public.movie",
+    "xls": "com.microsoft.excel.xls",
+    "xlsx": "org.openxmlformats.spreadsheetml.sheet",
+    "zip": "public.zip-archive",
+  },
+}
+`;

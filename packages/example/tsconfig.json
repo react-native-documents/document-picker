@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "target": "es2022",
+        "lib": [
+            "es2022"
+        ],
+        "types": [
+            "node",
+            "jasmine",
+            "@wdio/globals/types",
+//            "expect-webdriverio",
+            "expect-webdriverio/jasmine",
+            "@wdio/jasmine-framework",
+            "@wdio/appium-service",
+            "@wdio/browserstack-service"
+        ],
+        "skipLibCheck": true,
+        "noEmit": true,
+        "allowImportingTsExtensions": false,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true
+    },
+    "include": [
+        "test",
+        "wdio.conf.ts",
+    ],
+    // https://webdriver.io/docs/typescript/#missing-types
+//    "ts-node": {
+//        "files": true
+//    }
+}
