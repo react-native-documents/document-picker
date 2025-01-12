@@ -62,7 +62,7 @@ The result of calling [isKnownType](index.md#isknowntype)
 
 ### KeepLocalCopyOptions
 
-> **KeepLocalCopyOptions**: \{`destination`: `"cachesDirectory"` \| `"documentDirectory"`;`files`: `NonEmptyArray`\<[`FileToCopy`](index.md#filetocopy)\>; \}
+> **KeepLocalCopyOptions**: \{`destination`: `"cachesDirectory"` \| `"documentDirectory"`;`files`: [`NonEmptyArray`](index.md#nonemptyarrayt)\<[`FileToCopy`](index.md#filetocopy)\>; \}
 
 options for [keepLocalCopy](index.md#keeplocalcopy)
 
@@ -71,13 +71,13 @@ options for [keepLocalCopy](index.md#keeplocalcopy)
 | Name | Type |
 | ------ | ------ |
 | `destination` | `"cachesDirectory"` \| `"documentDirectory"` |
-| `files` | `NonEmptyArray`\<[`FileToCopy`](index.md#filetocopy)\> |
+| `files` | [`NonEmptyArray`](index.md#nonemptyarrayt)\<[`FileToCopy`](index.md#filetocopy)\> |
 
 ***
 
 ### KeepLocalCopyResponse
 
-> **KeepLocalCopyResponse**: `NonEmptyArray`\<[`LocalCopyResponse`](index.md#localcopyresponse)\>
+> **KeepLocalCopyResponse**: [`NonEmptyArray`](index.md#nonemptyarrayt)\<[`LocalCopyResponse`](index.md#localcopyresponse)\>
 
 Result of the call to [keepLocalCopy](index.md#keeplocalcopy). Please note the promise always resolves, even if there was an error processing any uri(s) (as indicated by the `status` field, and `copyError` field).
 
@@ -91,6 +91,18 @@ Indicates, for each Uri that was passed to [keepLocalCopy](index.md#keeplocalcop
 
 If the copy was successful, the status field is `success` and `localUri` contains the local Uri.
 If the copy was not successful, the status field is `error` and `copyError` field contains the error message.
+
+***
+
+### NonEmptyArray\<T\>
+
+> **NonEmptyArray**\<`T`\>: [`T`, `...T[]`]
+
+#### Type Parameters
+
+| Type Parameter |
+| ------ |
+| `T` |
 
 ***
 
@@ -334,7 +346,7 @@ Opens a directory picker.
 
 ### saveDocuments()
 
-> **saveDocuments**(`options`: [`SaveDocumentsOptions`](index.md#savedocumentsoptions)): `Promise`\<`NonEmptyArray`\<[`SaveDocumentsResponse`](index.md#savedocumentsresponse)\>\>
+> **saveDocuments**(`options`: [`SaveDocumentsOptions`](index.md#savedocumentsoptions)): `Promise`\<[`NonEmptyArray`](index.md#nonemptyarrayt)\<[`SaveDocumentsResponse`](index.md#savedocumentsresponse)\>\>
 
 The method for opening a "save as" dialog and saving source file(s) to a new location.
 
@@ -348,7 +360,7 @@ On Android, only one file can be saved at a time.
 
 #### Returns
 
-`Promise`\<`NonEmptyArray`\<[`SaveDocumentsResponse`](index.md#savedocumentsresponse)\>\>
+`Promise`\<[`NonEmptyArray`](index.md#nonemptyarrayt)\<[`SaveDocumentsResponse`](index.md#savedocumentsresponse)\>\>
 
 ## pick() types
 

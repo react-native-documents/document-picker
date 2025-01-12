@@ -16,20 +16,6 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
-        {/*<img*/}
-        {/*  src={logoUrl}*/}
-        {/*  alt="Example banner"*/}
-        {/*  style={{ maxHeight: 200, objectFit: 'contain' }}*/}
-        {/*/>*/}
-        <iframe
-          width="560"
-          height="315"
-          src="https://www.youtube.com/embed/CUNDpURFx4U?si=VAs8yHR-K4sJ5Deu"
-          title="YouTube video player"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        ></iframe>
         <Heading as="h1" className="hero__title">
           {siteConfig.title}
         </Heading>

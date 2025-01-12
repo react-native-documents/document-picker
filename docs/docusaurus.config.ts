@@ -122,11 +122,7 @@ const config: Config = {
       'docusaurus-lunr-search',
       {
         disableVersioning: true,
-        excludeRoutes: [
-          '/docs/license',
-          '/docs/sponsor-only/license',
-          'docs/public/document-picker',
-        ],
+        excludeRoutes: ['/docs/license', '/docs/sponsor-only/license'],
       },
     ],
     [

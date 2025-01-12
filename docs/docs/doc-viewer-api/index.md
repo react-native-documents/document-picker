@@ -8,14 +8,14 @@
 
 #### Type declaration
 
-| Name                 | Type                                              | Description                                                                                                                                                                              |
-| -------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `grantPermissions`?  | `"read"` \| `"write"`                             | Android only: The type of permission to grant to the receiving app that will open the document. This only has effect if you're viewing a file that lives in the app's sandboxed storage. |
-| `headerTitle`?       | `string`                                          | iOS only: The title to display in the header of the document viewer. If not provided, the filename will be used.                                                                         |
-| `mimeType`?          | `string`                                          | Optional, but recommended: the mimetype of the document. This will help the Android OS to find the right app(s) to open the document.                                                    |
-| `presentationStyle`? | [`PresentationStyle`](index.md#presentationstyle) | iOS only - Controls how the picker is presented, e.g. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`.                                                         |
+| Name | Type | Description |
+| ------ | ------ | ------ |
+| `grantPermissions`? | `"read"` \| `"write"` | Android only: The type of permission to grant to the receiving app that will open the document. This only has effect if you're viewing a file that lives in the app's sandboxed storage. |
+| `headerTitle`? | `string` | iOS only: The title to display in the header of the document viewer. If not provided, the filename will be used. |
+| `mimeType`? | `string` | Optional, but recommended: the mimetype of the document. This will help the Android OS to find the right app(s) to open the document. |
+| `presentationStyle`? | [`PresentationStyle`](index.md#presentationstyle) | iOS only - Controls how the picker is presented, e.g. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`. |
 
----
+***
 
 ### OptionsViewBookmark
 
@@ -27,11 +27,11 @@ A bookmark enables long-term access to a file.
 
 #### Type declaration
 
-| Name       | Type     | Description                                                                                                                                                                              |
-| ---------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Name | Type | Description |
+| ------ | ------ | ------ |
 | `bookmark` | `string` | bookmark data from the DocumentPicker module. Obtain it using the "open" mode, with `requestLongTermAccess` flag set to true. A bookmark allows a long-term permission to access a file. |
 
----
+***
 
 ### OptionsViewUri
 
@@ -41,11 +41,11 @@ BaseOptions with the uri of the document to view
 
 #### Type declaration
 
-| Name  | Type     | Description                     |
-| ----- | -------- | ------------------------------- |
+| Name | Type | Description |
+| ------ | ------ | ------ |
 | `uri` | `string` | The uri of the document to view |
 
----
+***
 
 ### PresentationStyle
 
@@ -53,7 +53,7 @@ BaseOptions with the uri of the document to view
 
 iOS only. Configure the presentation style of the picker.
 
----
+***
 
 ### ViewDocumentOptions
 
@@ -71,9 +71,9 @@ If you're trying to open a file that you have long-term permission to access, yo
 
 #### Parameters
 
-| Parameter | Type                                                  |
-| --------- | ----------------------------------------------------- |
-| `data`    | [`ViewDocumentOptions`](index.md#viewdocumentoptions) |
+| Parameter | Type |
+| ------ | ------ |
+| `data` | [`ViewDocumentOptions`](index.md#viewdocumentoptions) |
 
 #### Returns
 

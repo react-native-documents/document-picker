@@ -31,12 +31,12 @@ const FeatureList: FeatureItem[] = [
     ),
   },
   {
-    title: 'Actively maintained',
+    title: 'Maintained',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Thanks to sponsors, the premium module receives updates regularly, and comes with this
-        detailed documentation site.
+        Support the project maintenance by sponsoring it on GitHub, or just sponsor the author to
+        say thanks!
       </>
     ),
   },

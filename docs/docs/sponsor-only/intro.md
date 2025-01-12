@@ -6,9 +6,11 @@ sidebar_position: 0
 
 Welcome to the docs for `@react-native-documents/picker` and `@react-native-documents/viewer` packages. These packages provide a way to pick, save ('save as' dialog) documents and view documents on the device's file system or remote locations.
 
-## What's new in the premium packages?
+Originally, there was only `react-native-document-picker` ([see here](https://github.com/react-native-documents/document-picker/tree/master)), but the package was fully rewritten and published in 1/2025 and the `viewer` package was added.
 
-There's the improved (list of changes below) picker package (called `@react-native-documents/picker`) with api that's very similar to the [original](../public/document-picker). Secondly, there's the completely new `@react-native-documents/viewer` package which is designed to work well together with `picker`.
+## What's new in the full rewrite?
+
+There's the improved (list of changes below) picker package (called `@react-native-documents/picker`) with api that's very similar to the [original](https://github.com/react-native-documents/document-picker/tree/master). Secondly, there's the completely new `@react-native-documents/viewer` package which is designed to work well together with `picker`.
 
 ### TypeScript
 
@@ -58,17 +60,15 @@ The test suite focuses on Android, and was executed on real devices from Samsung
 
 As a result, I have greater confidence in the new package than in the old one!
 
-## Why do I ask for sponsorship?
+## Say thanks
 
-I ([vonovak](https://github.com/vonovak)) have been maintaining the original [`react-native-document-picker`](../public/document-picker) package more or less since 2020. The package has been used by thousands of devs, but I could see that there was a lot to improve.
+I ([vonovak](https://github.com/vonovak)) have been maintaining the original [`react-native-document-picker`](https://github.com/react-native-documents/document-picker/tree/master) package more or less since 2020. The package has been used by thousands of devs, but I could see that there was a lot to improve.
 
-In January 2024 I decided to rewrite the package from scratch and make it better! The new package has a new name: `@react-native-documents/picker` and is hosted on the [GitHub packages npm registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry).
+I decided to rewrite the package from scratch and make it better! The new package has a new name: `@react-native-documents/picker`.
 
 While I was at it, I also created a new `viewer` package.
 
-How to make OSS sustainable? My take is this: rather than asking for support, I provide full-featured packages and ask for a fee in return. I believe that the new packages are worth it.
-
-Feel free to read more in my [GitHub Sponsors profile](https://github.com/sponsors/vonovak).
+If you want to say thanks, go to my [GitHub Sponsors profile](https://github.com/sponsors/vonovak).
 
 ## Migrating from the old package
 

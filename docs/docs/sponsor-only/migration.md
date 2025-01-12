@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Migrating from the old document-picker
 
-The new package has a new name (`@react-native-documents/picker`), so you need to update your import statements. You also need to tell your package manager where to find the new package. This is covered in the [installation guide](../install.mdx#accessing-the-premium-version).
+The new package has a new name (`@react-native-documents/picker`), so you need to update your import statements.
 
 ### Migrating your code
 
