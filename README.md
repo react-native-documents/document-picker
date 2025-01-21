@@ -1,5 +1,5 @@
 # react-native-documents
 
-A set of React Native modules for document picker and viewer.
+A set of React Native modules for document picking and viewing.
 
-Thank you for sponsoring this project. Your support is greatly appreciated!!!
+If this is useful to you, consider [saying thanks](https://github.com/sponsors/vonovak). Your support is greatly appreciated!!!

@@ -14,7 +14,7 @@ defaults:
     working-directory: ./docs
 
 jobs:
-  test-deploy:
+  test-docusaurus-build:
     if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:

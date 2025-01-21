@@ -1,6 +1,6 @@
 {
   "name": "react-native-documents",
-  "private": true,
+  "private": false,
   "description": "A react native interface to access documents from dropbox, google drive, iCloud...",
   "scripts": {
     "build": "yarn workspaces foreach -A -p run prepare",
@@ -29,13 +29,12 @@
   "author": "Vojtech Novak (hello@react-native-training.eu)",
   "license": "see LICENSE file",
   "bugs": {
-    "url": "https://github.com/react-native-documents/sponsors-only/issues"
+    "url": "https://github.com/react-native-documents/document-picker/issues"
   },
-  "repository": "https://github.com/react-native-documents/sponsors-only",
-  "homepage": "https://github.com/react-native-documents/sponsors-only#readme",
+  "repository": "https://github.com/react-native-documents/document-picker",
+  "homepage": "https://github.com/react-native-documents/document-picker#readme",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "public"
   },
   "engines": {
     "node": ">= 19.0.0"

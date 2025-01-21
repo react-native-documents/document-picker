@@ -26,9 +26,6 @@
     "url": "https://github.com/react-native-documents/sponsors-only/issues"
   },
   "homepage": "https://github.com/react-native-documents/sponsors-only#readme",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "devDependencies": {
     "@react-native-community/cli": "^14.1.1",
     "@react-native/metro-config": "^0.76.2",

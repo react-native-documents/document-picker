@@ -48,17 +48,16 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/react-native-documents/sponsors-only.git"
+    "url": "git+https://github.com/react-native-documents/document-picker.git"
   },
   "author": "Vojtech Novak (hello@react-native-training.eu)",
   "license": "see LICENSE file",
   "bugs": {
-    "url": "https://github.com/react-native-documents/sponsors-only/issues"
+    "url": "https://github.com/react-native-documents/document-picker/issues"
   },
-  "homepage": "https://github.com/react-native-documents/sponsors-only#readme",
+  "homepage": "https://github.com/react-native-documents/document-picker#readme",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com",
-    "access": "restricted"
+    "access": "public"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",
