@@ -18,6 +18,7 @@
     "mkdist": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true, mode: 0o755 })\"",
     "wdio": "wdio ./wdio.conf.ts"
   },
+  "private": true,
   "repository": "https://github.com/react-native-documents/sponsors-only",
   "author": "Vojtech Novak (hello@react-native-training.eu)",
   "license": "see LICENSE file",

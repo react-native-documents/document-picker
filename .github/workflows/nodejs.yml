@@ -26,19 +26,16 @@ jobs:
       - run: yarn test
       - run: yarn build
 
-#  publish-npm:
-#    needs: build
-#    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 0
-#      - uses: actions/setup-node@v3
-#        with:
-#          node-version: lts/*
-#      - run: yarn install --frozen-lockfile
-#      - run: yarn release
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  publish-npm:
+    needs: build
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Release Pull Request or Publish
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: yarn run release-packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN_NEW }}

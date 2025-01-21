@@ -9,7 +9,10 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "manypkg-fix": "manypkg fix",
     "prettier:write": "prettier --write '**/*.{js,ts,tsx}' '**/*.{md,mdx}'",
-    "prettier:check": "prettier --list-different '**/*.{js,ts,tsx}' '**/*.{md,mdx}'"
+    "prettier:check": "prettier --list-different '**/*.{js,ts,tsx}' '**/*.{md,mdx}'",
+    "version": "changeset version",
+    "release": "changeset publish",
+    "release-packages": "yarn build && changeset publish"
   },
   "workspaces": [
     "packages/*"
@@ -44,6 +47,7 @@
   },
   "packageManager": "yarn@4.5.1",
   "dependencies": {
+    "@changesets/cli": "^2.27.11",
     "@commitlint/cli": "^18.6.1",
     "@commitlint/config-conventional": "^18.6.3",
     "@evilmartians/lefthook": "^1.7.15",
