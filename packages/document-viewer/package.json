@@ -1,6 +1,6 @@
 {
   "name": "@react-native-documents/viewer",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A react native interface to preview documents",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
