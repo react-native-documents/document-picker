@@ -1,0 +1,120 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #fb6222;
+  --ifm-color-primary-dark: #fa4e06;
+  --ifm-color-primary-darker: #ee4904;
+  --ifm-color-primary-darkest: #c43c04;
+  --ifm-color-primary-light: #fc763e;
+  --ifm-color-primary-lighter: #fc804c;
+  --ifm-color-primary-lightest: #fd9e76;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #fb6542;
+  --ifm-color-primary-dark: #fa4c23;
+  --ifm-color-primary-darker: #fa3f13;
+  --ifm-color-primary-darkest: #fa370a;
+  --ifm-color-primary-light: #fc7e61;
+  --ifm-color-primary-lighter: #fc8b71;
+  --ifm-color-primary-lightest: #fdb19f;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+.sponsor-heart {
+  display: flex;
+  align-items: center;
+}
+
+.sponsor-heart a:after {
+  content: '❤️';
+  margin-left: auto; /* Pushes the content to the right */
+}
+
+.unique-tabs .tabs__item {
+  line-height: 16px;
+  margin-right: 8px;
+}
+
+.tabs-container {
+  /*background-color: rgb(40, 42, 54);*/
+  /*background-color: rgb(246, 248, 250);*/
+  /*border: var(--ifm-alert-border-width) solid var(--ifm-alert-border-color);*/
+  /*border-left-width: var(--ifm-alert-border-left-width);*/
+  border-radius: var(--ifm-global-radius);
+}
+
+.unique-tabs .tabs__item--active {
+  background-color: var(--ifm-tabs-color-active);
+  border: 0;
+  border-radius: var(--ifm-global-radius);
+  color: #fff;
+}
+
+.larger-heading, .menu__list-item-collapsible {
+  font-family: var(--ifm-heading-font-family);
+  font-weight: var(--ifm-heading-font-weight);
+  font-size: 120%;
+}
+
+
+/* menu styles */
+.menu > ul.menu__list > li.menu__list-item > .menu__list-item-collapsible > a {
+  font-family: var(--ifm-heading-font-family);
+  font-weight: var(--ifm-heading-font-weight);
+  font-size: 120%;
+
+  margin-top: calc(3 * var(--ifm-menu-link-padding-vertical));
+}
+
+.menu__link > a,
+.menu__list-item > a {
+  padding-right: calc(0.5 * var(--ifm-menu-link-padding-horizontal));
+}
+
+.menu > ul.menu__list > li.menu__list-item > .menu__list-item-collapsible:hover,
+.menu > ul.menu__list > li.menu__list-item > .menu__list-item-collapsible:active {
+  background: none;
+}
+
+.menu > ul.menu__list > li.menu__list-item:first-of-type > .menu__list-item-collapsible > a {
+  margin-top: 0;
+}
+
+.menu__list .menu__list {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.menu__list .menu__list .menu__list {
+  margin-left: var(--ifm-menu-link-padding-horizontal);
+}
+
+.menu__list-item {
+  margin-top: 0.1rem;
+  margin-bottom: 0.1rem;
+}
+
+div[class^='announcementBar'] {
+  font-size: 20px;
+
+  --site-announcement-bar-stripe-color1: #e8d7ff;
+  --site-announcement-bar-stripe-color2: #ffe9d1;
+
+  background: repeating-linear-gradient(
+          35deg,
+          var(--site-announcement-bar-stripe-color1),
+          var(--site-announcement-bar-stripe-color1) 20px,
+          var(--site-announcement-bar-stripe-color2) 10px,
+          var(--site-announcement-bar-stripe-color2) 40px
+  );
+  font-weight: bold;
+}

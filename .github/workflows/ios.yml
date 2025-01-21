@@ -1,0 +1,57 @@
+name: iOS build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/ios.yml'
+      - 'packages/**/ios**'
+  pull_request:
+    paths:
+      - '.github/workflows/ios.yml'
+      - 'packages/**/ios**'
+
+jobs:
+  ios-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js lts
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          working-directory: packages/example/ios
+          bundler-cache: true
+      - name: Install dependencies
+        run: yarn install
+      - name: Install pods
+        run: RCT_NEW_ARCH_ENABLED=0 npx pod-install
+        working-directory: packages/example/ios
+      - name: Build ios example app on old architecture
+        run: xcodebuild -scheme ReactTestApp -workspace document-picker-example.xcworkspace ONLY_ACTIVE_ARCH=NO -sdk iphonesimulator -configuration Debug
+        working-directory: packages/example/ios
+  ios-build-new-arch:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js lts
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          working-directory: packages/example/ios
+          bundler-cache: true
+      - name: Install dependencies
+        run: yarn install
+      - name: Install pods for new arch
+        run: RCT_NEW_ARCH_ENABLED=1 npx pod-install
+        working-directory: packages/example/ios
+      - name: Build ios example app on new architecture
+        run: xcodebuild -scheme ReactTestApp -workspace document-picker-example.xcworkspace ONLY_ACTIVE_ARCH=NO -sdk iphonesimulator -configuration Debug
+        working-directory: packages/example/ios

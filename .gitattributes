@@ -1,3 +1,6 @@
 *.pbxproj -text
 # specific for windows script files
 *.bat text eol=crlf
+
+# https://stackoverflow.com/a/51564689/2070942 to avoid git grep result
+.yarn/**/*.* binary

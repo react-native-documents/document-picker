@@ -1,0 +1,11 @@
+### Releasing Long Term Access
+
+This is an Android-only feature. When you no longer need access to the file or location, you should release the long-term access by calling `releaseLongTermAccess`. Calling this on iOS will resolve.
+
+See [Android documentation](<https://developer.android.com/reference/android/content/ContentResolver#releasePersistableUriPermission(android.net.Uri,%20int)>) for more information.
+
+### Releasing (stopping) Secure Access
+
+This is an iOS-only feature. When you no longer need access to the file or location, you should release the secure access by calling `releaseSecureAccess`. Calling this on Android will resolve.
+
+See [iOS documentation](https://developer.apple.com/documentation/foundation/nsurl/1413736-stopaccessingsecurityscopedresou) for more information.

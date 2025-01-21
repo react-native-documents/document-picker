@@ -1,0 +1,51 @@
+---
+sidebar_position: 1
+sidebar_label: Installation & Setup
+---
+
+# Installation
+
+Depending on what module you need, install one or both of the packages:
+
+```bash
+yarn add @react-native-documents/picker
+```
+
+```bash
+yarn add @react-native-documents/viewer
+```
+
+## Setting up
+
+:::warning
+The document picker package requires iOS 14 or later. If you use Expo, use Expo SDK >=52 or [Expo build properties](https://docs.expo.dev/versions/latest/sdk/build-properties/#example-appjson-with-config-plugin) to update the `deploymentTarget` to `14`.
+
+In regular React Native projects, use RN >= 0.76 or update the [settings in Xcode](https://stackoverflow.com/a/66798215/2070942).
+:::
+
+### Expo
+
+:::info
+
+This package cannot be used in ["Expo Go"](https://docs.expo.dev/workflow/overview/#development-builds) because it requires custom native code.
+
+However, you can add custom native code to Expo through a [development build](https://docs.expo.dev/workflow/overview/#development-builds). That is the approach taken below.
+
+:::
+
+```bash
+# install the package first
+
+# Build the app locally
+expo prebuild --clean
+expo run:ios
+expo run:android
+```
+
+### React Native
+
+Install the package and then run `pod install` from the ios directory. Then rebuild your project with Xcode.
+
+The packages support last 3 stable releases of RN, but very likely work with RN 0.73 an up.
+
+If you're using the [New Architecture](https://reactnative.dev/docs/new-architecture-intro), it's strongly recommended to use the latest stable release of RN.

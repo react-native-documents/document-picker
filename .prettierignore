@@ -1,0 +1,14 @@
+# Ignore artifacts:
+**/build
+**/dist
+**/coverage
+**/.next
+**/.vscode
+**/.expo
+**/ios
+**/android
+docs/.docusaurus
+
+# these are auto-generated
+docs/docs/doc-picker-api/index.md
+docs/docs/doc-viewer-api/index.md

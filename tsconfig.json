@@ -1,13 +1,12 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
     "paths": {
-      "react-native-document-picker": ["./src/index"]
+      "@react-native-documents/picker": ["./packages/document-picker/src/index"],
+      "@react-native-documents/viewer": ["./packages/document-viewer/src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
-    "importsNotUsedAsValues": "error",
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "lib": ["esnext"],
@@ -17,11 +16,13 @@
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
     "noStrictGenericChecks": false,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "esnext"
-  }
+    "target": "esnext",
+  },
+  "exclude": ["docs", "packages/example/wdio.conf.ts", "packages/example/test"]
 }

@@ -1,0 +1,129 @@
+---
+sidebar_position: 2
+description: Open mode allows you to access the selected documents directly.
+---
+
+# Open mode
+
+<details>
+  <summary>Video introduction</summary>
+  <iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/CUNDpURFx4U?si=xr3jHKpWRDo3uFLi&amp;start=219"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  ></iframe>
+</details>
+
+In open mode, the returned uris refer directly to the selected documents.
+
+This is particularly useful when you want to read an existing file without making a copy into your app or when you want to open and edit a file in-place (using the [`Viewer module`](../viewer)).
+
+With `requestLongTermAccess`, your app is granted long-term read access to the file, also possibly with write access (to be clarified in a later docs update).
+
+```tsx title="Picking a file in open mode"
+import { pick } from '@react-native-documents/picker'
+
+return (
+  <Button
+    title="open file"
+    onPress={async () => {
+      try {
+        const [result] = await pick({
+          mode: 'open',
+        })
+        console.log(result)
+      } catch (err) {
+        // see error handling
+      }
+    }}
+  />
+)
+```
+
+### How it works
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+<Tabs queryString="current-os" className="unique-tabs">
+  <TabItem value="android" label="Android">
+    Open mode uses [`Intent.ACTION_OPEN_DOCUMENT`](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT) internally.
+
+  </TabItem>
+  <TabItem value="ios" label="iOS">
+    Open mode uses [UIDocumentPickerViewController init(forOpeningContentTypes:asCopy:)](https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller/3566733-init) internally.
+
+  </TabItem>
+</Tabs>
+
+### Open Options
+
+| Name                     | Type                                                                                                                                                               | Description                                                                                                                         |
+| :----------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- |
+| `mode`                   | `'open'`                                                                                                                                                           | specify that you want the picker to function in the "open" mode.                                                                    |
+| `type?`                  | `string` \| [`PredefinedFileTypes`](/docs/doc-picker-api#predefinedfiletypes) \| ([`PredefinedFileTypes`](/docs/doc-picker-api#predefinedfiletypes) \| `string`)[] | specify file type(s) that you want to pick. Use `types` for some predefined values.                                                 |
+| `requestLongTermAccess?` | `boolean`                                                                                                                                                          | Whether to ask for long-term access permissions. False by default.                                                                  |
+| `allowMultiSelection?`   | `boolean`                                                                                                                                                          | Whether to allow multiple files to be picked. False by default.                                                                     |
+| `allowVirtualFiles?`     | `boolean`                                                                                                                                                          | Android only - Whether to allow [virtual files](./virtual-files.md) (such as Google docs or sheets) to be picked. False by default. |
+| `presentationStyle?`     | [`PresentationStyle`](/docs/doc-picker-api#presentationstyle)                                                                                                      | iOS only - Controls how the picker is presented, e.g. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`.    |
+| `transitionStyle?`       | [`TransitionStyle`](/docs/doc-picker-api#transitionstyle)                                                                                                          |
+
+### Open result
+
+The shape of result is the same for both `open` and `import` modes.
+
+import PickResultTable from './_pickResultTable.mdx'
+
+<PickResultTable />
+
+## Long-term file access
+
+When `requestLongTermAccess` is set to `true`, your app will be able to access the file even after the app or device is restarted.
+
+If you've requested long-term access to a directory or file, the response object will contain [BookmarkingResponse](/docs/doc-picker-api#bookmarkingresponse).
+
+In order to access the same directory or file in the future, you must check `bookmarkStatus` and store the `bookmark` opaque string.
+
+:::note Advanced
+
+When you want to access the file later (for example in your own native module), you can use the `bookmark` to resolve the file uri. See the Document viewer source on how to do it, if you need this.
+
+:::
+
+```tsx title="Request long-term access to a file"
+import { pick, types } from '@react-native-documents/picker'
+
+return (
+  <Button
+    title="open pdf file with requestLongTermAccess: true"
+    onPress={async () => {
+      try {
+        const [result] = await pick({
+          mode: 'open',
+          requestLongTermAccess: true,
+          type: [types.pdf],
+        })
+        if (result.bookmarkStatus === 'success') {
+          const bookmarkToStore = {
+            fileName: result.name ?? 'unknown name',
+            bookmark: result.bookmark,
+          }
+          localStorage.set('bookmark', JSON.stringify(bookmarkToStore))
+        } else {
+          console.error(result)
+        }
+      } catch (err) {
+        // see error handling
+      }
+    }}
+  />
+)
+```
+
+import Releasing from './_releasing.mdx'
+
+<Releasing />

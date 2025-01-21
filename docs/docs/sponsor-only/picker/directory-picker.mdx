@@ -1,0 +1,62 @@
+---
+sidebar_position: 6
+---
+
+# Directory Picker
+
+This module allows you to pick a directory from the file system. The chosen directory can then be used for file I/O operations.
+
+When `requestLongTermAccess` is set to `true`, your app will be able to access the directory even after the app is restarted.
+
+If you've requested long-term access to a directory or file, the response object will contain [BookmarkingResponse](/docs/doc-picker-api#bookmarkingresponse).
+
+Please note there are some [security limitations](https://developer.android.com/training/data-storage/shared/documents-files#document-tree-access-restrictions).
+
+```tsx title="Selecting a directory"
+import { pickDirectory } from '@react-native-documents/picker'
+
+return (
+  <Button
+    title="open directory"
+    onPress={async () => {
+      try {
+        const { uri } = await pickDirectory({
+          requestLongTermAccess: false,
+        })
+        // do something with the uri
+      } catch (err) {
+        // see error handling section
+        console.error(err)
+      }
+    }}
+  />
+)
+```
+
+### How it works
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+<Tabs queryString="current-os" className="unique-tabs">
+    <TabItem value="android" label="Android">
+        Open mode uses [`Intent.ACTION_OPEN_DOCUMENT_TREE`](https://developer.android.com/reference/android/content/Intent#ACTION_OPEN_DOCUMENT_TREE) internally.
+
+    </TabItem>
+    <TabItem value="ios" label="iOS">
+        Open mode uses [UIDocumentPickerViewController init(forOpeningContentTypes:asCopy:)](https://developer.apple.com/documentation/uikit/uidocumentpickerviewcontroller/3566733-init) internally.
+
+    </TabItem>
+
+</Tabs>
+
+### Writing to the directory location
+
+In order to write to the user-selected location, this approach needs to be used:
+
+- on Android: https://stackoverflow.com/a/61120265
+- on iOS: [docs](https://developer.apple.com/documentation/foundation/nsfilemanager/1410695-createfileatpath)
+
+import Releasing from './_releasing.mdx'
+
+<Releasing />

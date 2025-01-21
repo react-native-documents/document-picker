@@ -1,0 +1,67 @@
+---
+sidebar_position: 30
+sidebar_class_name: larger-heading
+---
+
+# Document Viewer
+
+The viewer module is designed to work with the files that the document picker module returns. It supports both `uri` and `bookmark` coming from `open` and `import` modes, also supports virtual files and long-term access to the files.
+
+The call to `viewDocument` returns a promise that resolves with `null` in case of success or rejects with error.
+
+### How it works
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+<Tabs queryString="current-os" className="unique-tabs">
+    <TabItem value="android" label="Android">
+        `viewDocument` uses [`Intent.ACTION_VIEW`](https://developer.android.com/reference/android/content/Intent#ACTION_VIEW) internally.
+
+    </TabItem>
+    <TabItem value="ios" label="iOS">
+        `viewDocument` uses the [QuickLook framework](https://developer.apple.com/documentation/quicklook) internally.
+
+    </TabItem>
+
+</Tabs>
+
+### View a document given a `uri`
+
+Uri would come from the [open](./picker/open-mode.mdx) or [import](./picker/import-mode.mdx) modes of the document picker.
+
+> See more in the [API reference](../doc-viewer-api#optionsviewuri)
+
+```tsx title="Previewing a document given a uri"
+import { viewDocument } from '@react-native-documents/viewer'
+
+return (
+  <Button
+    title="view the last imported file"
+    onPress={() => {
+      const uriToOpen = 'file:///path/to/your/file'
+      viewDocument({ uri: uriToOpen }).catch(handleError)
+    }}
+  />
+)
+```
+
+### View a document given a `bookmark`
+
+`bookmark` would come from the [open](./picker/open-mode.mdx) mode, with the `requestLongTermAccess` option set to `true`.
+
+> See more in the [API reference](../doc-viewer-api#optionsviewbookmark)
+
+```tsx title="Previewing a document given a bookmark"
+import { viewDocument } from '@react-native-documents/viewer'
+
+return (
+  <Button
+    title="view the last imported file"
+    onPress={() => {
+      const bookmark = '...'
+      viewDocument({ bookmark }).catch(handleError)
+    }}
+  />
+)
+```

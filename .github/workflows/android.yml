@@ -1,0 +1,49 @@
+name: Android build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/android.yml'
+      - 'packages/**/android**'
+  pull_request:
+    paths:
+      - '.github/workflows/android.yml'
+      - 'packages/**/android/**'
+
+jobs:
+  android-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js lts
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Install dependencies
+        run: yarn install
+      - name: Build android example app on old architecture
+        run: ./gradlew app:assembleDebug -PnewArchEnabled=false
+        working-directory: packages/example/android
+  android-build-new-arch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js lts
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Install dependencies
+        run: yarn install
+      - name: Build android example app on new architecture
+        run: ./gradlew app:assembleDebug -PnewArchEnabled=true
+        working-directory: packages/example/android
