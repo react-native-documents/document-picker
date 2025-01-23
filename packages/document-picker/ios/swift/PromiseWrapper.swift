@@ -7,7 +7,7 @@ class PromiseWrapper {
   private var promiseReject: RNDPPromiseRejectBlock?
   private var nameOfCallInProgress: String?
 
-  private let E_DOCUMENT_PICKER_CANCELED = "E_DOCUMENT_PICKER_CANCELED"
+  private let E_DOCUMENT_PICKER_CANCELED = "OPERATION_CANCELED"
   private let ASYNC_OP_IN_PROGRESS = "ASYNC_OP_IN_PROGRESS"
 
   func setPromiseRejectingPrevious(_ resolve: @escaping RNDPPromiseResolveBlock,
