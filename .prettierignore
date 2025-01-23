@@ -9,6 +9,10 @@
 **/android
 docs/.docusaurus
 
+# usually fails bcs prettier likes to have empty lines at the end of files
+# TODO? might need to add prettier:write to release-packages to format changelog files
+.changeset
+
 # these are auto-generated
 docs/docs/doc-picker-api/index.md
 docs/docs/doc-viewer-api/index.md
