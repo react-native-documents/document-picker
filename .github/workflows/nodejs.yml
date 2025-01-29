@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - run: yarn install
+      - run: yarn install --immutable
       - run: yarn typescript
       - run: yarn prettier:check
       - run: yarn lint
@@ -41,7 +41,7 @@ jobs:
           node-version: lts/*
           cache: 'yarn'
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install --immutable
 
       - name: Create Release Pull Request or Publish
         id: changesets

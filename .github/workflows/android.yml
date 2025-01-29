@@ -26,7 +26,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
       - name: Build android example app on old architecture
         run: ./gradlew app:assembleDebug -PnewArchEnabled=false
         working-directory: packages/example/android
@@ -43,7 +43,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
       - name: Build android example app on new architecture
         run: ./gradlew app:assembleDebug -PnewArchEnabled=true
         working-directory: packages/example/android

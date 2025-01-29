@@ -27,7 +27,7 @@ jobs:
           working-directory: packages/example/ios
           bundler-cache: true
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
       - name: Install pods
         run: RCT_NEW_ARCH_ENABLED=0 npx pod-install
         working-directory: packages/example/ios
@@ -48,7 +48,7 @@ jobs:
           working-directory: packages/example/ios
           bundler-cache: true
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --immutable
       - name: Install pods for new arch
         run: RCT_NEW_ARCH_ENABLED=1 npx pod-install
         working-directory: packages/example/ios
