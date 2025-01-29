@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 10.1.0
+
+### Minor Changes
+
+- 8fb87ea: feat: support react native 0.77
+
 ## 10.0.1
 
 ### Patch Changes
