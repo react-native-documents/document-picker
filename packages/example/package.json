@@ -16,7 +16,8 @@
     "ios": "react-native run-ios",
     "macos": "react-native run-macos --scheme document-picker-example",
     "mkdist": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true, mode: 0o755 })\"",
-    "wdio": "wdio ./wdio.conf.ts"
+    "wdio": "wdio ./wdio.conf.ts",
+    "repod": "rm -rf ios/Podfile.lock && rm -rf ios/build && npx pod-install && xed ios"
   },
   "private": true,
   "repository": "https://github.com/react-native-documents/sponsors-only",
@@ -27,11 +28,11 @@
   },
   "homepage": "https://github.com/react-native-documents/sponsors-only#readme",
   "devDependencies": {
-    "@react-native-community/cli": "^14.1.1",
-    "@react-native/metro-config": "^0.76.2",
+    "@react-native-community/cli": "^16.0.2",
+    "@react-native/metro-config": "^0.77.0",
     "@types/invariant": "^2.2.37",
-    "@types/jasmine": "^5.1.4",
-    "@types/react": "^18.3.3",
+    "@types/jasmine": "^5.1.5",
+    "@types/react": "^18.3.18",
     "@wdio/browserstack-service": "^8.36.1",
     "@wdio/cli": "^8.36.1",
     "@wdio/jasmine-framework": "^8.36.1",
@@ -39,9 +40,8 @@
     "@wdio/spec-reporter": "^8.36.1",
     "appium": "^2.5.4",
     "appium-uiautomator2-driver": "^3.1.0",
-    "pod-install": "^0.2.2",
-    "react-native-test-app": "^4.0.4",
-    "semantic-release": "^22.0.12",
+    "pod-install": "^0.3.4",
+    "react-native-test-app": "^4.1.0",
     "ts-node": "^10.9.2",
     "wdio-wait-for": "^3.0.11"
   },
@@ -63,13 +63,12 @@
       "@commitlint/config-conventional"
     ]
   },
-  "packageManager": "yarn@4.5.1",
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.0",
-    "@react-native-segmented-control/segmented-control": "^2.5.5",
+    "@react-native-segmented-control/segmented-control": "^2.5.7",
     "invariant": "^2.2.4",
     "react": "18.3.1",
-    "react-native": "^0.75.4",
+    "react-native": "^0.77.0",
     "react-native-uitextview": "^1.4.0"
   }
 }
