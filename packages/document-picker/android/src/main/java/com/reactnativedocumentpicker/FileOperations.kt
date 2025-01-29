@@ -40,13 +40,14 @@ class FileOperations(private val uriMap: MutableMap<String, Uri>) {
           val map = filesToCopy.getMap(i)
 
           try {
-            val newFile = copySingleFile(map, context, destinationDir)
+            val nonNullMap = map ?: throw IllegalArgumentException("keepLocalCopy: The file argument is null at index $i")
+            val newFile = copySingleFile(nonNullMap, context, destinationDir)
             oneResult.merge(newFile)
           } catch (e: Exception) {
             val message: String = e.localizedMessage ?: e.message ?: "Unknown error"
             oneResult.putString("status", "error")
             oneResult.putString("copyError", message)
-            oneResult.putString("sourceUri", map.getString("uri"))
+            oneResult.putString("sourceUri", map?.getString("uri"))
           }
           return@async oneResult
         }

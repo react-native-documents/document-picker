@@ -27,9 +27,9 @@ In regular React Native projects, use RN >= 0.76 or update the [settings in Xcod
 
 :::info
 
-This package cannot be used in ["Expo Go"](https://docs.expo.dev/workflow/overview/#development-builds) because it requires custom native code.
+These packages cannot be used in ["Expo Go"](https://docs.expo.dev/workflow/overview/#expo-go-an-optional-tool-for-learning) because they require custom native code.
 
-However, you can add custom native code to Expo through a [development build](https://docs.expo.dev/workflow/overview/#development-builds). That is the approach taken below.
+However, you can add custom native code to an Expo app through a [development build](https://docs.expo.dev/workflow/overview/#development-builds). That is the officially recommended approach for building Expo apps. See the commands below to do this.
 
 :::
 
@@ -46,6 +46,6 @@ expo run:android
 
 Install the package and then run `pod install` from the ios directory. Then rebuild your project with Xcode.
 
-The packages support last 3 stable releases of RN, but very likely work with RN 0.73 an up.
+The packages support last 3 stable releases of RN, but very likely work with RN 0.73 and up.
 
 If you're using the [New Architecture](https://reactnative.dev/docs/new-architecture-intro), it's strongly recommended to use the latest stable release of RN.

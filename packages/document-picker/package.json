@@ -26,8 +26,7 @@
   ],
   "scripts": {
     "build:mock": "tsc --build jest",
-    "prepare": "bob build && yarn build:mock",
-    "release": "yarn prepare && npx semantic-release"
+    "prepare": "bob build && yarn build:mock"
   },
   "codegenConfig": {
     "name": "rndocumentpickerCGen",
@@ -61,8 +60,8 @@
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",
-    "react-native-builder-bob": "^0.30.2",
-    "typescript": "^5.6.2"
+    "react-native-builder-bob": "^0.36.0",
+    "typescript": "^5.7.3"
   },
   "peerDependencies": {
     "react": "*",
@@ -87,6 +86,5 @@
         }
       ]
     ]
-  },
-  "packageManager": "yarn@4.5.1"
+  }
 }

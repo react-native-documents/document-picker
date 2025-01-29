@@ -180,18 +180,17 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
     val filesToCopy = options.getArray("files")
     val copyTo = options.getString("destination")
     if (copyTo == null || filesToCopy == null) {
-      promise.reject("keepLocalCopy",
+      return promise.reject("keepLocalCopy",
         "You did not provide the correct options. Expected 'files' and 'destination', got: ${options.toHashMap().keys}"
       )
-    } else {
-      fileCopyingCoroutine.launch {
-        val results = fileOps.copyFilesToLocalStorage(
-                reactApplicationContext,
-                filesToCopy,
-                CopyDestination.fromPath(copyTo),
-            )
-        promise.resolve(results)
-      }
+    }
+    fileCopyingCoroutine.launch {
+      val results = fileOps.copyFilesToLocalStorage(
+              reactApplicationContext,
+              filesToCopy,
+              CopyDestination.fromPath(copyTo),
+          )
+      promise.resolve(results)
     }
   }
 
