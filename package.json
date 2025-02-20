@@ -26,7 +26,7 @@
     "icloud"
   ],
   "author": "Vojtech Novak (hello@react-native-training.eu)",
-  "license": "see LICENSE file",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/react-native-documents/document-picker/issues"
   },
