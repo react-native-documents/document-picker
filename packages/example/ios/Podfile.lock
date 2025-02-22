@@ -1210,7 +1210,7 @@ PODS:
     - React-jsiexecutor
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
-  - react-native-document-picker (10.0.1):
+  - react-native-document-picker (10.1.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1885,7 +1885,7 @@ SPEC CHECKSUMS:
   React-logger: 02e5802824aa9b15cb7df42e10a91abead83cd8d
   React-Mapbuffer: 99bd566147aaa78e872568be53ebca8a4449ddae
   React-microtasksnativemodule: 51e7813abf875408a0f367e473a65bbab6aa8481
-  react-native-document-picker: 00f3dedbea5b81e9e5d810720d0ed9ff40e3f687
+  react-native-document-picker: d566165412d4913ff83e611c6ba51cebaa05cd79
   react-native-document-viewer: e72376e1efe598380803ef661c33e3b3a3c0e3b0
   react-native-segmented-control: bf6e0032726727498e18dd437ae88afcdbc18e99
   react-native-uitextview: d30631440c99dde5210691267bdaf5480a080ffe

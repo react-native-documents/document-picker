@@ -21,8 +21,7 @@ Pod::Spec.new do |s|
     'DEFINES_MODULE' => 'YES',
   }
 
-  if ENV['RCT_NEW_ARCH_ENABLED'] == '1' then
-    # RN 71+
+  if respond_to?(:install_modules_dependencies, true)
     install_modules_dependencies(s)
   else
     s.dependency "React-Core"
