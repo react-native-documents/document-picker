@@ -11,6 +11,7 @@ on:
     paths:
       - '.github/workflows/ios.yml'
       - 'packages/**/ios**'
+  workflow_dispatch:
 
 jobs:
   ios-build:
