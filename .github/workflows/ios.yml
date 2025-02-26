@@ -7,10 +7,12 @@ on:
     paths:
       - '.github/workflows/ios.yml'
       - 'packages/**/ios**'
+      - 'packages/**/*.podspec'
   pull_request:
     paths:
       - '.github/workflows/ios.yml'
       - 'packages/**/ios**'
+      - 'packages/**/*.podspec'
 
 jobs:
   ios-build:
