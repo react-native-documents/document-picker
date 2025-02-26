@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 10.1.1
+
+### Patch Changes
+
+- 62794a6: fix: enable ios build with use_frameworks static
+
 ## 10.1.0
 
 ### Minor Changes
