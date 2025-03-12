@@ -8,7 +8,7 @@ body:
     attributes:
       label: Feature description
       description: |
-        Please describe what feature you think is missing and link to the documentation of the underlying Google's SDKs which covers the functionality.
+        Please describe what feature you think is missing and link to the documentation of the underlying operating system APIs which cover the functionality.
   
         Thank you!
     validations:
