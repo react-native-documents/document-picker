@@ -13,7 +13,7 @@ jobs:
           github-token: ${{ github.token }}
           support-label: 'repro-required'
           issue-comment: >
-            :wave: @{issue-author}, sorry you're having an issue. As the issue template explains, it's required that you provide a runnable example that reproduces your issue (see the [issue template](../ISSUE_TEMPLATE/custom.yaml)).
+            :wave: @{issue-author}, sorry you're having an issue. As the issue template explains, it's required that you provide a runnable example that reproduces your issue (see the [issue template](../blob/main/.github/ISSUE_TEMPLATE/custom.yaml)).
 
             The reason is that a bug report is not actionable without a reproducer. Try to minimize the superfluous code and focus only on reproducing the bug.
 
