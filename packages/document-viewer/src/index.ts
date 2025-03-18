@@ -77,3 +77,4 @@ export function viewDocument(data: ViewDocumentOptions): Promise<null> {
     data?.presentationStyle,
   )
 }
+export { errorCodes, isErrorWithCode } from './errors'
