@@ -42,7 +42,7 @@ There's the improved (list of changes below) picker package (called `@react-nati
 
 ### Windows
 
-Windows is not supported at the moment. While there is Windows-related code in the public module, it's not maintained and probably does not work.
+Windows is not supported at the moment but you can try your luck [here](https://github.com/ClaudiuHBann/document-picker-windows). While there was Windows-related code in the public module, it was not maintained and probably does not work.
 
 ### How do I know it works?
 

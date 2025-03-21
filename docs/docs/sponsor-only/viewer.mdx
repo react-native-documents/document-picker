@@ -40,7 +40,7 @@ return (
     title="view the last imported file"
     onPress={() => {
       const uriToOpen = 'file:///path/to/your/file'
-      viewDocument({ uri: uriToOpen }).catch(handleError)
+      viewDocument({ uri: uriToOpen, mimeType: 'some-mime' }).catch(handleError)
     }}
   />
 )
