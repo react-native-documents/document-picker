@@ -62,7 +62,8 @@ return (
           destination: 'documentDirectory',
         })
         if (copyResult.status === 'success') {
-          // do something
+          // do something with the local copy:
+          console.log(copyResult.localUri)
         }
       } catch (err) {
         // see error handling

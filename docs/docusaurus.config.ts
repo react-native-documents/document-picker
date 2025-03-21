@@ -38,10 +38,6 @@ const config: Config = {
     [
       'classic',
       {
-        gtag: {
-          trackingID: 'G-V1JZZG12TG',
-          anonymizeIP: true,
-        },
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl: 'https://github.com/react-native-documents/document-picker/edit/main/docs',
@@ -130,13 +126,16 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // announcementBar: {
-    //   id: 'announcementBar',
-    //   content:
-    //     '<a target="_blank" href="https://github.com/reactwg/react-native-new-architecture/discussions/154">Bridgeless mode</a> is now available in the premium module!',
-    //   isCloseable: true,
-    // },
+    announcementBar: {
+      id: 'announcementBar',
+      content:
+        'Find these packages useful? Say thanks by <a target="_blank" href="https://github.com/sponsors/vonovak">sponsoring</a> the author on GitHub!',
+      //   isCloseable: true,
+    },
     // Replace with your project's social card
+    colorMode: {
+      respectPrefersColorScheme: true,
+    },
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
       title: 'RN Document picker & viewer',
@@ -154,12 +153,12 @@ const config: Config = {
         { to: 'docs/doc-picker-api', label: 'Picker API', position: 'left' },
         { to: 'docs/doc-viewer-api', label: 'Viewer API', position: 'left' },
         {
-          to: '/example',
+          to: 'https://github.com/react-native-documents/document-picker/tree/main/packages/example',
           label: 'Example app',
-          position: 'left',
+          position: 'right',
         },
         {
-          href: '/github-repo',
+          href: 'https://github.com/react-native-documents/document-picker',
           label: 'GitHub',
           position: 'right',
         },

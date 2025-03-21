@@ -63,7 +63,40 @@ options for viewing a document
 
 If you're trying to open a file that you have long-term permission to access, you should use the `bookmark` option (provided by the DocumentPicker module).
 
+## Variables
+
+### errorCodes
+
+> `const` **errorCodes**: `Readonly`\<\{`IN_PROGRESS`: `"ASYNC_OP_IN_PROGRESS"`;`OPERATION_CANCELED`: `"OPERATION_CANCELED"`;`UNABLE_TO_OPEN_FILE_TYPE`: `"UNABLE_TO_OPEN_FILE_TYPE"`; \}\>
+
+#### Type declaration
+
+| Name | Type |
+| ------ | ------ |
+| `IN_PROGRESS` | `"ASYNC_OP_IN_PROGRESS"` |
+| `OPERATION_CANCELED` | `"OPERATION_CANCELED"` |
+| `UNABLE_TO_OPEN_FILE_TYPE` | `"UNABLE_TO_OPEN_FILE_TYPE"` |
+
 ## Functions
+
+### isErrorWithCode()
+
+> **isErrorWithCode**(`error`: `any`): `error is NativeModuleError`
+
+TypeScript helper to check if an object has the `code` property.
+This is used to avoid `as` casting when you access the `code` property on errors returned by the module.
+
+#### Parameters
+
+| Parameter | Type |
+| ------ | ------ |
+| `error` | `any` |
+
+#### Returns
+
+`error is NativeModuleError`
+
+***
 
 ### viewDocument()
 
