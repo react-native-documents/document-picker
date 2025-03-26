@@ -42,6 +42,7 @@ body:
       label: Did you reproduce on a real device or emulator / simulator?
       multiple: false
       options:
+        - Select an option
         - real device
         - emulator / simulator
     validations:
