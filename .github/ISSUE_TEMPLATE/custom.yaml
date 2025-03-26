@@ -12,9 +12,9 @@ body:
           required: true
   - type: checkboxes
     attributes:
-      label: I have read and understood the [license](https://github.com/react-native-documents/document-picker/blob/main/LICENSE.md).
+      label: I have read and understood the license (link below).
       options:
-        - label: I have read and understood the license.
+        - label: I have read and understood the [license](https://github.com/react-native-documents/document-picker/blob/main/LICENSE.md).
           required: true
   - type: input
     attributes:
@@ -28,12 +28,6 @@ body:
         [Learn more about creating a minimal reproducible example](https://stackoverflow.com/help/mcve).
     validations:
       required: true
-  - type: checkboxes
-    attributes:
-      label: If the issue is related to specific file(s), I have linked the files so that others can reproduce exactly what I see.
-      options:
-        - label: I have attached files necessary to reproduce the problem (if applicable).
-          required: true
   - type: dropdown
     attributes:
       label: What platform(s) does this occur on?
@@ -60,6 +54,12 @@ body:
         Clearly describe what the expected behavior is and what instead is actually happening. Be concise and precise in your description.
     validations:
       required: true
+  - type: checkboxes
+    attributes:
+      label: If the issue is related to specific file(s), I have linked the files so that others can reproduce exactly what I see.
+      options:
+        - label: I have attached files necessary to reproduce the problem (if applicable).
+          required: true
   - type: textarea
     attributes:
       label: Stacktrace of the crash (if applicable)
