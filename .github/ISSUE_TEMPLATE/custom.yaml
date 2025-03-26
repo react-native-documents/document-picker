@@ -10,7 +10,12 @@ body:
       options:
         - label: I have searched open and closed issues.
           required: true
-
+  - type: checkboxes
+    attributes:
+      label: I have read and understood the [license](https://github.com/react-native-documents/document-picker/blob/main/LICENSE.md).
+      options:
+        - label: I have read and understood the license.
+          required: true
   - type: input
     attributes:
       label: Minimal reproducible example
@@ -23,6 +28,12 @@ body:
         [Learn more about creating a minimal reproducible example](https://stackoverflow.com/help/mcve).
     validations:
       required: true
+  - type: checkboxes
+    attributes:
+      label: If the issue is related to specific file(s), I have linked the files so that others can reproduce exactly what I see.
+      options:
+        - label: I have attached files necessary to reproduce the problem (if applicable).
+          required: true
   - type: dropdown
     attributes:
       label: What platform(s) does this occur on?
@@ -32,12 +43,28 @@ body:
         - iOS
     validations:
       required: true
+  - type: dropdown
+    attributes:
+      label: Did you reproduce on a real device or emulator / simulator?
+      multiple: false
+      options:
+        - real device
+        - emulator / simulator
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Steps to reproduce
       description: |
         Explain the steps we need to take to reproduce the issue. Include a video or screenshots if you think it may help.
         Clearly describe what the expected behavior is and what instead is actually happening. Be concise and precise in your description.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Stacktrace of the crash (if applicable)
+      description: |
+        Give the stacktrace of the crash, or explain the error message you are seeing.
     validations:
       required: true
   - type: textarea
