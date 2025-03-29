@@ -105,16 +105,7 @@
 
 div[class^='announcementBar'] {
   font-size: 20px;
-
-  --site-announcement-bar-stripe-color1: #e8d7ff;
-  --site-announcement-bar-stripe-color2: #ffe9d1;
-
-  background: repeating-linear-gradient(
-          35deg,
-          var(--site-announcement-bar-stripe-color1),
-          var(--site-announcement-bar-stripe-color1) 20px,
-          var(--site-announcement-bar-stripe-color2) 10px,
-          var(--site-announcement-bar-stripe-color2) 40px
-  );
+  color: var(--ifm-navbar-link-color);
+  background-color: var(--ifm-navbar-background-color);
   font-weight: bold;
 }

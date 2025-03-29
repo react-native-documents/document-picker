@@ -11,6 +11,13 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
+    title: 'Open-source and free',
+    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    description: (
+      <>Support the project by contributing PRs on GitHub, or sponsor the author to say thanks!</>
+    ),
+  },
+  {
     title: 'Full-featured',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
@@ -27,16 +34,6 @@ const FeatureList: FeatureItem[] = [
       <>
         The implementation was tested for correctness on a range of real devices -{' '}
         <a href="docs/sponsor-only/intro#how-do-i-know-it-works">see a test recording</a>.
-      </>
-    ),
-  },
-  {
-    title: 'Maintained',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
-    description: (
-      <>
-        Support the project maintenance by sponsoring it on GitHub, or just sponsor the author to
-        say thanks!
       </>
     ),
   },
