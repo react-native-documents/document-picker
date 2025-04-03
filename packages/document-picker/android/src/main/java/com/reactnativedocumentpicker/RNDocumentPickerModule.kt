@@ -272,7 +272,7 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
         val targetUriString = if (options.hasKey("uri")) options.getString("uri") else null
 
         val metadataBuilder = fileOps.writeDocumentImpl(currentUriOfFileBeingExported, targetUriString, reactApplicationContext)
-        metadataGetter.queryContentResolverMetadata(reactApplicationContext.contentResolver, metadataBuilder, reactApplicationContext)
+        metadataGetter.queryContentResolverMetadata(reactApplicationContext.contentResolver, metadataBuilder, couldBeVirtualFile = false)
 
         val arrayWithSingleResult = Arguments.createArray().apply {
           val resultMap = metadataBuilder.build()
