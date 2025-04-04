@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 10.1.2
+
+### Patch Changes
+
+- 8cd6dc5: fix(android): invalid column flags error in picker
+
 ## 10.1.1
 
 ### Patch Changes
