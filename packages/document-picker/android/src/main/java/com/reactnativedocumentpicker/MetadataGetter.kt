@@ -65,7 +65,8 @@ class MetadataGetter(private val uriMap: MutableMap<String, Uri>) {
           }
         }
 
-        queryContentResolverMetadata(contentResolver, metadataBuilder, context)
+        val couldBeVirtualFile = pickOptions.allowVirtualFiles && DocumentsContract.isDocumentUri(context, sourceUri)
+        queryContentResolverMetadata(contentResolver, metadataBuilder, couldBeVirtualFile)
 
         metadataBuilder
       }
@@ -73,18 +74,24 @@ class MetadataGetter(private val uriMap: MutableMap<String, Uri>) {
   fun queryContentResolverMetadata(
       contentResolver: ContentResolver,
       metadataBuilder: DocumentMetadataBuilder,
-      context: Context
+      couldBeVirtualFile: Boolean
   ) {
     val forUri = metadataBuilder.getUri()
+
+    val projection = mutableListOf(
+      DocumentsContract.Document.COLUMN_MIME_TYPE,
+      OpenableColumns.DISPLAY_NAME,
+      OpenableColumns.SIZE,
+    ).apply {
+      if (couldBeVirtualFile) {
+        add(DocumentsContract.Document.COLUMN_FLAGS)
+      }
+    }.toTypedArray()
+
     contentResolver
       .query(
         forUri,
-        arrayOf(
-          DocumentsContract.Document.COLUMN_MIME_TYPE,
-          OpenableColumns.DISPLAY_NAME,
-          OpenableColumns.SIZE,
-          DocumentsContract.Document.COLUMN_FLAGS,
-        ),
+        projection,
         null,
         null,
         null
@@ -106,7 +113,7 @@ class MetadataGetter(private val uriMap: MutableMap<String, Uri>) {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // https://developer.android.com/training/data-storage/shared/documents-files#open-virtual-file
             val isVirtual =
-              if (DocumentsContract.isDocumentUri(context, forUri)) {
+              if (couldBeVirtualFile) {
                 val cursorValue: Int =
                   getCursorValue(
                     cursor, DocumentsContract.Document.COLUMN_FLAGS, Int::class.java
