@@ -254,12 +254,12 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
         reactApplicationContext.contentResolver.takePersistableUriPermission(uri, takeFlags)
         val encodedBookmark =
             Base64.encodeToString(uri.toString().toByteArray(Charsets.UTF_8), Base64.DEFAULT)
-        map.putString("status", "success")
+        map.putString("bookmarkStatus", "success")
         map.putString("bookmark", encodedBookmark)
       } catch (e: Exception) {
         val error =
             e.localizedMessage ?: e.message ?: "Unknown error with takePersistableUriPermission"
-        map.putString("status", "error")
+        map.putString("bookmarkStatus", "error")
         map.putString("bookmarkError", error)
       }
     }
