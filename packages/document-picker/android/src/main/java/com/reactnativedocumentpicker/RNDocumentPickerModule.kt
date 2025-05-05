@@ -218,9 +218,9 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
         )
         // TODO clarify if this should be done
         // pickedFilesUriMap.remove(uriString)
-        result.putString("status", "success")
+        result.putString("bookmarkStatus", "success")
       } catch (e: Exception) {
-        result.putString("status", "error")
+        result.putString("bookmarkStatus", "error")
         result.putString("errorMessage", e.message ?: "Unknown error")
       }
       results.pushMap(result)
@@ -254,12 +254,12 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
         reactApplicationContext.contentResolver.takePersistableUriPermission(uri, takeFlags)
         val encodedBookmark =
             Base64.encodeToString(uri.toString().toByteArray(Charsets.UTF_8), Base64.DEFAULT)
-        map.putString("status", "success")
+        map.putString("bookmarkStatus", "success")
         map.putString("bookmark", encodedBookmark)
       } catch (e: Exception) {
         val error =
             e.localizedMessage ?: e.message ?: "Unknown error with takePersistableUriPermission"
-        map.putString("status", "error")
+        map.putString("bookmarkStatus", "error")
         map.putString("bookmarkError", error)
       }
     }
