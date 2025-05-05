@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 10.1.3
+
+### Patch Changes
+
+- c7166b1: fix(android): correct long term access directory picker response
+
 ## 10.1.2
 
 ### Patch Changes
