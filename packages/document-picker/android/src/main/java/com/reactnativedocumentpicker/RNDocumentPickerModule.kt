@@ -218,9 +218,9 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
         )
         // TODO clarify if this should be done
         // pickedFilesUriMap.remove(uriString)
-        result.putString("bookmarkStatus", "success")
+        result.putString("status", "success")
       } catch (e: Exception) {
-        result.putString("bookmarkStatus", "error")
+        result.putString("status", "error")
         result.putString("errorMessage", e.message ?: "Unknown error")
       }
       results.pushMap(result)
