@@ -41,6 +41,7 @@ import java.util.concurrent.Executors;
 public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
   private final Executor executor = Executors.newSingleThreadExecutor();
   private final Handler handler = new Handler(Looper.getMainLooper());
+  private final ReactApplicationContext reactContext;
   public static final String NAME = "RNDocumentPicker";
   private static final int READ_REQUEST_CODE = 41;
   private static final int PICK_DIR_REQUEST_CODE = 42;
@@ -69,6 +70,7 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
 
   public RNDocumentPickerModule(ReactApplicationContext reactContext) {
     super(reactContext);
+    this.reactContext = reactContext;
     reactContext.addActivityEventListener(activityEventListener);
   }
 
@@ -227,9 +229,9 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
       }
       executor.execute(() -> {
         try {
-          ReadableMap data = processData(uris, copyTo);
+          ReadableArray result = processData(uris);
           handler.post(() -> {
-            promise.resolve(data);
+            promise.resolve(result);
           });
         } catch (IOException e) {
           handler.post(() -> {
@@ -242,7 +244,7 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
     }
   }
 
-  private ReadableMap processData(List<Uri> uris, String copyTo) throws IOException {
+  private ReadableArray processData(List<Uri> uris) throws IOException {
     WritableArray results = Arguments.createArray();
     for (Uri uri : uris) {
       results.pushMap(getMetadata(uri));
@@ -251,7 +253,7 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
   }
 
   private WritableMap getMetadata(Uri uri) {
-    Context context = weakContext.get();
+    Context context = reactContext;
     if (context == null) {
       return Arguments.createMap();
     }
