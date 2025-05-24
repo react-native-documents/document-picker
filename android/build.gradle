@@ -1,11 +1,11 @@
 buildscript {
-    ext.kotlin_version = '1.8.20' // Or your project's Kotlin version
+    ext.kotlin_version = '1.8.20'
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1' // Or your project's AGP version
+        classpath 'com.android.tools.build:gradle:7.3.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -23,11 +23,10 @@ def isNewArchitectureEnabled() {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android' // Add this line
+apply plugin: 'kotlin-android'
 if (isNewArchitectureEnabled()) {
     apply plugin: "com.facebook.react"
 }
-
 
 android {
     def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
@@ -53,8 +52,8 @@ android {
 
     sourceSets.main {
         java {
-            srcDirs += 'src/main/java' // Ensure this is present
-            srcDirs += 'src/main/kotlin' // Add this line for Kotlin source files
+            srcDirs += 'src/main/java'
+            srcDirs += 'src/main/kotlin'
             if (!isNewArchitectureEnabled()) {
                 srcDirs += 'src/paper/java'
             }
@@ -69,8 +68,7 @@ repositories {
 }
 
 dependencies {
-    //noinspection GradleDynamicVersion
-    implementation 'com.facebook.react:react-native:+' // from node_modules
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version" // Add this line
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4" // Ensure this is present for coroutines
+    implementation 'com.facebook.react:react-native:+'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 }

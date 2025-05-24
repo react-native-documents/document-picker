@@ -20,7 +20,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.lang.ref.WeakReference
 import java.util.UUID
-import android.content.ActivityNotFoundException // Added this import
+import android.content.ActivityNotFoundException
 
 class RNDocumentPickerModule(
     private val reactContext: ReactApplicationContext
@@ -86,15 +86,14 @@ class RNDocumentPickerModule(
                         }
                     }
                 }
-                // Corrected optBoolean call
                 val allowMultiSelection = if (options.hasKey("allowMultiSelection")) options.getBoolean("allowMultiSelection") else false
                 putExtra(Intent.EXTRA_ALLOW_MULTIPLE, allowMultiSelection)
             }
             activity.startActivityForResult(intent, READ_REQUEST_CODE, Bundle.EMPTY)
         } catch (e: ActivityNotFoundException) {
-            promise.reject(E_UNABLE_TO_OPEN_FILE_TYPE, e.message) // Changed to e.message
+            promise.reject(E_UNABLE_TO_OPEN_FILE_TYPE, e.message)
         } catch (e: Exception) {
-            promise.reject(E_FAILED_TO_SHOW_PICKER, e.message) // Changed to e.message
+            promise.reject(E_FAILED_TO_SHOW_PICKER, e.message)
         }
     }
 
@@ -110,7 +109,7 @@ class RNDocumentPickerModule(
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
             activity.startActivityForResult(intent, PICK_DIR_REQUEST_CODE)
         } catch (e: Exception) {
-            promise.reject(E_FAILED_TO_SHOW_PICKER, e.message) // Changed to e.message
+            promise.reject(E_FAILED_TO_SHOW_PICKER, e.message)
         }
     }
 
@@ -163,7 +162,7 @@ class RNDocumentPickerModule(
                 }
                 promise.resolve(results)
             } catch (e: Exception) {
-                promise.reject(E_UNEXPECTED_EXCEPTION, e.message) // Changed to e.message
+                promise.reject(E_UNEXPECTED_EXCEPTION, e.message)
             }
         }
     }
@@ -178,9 +177,9 @@ class RNDocumentPickerModule(
         resolver.query(uri, null, null, null, null)?.use { cursor ->
             if (cursor.moveToFirst()) {
                 val nameIdx = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (!cursor.isNull(nameIdx)) map.putString("name", cursor.getString(nameIdx)) // Corrected: use map.putString
+                if (!cursor.isNull(nameIdx)) map.putString("name", cursor.getString(nameIdx))
                 val sizeIdx = cursor.getColumnIndex(OpenableColumns.SIZE)
-                if (!cursor.isNull(sizeIdx)) map.putDouble("size", cursor.getLong(sizeIdx).toDouble()) // Corrected: use map.putDouble
+                if (!cursor.isNull(sizeIdx)) map.putDouble("size", cursor.getLong(sizeIdx).toDouble())
             }
         }
         copyTo?.let { option ->
@@ -189,7 +188,7 @@ class RNDocumentPickerModule(
                 map.putString("fileCopyUri", copyUri.toString())
             } catch (ex: Exception) {
                 map.putNull("fileCopyUri")
-                map.putString("copyError", ex.message) // Changed to ex.message
+                map.putString("copyError", ex.message)
             }
         } ?: map.putNull("fileCopyUri")
 
