@@ -3,6 +3,8 @@ package com.reactnativedocumentpicker
 import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
+import android.os.Build
+import android.os.FileUtils
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContext
@@ -18,7 +20,7 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.nio.channels.Channels
+import java.io.OutputStream
 import java.util.UUID
 
 class FileOperations(private val uriMap: MutableMap<String, Uri>) {
@@ -119,23 +121,17 @@ class FileOperations(private val uriMap: MutableMap<String, Uri>) {
     val destFileSafe = safeGetDestination(attemptedDestFile, destinationDir)
 
     val copyStreamToFile: (InputStream?) -> Unit = { inputStream ->
-      if (inputStream == null) {
-        throw FileNotFoundException("No input stream was found for the source file")
-      }
-      FileOutputStream(destFileSafe).channel.use { destinationFileChannel ->
-        val inputChannel = Channels.newChannel(inputStream)
-        val size = destinationFileChannel.transferFrom(inputChannel, 0, Long.MAX_VALUE)
-        if (size == 0L) {
-          throw IOException("No data was copied to the destination file")
-        }
+      inputStream ?: throw FileNotFoundException("No input stream was found for the source file")
+      val bytesCopied = copyStreamToAnother(inputStream, FileOutputStream(destFileSafe))
+      if (bytesCopied == 0L) {
+        throw IOException("No data was copied to the destination file")
       }
     }
 
     if (convertVirtualFileAsType == null) {
-      context.contentResolver.openInputStream(from).use(copyStreamToFile)
+      copyStreamToFile(context.contentResolver.openInputStream(from))
     } else {
-      getInputStreamForVirtualFile(context.contentResolver, from, convertVirtualFileAsType)
-        .use(copyStreamToFile)
+      copyStreamToFile(getInputStreamForVirtualFile(context.contentResolver, from, convertVirtualFileAsType))
     }
 
     return destFileSafe
@@ -161,9 +157,7 @@ class FileOperations(private val uriMap: MutableMap<String, Uri>) {
   }
 
   fun writeDocumentImpl(sourceUri: Uri?, targetUriString: String?, context: ReactApplicationContext): DocumentMetadataBuilder {
-    if (sourceUri == null) {
-      throw IllegalArgumentException("The source URI is null. Call saveDocument() before writeDocument()")
-    }
+    sourceUri ?:  throw IllegalArgumentException("The source URI is null. Call saveDocument() before writeDocument()")
     val targetUri: Uri? = uriMap[targetUriString]
 
     if (targetUri == null) {
@@ -180,25 +174,30 @@ class FileOperations(private val uriMap: MutableMap<String, Uri>) {
     val mimeFromUri = contentResolver.getType(targetUri)
     metadataBuilder.mimeType(mimeFromUri)
 
-    // TODO https://gist.github.com/vonovak/73affb1a5b904ee165d9b5981d8dfe9a
-    contentResolver.openInputStream(sourceUri).use { inputStream ->
-      if (inputStream == null) {
-        metadataBuilder.metadataReadingError("No output stream found for source file")
-      } else {
-        contentResolver.openOutputStream(targetUri).use { outputStream ->
-          if (outputStream == null) {
-            metadataBuilder.metadataReadingError("No output stream found for destination file")
-          } else {
-            val bytesCopied = inputStream.copyTo(outputStream)
-            if (bytesCopied == 0L) {
-              metadataBuilder.metadataReadingError("No data was copied to the destination file")
-            }
-            outputStream.flush()
-          }
-        }
-      }
+    val inputStream = contentResolver.openInputStream(sourceUri)
+      ?: return metadataBuilder.metadataReadingError("No input stream found for source file")
+
+    val outputStream = contentResolver.openOutputStream(targetUri)
+      ?: return metadataBuilder.metadataReadingError("No output stream found for destination file")
+
+    val bytesCopied = copyStreamToAnother(inputStream, outputStream)
+    if (bytesCopied == 0L) {
+      metadataBuilder.metadataReadingError("No data was copied to the destination file")
     }
 
     return metadataBuilder
+  }
+
+  val copyStreamToAnother: (InputStream, OutputStream) -> Long = { inputStream, outputStream ->
+    inputStream.use { input ->
+      outputStream.use { output ->
+        val bytesCopied = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+          FileUtils.copy(inputStream, outputStream)
+        } else {
+          inputStream.copyTo(outputStream)
+        }
+        return@use bytesCopied
+      }
+    }
   }
 }
