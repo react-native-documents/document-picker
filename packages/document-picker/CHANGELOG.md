@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 10.1.4
+
+### Patch Changes
+
+- 4b2b80e: refactor: copy streams differently
+
 ## 10.1.3
 
 ### Patch Changes
