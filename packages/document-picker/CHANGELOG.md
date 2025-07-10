@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 10.1.5
+
+### Patch Changes
+
+- 4ddab03: refactor(ios): simplify file moves
+
 ## 10.1.4
 
 ### Patch Changes
