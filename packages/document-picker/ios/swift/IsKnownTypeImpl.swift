@@ -28,14 +28,10 @@ import UniformTypeIdentifiers
 
   static func createUTType(kind: String, value: String) -> UTType? {
     switch kind {
-    case "UTType":
-      return UTType(value)
-    case "mimeType":
-      return UTType(mimeType: value)
-    case "extension":
-      return UTType(filenameExtension: value)
-    default:
-      return nil
+    case "UTType": UTType(value)
+    case "mimeType": UTType(mimeType: value)
+    case "extension": UTType(filenameExtension: value)
+    default: nil
     }
   }
 }
