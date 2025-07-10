@@ -28,10 +28,10 @@ import MobileCoreServices
   }
 
   public func getMetadataFor(url: URL) throws -> DocumentMetadataBuilder {
-    if (currentOptions?.isOpenMode() == true) {
-      return try self.getOpenedDocumentInfo(url: url, requestLongTermAccess: currentOptions?.requestLongTermAccess ?? false)
+    return if (currentOptions?.isOpenMode() == true) {
+      try self.getOpenedDocumentInfo(url: url, requestLongTermAccess: currentOptions?.requestLongTermAccess ?? false)
     } else {
-      return try self.getAnyModeMetadata(url: url)
+      try self.getAnyModeMetadata(url: url)
     }
   }
 
