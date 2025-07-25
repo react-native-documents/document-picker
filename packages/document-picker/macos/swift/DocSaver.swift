@@ -65,11 +65,17 @@ import AppKit
       // Return success with saved file metadata
       let resourceValues = try url.resourceValues(forKeys: [.fileSizeKey, .nameKey, .isDirectoryKey, .contentTypeKey])
       let builder = DocumentMetadataBuilder(forUri: url, resourceValues: resourceValues)
-      let metadata = try builder.build()
+      let metadata = builder.build()
       
       promiseWrapper.resolve(fromCallSite: "saveDocument", result: metadata)
     } catch {
       promiseWrapper.reject(fromCallSite: "saveDocument", code: "SAVE_FAILED", message: "Failed to save document: \(error.localizedDescription)", error: error)
     }
+  }
+  
+  // MARK: - GetsMetadataProtocol
+  public func getMetadataFor(url: URL) throws -> DocumentMetadataBuilder {
+    let resourceValues = try url.resourceValues(forKeys: [.fileSizeKey, .nameKey, .isDirectoryKey, .contentTypeKey])
+    return DocumentMetadataBuilder(forUri: url, resourceValues: resourceValues)
   }
 }
