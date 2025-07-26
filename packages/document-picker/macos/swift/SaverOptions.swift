@@ -4,12 +4,22 @@ import Foundation
 import UniformTypeIdentifiers
 
 @objc public class SaverOptions: NSObject {
-  let initialDirectoryUrl: URL?
-  let fileName: String?
-  let data: String?
-  let uri: String?
-  let shouldShowFileExtensions: Bool
-  let asCopy: Bool
+  @objc public var initialDirectoryUrl: URL?
+  @objc public var fileName: String?
+  @objc public var data: String?
+  @objc public var uri: String?
+  @objc public var shouldShowFileExtensions: Bool
+  @objc public var asCopy: Bool
+  
+  @objc public override init() {
+    initialDirectoryUrl = nil
+    fileName = nil
+    data = nil
+    uri = nil
+    shouldShowFileExtensions = true
+    asCopy = true
+    super.init()
+  }
   
   @objc public init(fileName: String? = nil, data: String? = nil, uri: String? = nil, asCopy: Bool = true, initialDirectoryUrl: String? = nil, shouldShowFileExtensions: Bool = true) {
     self.fileName = fileName

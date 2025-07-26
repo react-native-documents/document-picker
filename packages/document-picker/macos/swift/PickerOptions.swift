@@ -4,13 +4,26 @@ import Foundation
 import UniformTypeIdentifiers
 
 @objc public class PickerOptions: NSObject {
-  let allowedTypes: Array<UTType>
-  let mode: String // "import" or "open"
-  let allowMultiSelection: Bool
-  let initialDirectoryUrl: URL?
-  let shouldShowFileExtensions: Bool
-  let requestLongTermAccess: Bool
-  let copyTo: String
+  @objc public var allowedTypes: Array<UTType>
+  @objc public var mode: String // "import" or "open"
+  @objc public var allowMultiSelection: Bool
+  @objc public var initialDirectoryUrl: URL?
+  @objc public var shouldShowFileExtensions: Bool
+  @objc public var requestLongTermAccess: Bool
+  @objc public var copyTo: String
+  @objc public var isDirectoryPicker: Bool = false
+  
+  @objc public override init() {
+    allowedTypes = []
+    mode = "import"
+    allowMultiSelection = false
+    initialDirectoryUrl = nil
+    shouldShowFileExtensions = true
+    requestLongTermAccess = false
+    copyTo = "cachesDirectory"
+    isDirectoryPicker = false
+    super.init()
+  }
   
   @objc public init(types: Array<String>, mode: String = "import", initialDirectoryUrl: String? = nil, allowMultiSelection: Bool, shouldShowFileExtensions: Bool, requestLongTermAccess: Bool = false, copyTo: String = "cachesDirectory") {
     // TODO check if types were valid

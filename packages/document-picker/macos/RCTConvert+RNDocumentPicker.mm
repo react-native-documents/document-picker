@@ -3,6 +3,19 @@
 #import "RCTConvert+RNDocumentPicker.h"
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
+// Import Swift module header with multiple fallback options
+#if __has_include("react_native_document_picker-Swift.h")
+#import "react_native_document_picker-Swift.h"
+#elif __has_include(<react_native_document_picker/react_native_document_picker-Swift.h>)
+#import <react_native_document_picker/react_native_document_picker-Swift.h>
+#elif __has_include("react-native-document-picker-Swift.h")
+#import "react-native-document-picker-Swift.h"
+#elif __has_include(<react-native-document-picker/react-native-document-picker-Swift.h>)
+#import <react-native-document-picker/react-native-document-picker-Swift.h>
+#else
+#warning "Swift bridging header not found. Make sure Swift files are compiled and module is properly configured."
+#endif
+
 @implementation RCTConvert (RNDocumentPicker)
 
 + (PickerOptions *)PickerOptions:(id)json

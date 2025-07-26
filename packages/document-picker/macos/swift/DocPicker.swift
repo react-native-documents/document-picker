@@ -18,8 +18,8 @@ import AppKit
       let openPanel = NSOpenPanel()
       
       openPanel.allowsMultipleSelection = options.allowMultiSelection
-      openPanel.canChooseDirectories = false
-      openPanel.canChooseFiles = true
+      openPanel.canChooseDirectories = options.isDirectoryPicker
+      openPanel.canChooseFiles = !options.isDirectoryPicker
       openPanel.canCreateDirectories = false
       
       // Set allowed file types
@@ -45,28 +45,6 @@ import AppKit
     }
   }
 
-  @objc public func presentDirectory(options: PickerOptions, resolve: @escaping RNDPPromiseResolveBlock, reject: @escaping RNDPPromiseRejectBlock) {
-    if (!promiseWrapper.trySetPromiseRejectingIncoming(resolve, rejecter: reject, fromCallSite: "pickDirectory")) {
-      return;
-    }
-    currentOptions = options;
-    DispatchQueue.main.async {
-      let openPanel = NSOpenPanel()
-      
-      openPanel.allowsMultipleSelection = options.allowMultiSelection
-      openPanel.canChooseDirectories = true
-      openPanel.canChooseFiles = false
-      openPanel.canCreateDirectories = false
-      
-      openPanel.begin { (result) in
-        if result == .OK {
-          self.handlePickerResult(urls: openPanel.urls)
-        } else {
-          self.promiseWrapper.reject(fromCallSite: "pickDirectory", code: "DOCUMENT_PICKER_CANCELED", message: "User canceled directory picker", error: nil)
-        }
-      }
-    }
-  }
 
   public func getMetadataFor(url: URL) throws -> DocumentMetadataBuilder {
     return if (currentOptions?.isOpenMode() == true) {

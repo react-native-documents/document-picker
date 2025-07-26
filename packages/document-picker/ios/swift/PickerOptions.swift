@@ -5,14 +5,26 @@ import UIKit
 import UniformTypeIdentifiers
 
 @objc public class PickerOptions: NSObject {
-  let allowedTypes: Array<UTType>
-  let mode: String // "import" or "open"
-  let allowMultiSelection: Bool
-  let transitionStyle: UIModalTransitionStyle
-  let presentationStyle: UIModalPresentationStyle
-  let initialDirectoryUrl: URL?
-  let shouldShowFileExtensions: Bool
-  let requestLongTermAccess: Bool
+  @objc public var allowedTypes: Array<UTType>
+  @objc public var mode: String // "import" or "open"
+  @objc public var allowMultiSelection: Bool
+  @objc public var transitionStyle: UIModalTransitionStyle
+  @objc public var presentationStyle: UIModalPresentationStyle
+  @objc public var initialDirectoryUrl: URL?
+  @objc public var shouldShowFileExtensions: Bool
+  @objc public var requestLongTermAccess: Bool
+  
+  @objc public override init() {
+    allowedTypes = []
+    mode = "import"
+    allowMultiSelection = false
+    transitionStyle = .coverVertical
+    presentationStyle = .fullScreen
+    initialDirectoryUrl = nil
+    shouldShowFileExtensions = true
+    requestLongTermAccess = false
+    super.init()
+  }
   
   @objc public init(types: Array<String>, mode: String = "import", initialDirectoryUrl: String? = nil, allowMultiSelection: Bool, shouldShowFileExtensions: Bool, transitionStyle: UIModalTransitionStyle = .coverVertical, presentationStyle: UIModalPresentationStyle = .fullScreen, requestLongTermAccess: Bool = false) {
     // TODO check if types were valid
