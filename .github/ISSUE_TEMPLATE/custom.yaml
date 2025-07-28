@@ -64,8 +64,9 @@ body:
   - type: textarea
     attributes:
       label: Stacktrace of the crash (if applicable)
+      render: shell
       description: |
-        Give the stacktrace of the crash, or explain the error message you are seeing.
+        Give the stacktrace of the crash, or explain the error message you are seeing. This will be automatically formatted into code.
     validations:
       required: true
   - type: textarea
