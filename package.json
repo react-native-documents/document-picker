@@ -60,5 +60,8 @@
     "prettier": "^3.4.2",
     "typescript": "^5.7.3"
   },
+  "devDependencies": {
+    "@react-native-community/cli": "latest"
+  },
   "packageManager": "yarn@4.6.0"
 }
