@@ -22,6 +22,18 @@ becomes
 import { ... } from '@react-native-documents/picker'
 ```
 
+Also, if you previously used a default import like this:
+
+```ts
+import DocumentPicker from 'react-native-document-picker'
+```
+
+you should update it to use named imports for the methods you need (such as `pick`, `keepLocalCopy`, etc):
+
+```ts
+import { pick, keepLocalCopy } from '@react-native-documents/picker'
+```
+
 2. remove `pickSingle`
 
 Replace `pickSingle` with `pick`:
