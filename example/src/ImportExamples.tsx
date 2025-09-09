@@ -106,7 +106,10 @@ export function ImportExamples() {
                 })
 
                 const localCopyResults: LocalCopyResponse[] = copyResults.map((it) => {
-                  invariant(it.status === 'success', 'status should be success')
+                  invariant(
+                    it.status === 'success',
+                    `status should be success, error: ${JSON.stringify(it)}`,
+                  )
                   return {
                     status: 'success',
                     sourceUri: it.sourceUri,

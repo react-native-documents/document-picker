@@ -29,7 +29,7 @@ jobs:
         run: yarn install --immutable
       - name: Build android example app on old architecture
         run: ./gradlew app:assembleDebug -PnewArchEnabled=false
-        working-directory: packages/example/android
+        working-directory: example/android
   android-build-new-arch:
     runs-on: ubuntu-latest
     steps:
@@ -46,4 +46,4 @@ jobs:
         run: yarn install --immutable
       - name: Build android example app on new architecture
         run: ./gradlew app:assembleDebug -PnewArchEnabled=true
-        working-directory: packages/example/android
+        working-directory: example/android

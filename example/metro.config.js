@@ -1,6 +1,6 @@
 const path = require('path')
 
-const exclusionList = require('metro-config/src/defaults/exclusionList')
+const exclusionList = require('metro-config/private/defaults/exclusionList')
 
 const blockList = exclusionList([
   /node_modules\/.*\/node_modules\/react-native\/.*/,
@@ -26,8 +26,8 @@ const config = {
   resolver: {
     blockList,
     extraNodeModules: {
-      '@react-native-documents/picker': path.resolve(__dirname, '../document-picker'),
-      '@react-native-documents/viewer': path.resolve(__dirname, '../document-viewer'),
+      '@react-native-documents/picker': path.resolve(__dirname, '../../packages/document-picker'),
+      '@react-native-documents/viewer': path.resolve(__dirname, '../../packages/document-viewer'),
     },
   },
 }

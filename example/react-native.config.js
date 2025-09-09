@@ -20,10 +20,10 @@ module.exports = {
   dependencies: {
     // Help rn-cli find and autolink libs
     '@react-native-documents/picker': {
-      root: path.resolve(__dirname, '../document-picker'),
+      root: path.resolve(__dirname, '../packages/document-picker'),
     },
     '@react-native-documents/viewer': {
-      root: path.resolve(__dirname, '../document-viewer'),
+      root: path.resolve(__dirname, '../packages/document-viewer'),
     },
   },
   ...(project ? { project } : undefined),
