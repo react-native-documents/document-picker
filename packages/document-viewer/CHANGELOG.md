@@ -1,5 +1,11 @@
 # @react-native-documents/viewer
 
+## 1.0.2
+
+### Patch Changes
+
+- afe25e3: fix: remove use of deprecated api
+
 ## 1.0.1
 
 ### Patch Changes
