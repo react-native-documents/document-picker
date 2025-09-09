@@ -22,7 +22,7 @@ class RNDocumentViewerModule(reactContext: ReactApplicationContext) : NativeDocu
     presentation: String?,
     promise: Promise
   ) {
-    val currentActivity = reactApplicationContext.currentActivity
+    val currentActivity = currentActivity
     if (currentActivity == null) {
       rejectWithNullActivity(promise)
       return
