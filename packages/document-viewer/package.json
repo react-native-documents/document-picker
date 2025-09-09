@@ -54,8 +54,7 @@
   },
   "homepage": "https://github.com/react-native-documents/document-picker#readme",
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",
