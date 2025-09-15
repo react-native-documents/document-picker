@@ -1,22 +1,11 @@
 import React from 'react'
-import { UITextView } from 'react-native-uitextview'
 import { Platform, TextInput, Text } from 'react-native'
-// note this is not stable yet
 
 export type SelectableTextProps = {
   value: string | Record<string, any>
   accessibilityLabel: string
 }
 const style = { color: 'black' } as const
-
-const SelectableTextPaper = ({ value, accessibilityLabel }: SelectableTextProps) => {
-  const toRender = typeof value === 'string' ? value : JSON.stringify(value, null, 2)
-  return (
-    <UITextView style={style} accessibilityLabel={accessibilityLabel} selectable uiTextView>
-      {toRender}
-    </UITextView>
-  )
-}
 
 const SelectableTextFabric = ({ value, accessibilityLabel }: SelectableTextProps) => {
   const toRender = typeof value === 'string' ? value : JSON.stringify(value, null, 2)
@@ -35,6 +24,5 @@ const SelectableTextFabric = ({ value, accessibilityLabel }: SelectableTextProps
     </Text>
   )
 }
-// @ts-ignore
-const isFabricEnabled = global.nativeFabricUIManager !== null
-export const SelectableText = isFabricEnabled ? SelectableTextFabric : SelectableTextPaper
+// maybe use different implementation for old architecture
+export const SelectableText = SelectableTextFabric

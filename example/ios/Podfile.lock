@@ -1304,7 +1304,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-document-viewer (1.0.1):
+  - react-native-document-viewer (1.0.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1328,28 +1328,6 @@ PODS:
     - Yoga
   - react-native-segmented-control (2.5.7):
     - React-Core
-  - react-native-uitextview (2.1.0-rc.0):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
   - React-NativeModulesApple (0.81.1):
     - hermes-engine
     - React-callinvoker
@@ -1724,7 +1702,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - ReactTestApp-DevSupport (4.4.9):
+  - ReactTestApp-DevSupport (4.4.10):
     - React-Core
     - React-jsi
   - ReactTestApp-Resources (1.0.0-dev)
@@ -1792,7 +1770,6 @@ DEPENDENCIES:
   - react-native-document-picker (from `../../packages/document-picker`)
   - react-native-document-viewer (from `../../packages/document-viewer`)
   - "react-native-segmented-control (from `../../node_modules/@react-native-segmented-control/segmented-control`)"
-  - react-native-uitextview (from `../../node_modules/react-native-uitextview`)
   - React-NativeModulesApple (from `../../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-oscompat (from `../../node_modules/react-native/ReactCommon/oscompat`)
   - React-perflogger (from `../../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1908,8 +1885,6 @@ EXTERNAL SOURCES:
     :path: "../../packages/document-viewer"
   react-native-segmented-control:
     :path: "../../node_modules/@react-native-segmented-control/segmented-control"
-  react-native-uitextview:
-    :path: "../../node_modules/react-native-uitextview"
   React-NativeModulesApple:
     :path: "../../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-oscompat:
@@ -2020,9 +1995,8 @@ SPEC CHECKSUMS:
   React-Mapbuffer: bc36232966c55d5b1cbef3b84cb97c4317fa4403
   React-microtasksnativemodule: cbabfedcf6c2984e59d07f9ab553f3d277599b1b
   react-native-document-picker: e06c0a5836adabd1b58e4f956bb3b5b58d7766e2
-  react-native-document-viewer: aab4b9b37bebfe95f10679085666ec6fe424fa38
+  react-native-document-viewer: 49cf47192ee7e15f4ad25f8fdaef6b4f1ab0cc9c
   react-native-segmented-control: bf6e0032726727498e18dd437ae88afcdbc18e99
-  react-native-uitextview: d24acf59b5d64c9f0ddcd86d23629655460c1f3f
   React-NativeModulesApple: 055e2d1417c663e7a26fc0847609f503e626e9e1
   React-oscompat: 8f2893713639e12c7558750a9f7de3f08ac255b0
   React-perflogger: 34b632f94b15e1068f7997e5a68b40a55162ad13
@@ -2055,7 +2029,7 @@ SPEC CHECKSUMS:
   ReactCommon: 3579ef7cd884fbb5218bed929f25b7b212299700
   ReactNativeDependencies: 9444683ddc7eaa98d2289224ce730a7632b705ff
   ReactNativeHost: 7f059fda99bc0ba0187c19bfe91866c7692d90df
-  ReactTestApp-DevSupport: f62a6d484c9aff112862cec102aa1b526f7714aa
+  ReactTestApp-DevSupport: 9b7bbba5e8fed998e763809171d9906a1375f9d3
   ReactTestApp-Resources: 1bd9ff10e4c24f2ad87101a32023721ae923bccf
   RNCAsyncStorage: 3a4f5e2777dae1688b781a487923a08569e27fe4
   Yoga: 18b87f28df0aee34fa7370518a35aa8107ba47b9
