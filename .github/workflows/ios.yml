@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
       - name: Install pods
-        run: RCT_NEW_ARCH_ENABLED=0 npx pod-install
+        run: RCT_NEW_ARCH_ENABLED=0 RCT_USE_PREBUILT_RNCORE=1 RCT_USE_RN_DEP=1 npx pod-install
         working-directory: example/ios
       - name: Build ios example app on old architecture
         run: xcodebuild -scheme ReactTestApp -workspace document-picker-example.xcworkspace ONLY_ACTIVE_ARCH=NO -sdk iphonesimulator -configuration Debug
