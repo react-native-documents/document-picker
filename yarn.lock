@@ -13378,7 +13378,6 @@ __metadata:
     react: "npm:19.1.0"
     react-native: "npm:^0.81.1"
     react-native-test-app: "npm:^4.4.9"
-    react-native-uitextview: "npm:^2.1.0-rc.0"
     ts-node: "npm:^10.9.2"
     wdio-wait-for: "npm:^3.0.11"
   languageName: unknown
@@ -13440,16 +13439,6 @@ __metadata:
     init-test-app: scripts/init.mjs
     install-windows-test-app: windows/app.mjs
   checksum: 10c0/b85c711b456ef77dd63733827568d33a621ac434d8ca5b2d70de5b2d42e8ada1bc43c0307d7e8b5f1df9c0fe2d4367e2747c7703f798edf442f39e982bbf102f
-  languageName: node
-  linkType: hard
-
-"react-native-uitextview@npm:^2.1.0-rc.0":
-  version: 2.1.0-rc.0
-  resolution: "react-native-uitextview@npm:2.1.0-rc.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/0968832963372c254c3ef7aa09dabd2a3188cf7e2adff78efd95101886580df638b3e8441efe9631fe2cdf3a72f4ea010fdfaed8ef6c5ca7ab0804b729ecc22d
   languageName: node
   linkType: hard
 
