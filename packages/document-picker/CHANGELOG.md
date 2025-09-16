@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 10.1.6
+
+### Patch Changes
+
+- 19c44f8: fix(android): remove deprecated activity getters
+
 ## 10.1.5
 
 ### Patch Changes
