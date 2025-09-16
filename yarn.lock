@@ -1936,9 +1936,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@changesets/apply-release-plan@npm:^7.0.12":
-  version: 7.0.12
-  resolution: "@changesets/apply-release-plan@npm:7.0.12"
+"@changesets/apply-release-plan@npm:^7.0.13":
+  version: 7.0.13
+  resolution: "@changesets/apply-release-plan@npm:7.0.13"
   dependencies:
     "@changesets/config": "npm:^3.1.1"
     "@changesets/get-version-range-type": "npm:^0.4.0"
@@ -1953,7 +1953,7 @@ __metadata:
     prettier: "npm:^2.7.1"
     resolve-from: "npm:^5.0.0"
     semver: "npm:^7.5.3"
-  checksum: 10c0/3211e6e75fc50275647fa023ca2187a23b6b2406788f7ef39b38c3486ccf1d068a78b026ec488e46a2e3d135084ba8c152323e8df314cdd6ffbe188bf73bd238
+  checksum: 10c0/940f13bc09816f534f912559471af77c29eb31fcfa10a255bdc772573def9fb3ee24e3db710ac1ebbd70a90b03b667d63e535a13c580a150f3730c3798827a01
   languageName: node
   linkType: hard
 
@@ -1981,10 +1981,10 @@ __metadata:
   linkType: hard
 
 "@changesets/cli@npm:^2.29.6":
-  version: 2.29.6
-  resolution: "@changesets/cli@npm:2.29.6"
+  version: 2.29.7
+  resolution: "@changesets/cli@npm:2.29.7"
   dependencies:
-    "@changesets/apply-release-plan": "npm:^7.0.12"
+    "@changesets/apply-release-plan": "npm:^7.0.13"
     "@changesets/assemble-release-plan": "npm:^6.0.9"
     "@changesets/changelog-git": "npm:^0.2.1"
     "@changesets/config": "npm:^3.1.1"
@@ -2014,7 +2014,7 @@ __metadata:
     term-size: "npm:^2.1.0"
   bin:
     changeset: bin.js
-  checksum: 10c0/6e09201df1bc83f45526f7ab3d77b1171c2c74e89639993367acf183b9d0809d02845b9d900f34a5febcd1a963cdad7246e2b9c444da2440760d297aad3aff32
+  checksum: 10c0/a868fd39ace25993714f8b80ebb08529e0aba5446266e18edee9e5fd34d529ef6f8fcb7f53fc5831ab99c5721762fe06198aade304799792f1f79b9d37600d04
   languageName: node
   linkType: hard
 
@@ -2442,12 +2442,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@evilmartians/lefthook@npm:^1.10.10":
-  version: 1.10.10
-  resolution: "@evilmartians/lefthook@npm:1.10.10"
+"@evilmartians/lefthook@npm:^1.13.0":
+  version: 1.13.0
+  resolution: "@evilmartians/lefthook@npm:1.13.0"
   bin:
     lefthook: bin/index.js
-  checksum: 10c0/dd8a33e942f18136614ab593bd620016432e4ae37318a53af3d274eb87a180d66b1c7a8b61b5e11eba7478ff867838689c60885d1794b3e1367604623e0c5bda
+  checksum: 10c0/0679feae801136900f1ffbe21b74982fcd414391f2b23b14576387b19d6000308343cbf8de2b1510a41f6fd6933a27c2d277879207f17bfa98f235bad91fb29b
   conditions: (os=darwin | os=linux | os=win32) & (cpu=x64 | cpu=arm64 | cpu=ia32)
   languageName: node
   linkType: hard
@@ -4230,9 +4230,9 @@ __metadata:
   linkType: hard
 
 "@types/prop-types@npm:*":
-  version: 15.7.13
-  resolution: "@types/prop-types@npm:15.7.13"
-  checksum: 10c0/1b20fc67281902c6743379960247bc161f3f0406ffc0df8e7058745a85ea1538612109db0406290512947f9632fe9e10e7337bf0ce6338a91d6c948df16a7c61
+  version: 15.7.15
+  resolution: "@types/prop-types@npm:15.7.15"
+  checksum: 10c0/b59aad1ad19bf1733cf524fd4e618196c6c7690f48ee70a327eb450a42aab8e8a063fbe59ca0a5701aebe2d92d582292c0fb845ea57474f6a15f6994b0e260b2
   languageName: node
   linkType: hard
 
@@ -4251,12 +4251,12 @@ __metadata:
   linkType: hard
 
 "@types/react@npm:^18.3.18":
-  version: 18.3.18
-  resolution: "@types/react@npm:18.3.18"
+  version: 18.3.24
+  resolution: "@types/react@npm:18.3.24"
   dependencies:
     "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/8fb2b00672072135d0858dc9db07873ea107cc238b6228aaa2a9afd1ef7a64a7074078250db38afbeb19064be8ea6af5eac32d404efdd5f45e093cc4829d87f8
+  checksum: 10c0/9e188fa8e50f172cf647fc48fea2e04d88602afff47190b697de281a8ac88df9ee059864757a2a438ff599eaf9276d9a9e0e60585e88f7d57f01a2e4877d37ec
   languageName: node
   linkType: hard
 
@@ -9222,7 +9222,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"import-fresh@npm:^3.0.0, import-fresh@npm:^3.2.1, import-fresh@npm:^3.3.0":
+"import-fresh@npm:^3.0.0":
+  version: 3.3.1
+  resolution: "import-fresh@npm:3.3.1"
+  dependencies:
+    parent-module: "npm:^1.0.0"
+    resolve-from: "npm:^4.0.0"
+  checksum: 10c0/bf8cc494872fef783249709385ae883b447e3eb09db0ebd15dcead7d9afe7224dad7bd7591c6b73b0b19b3c0f9640eb8ee884f01cfaf2887ab995b0b36a0cbec
+  languageName: node
+  linkType: hard
+
+"import-fresh@npm:^3.2.1, import-fresh@npm:^3.3.0":
   version: 3.3.0
   resolution: "import-fresh@npm:3.3.0"
   dependencies:
@@ -9440,7 +9450,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-core-module@npm:^2.13.0, is-core-module@npm:^2.5.0":
+"is-core-module@npm:^2.13.0":
   version: 2.15.1
   resolution: "is-core-module@npm:2.15.1"
   dependencies:
@@ -9449,7 +9459,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-core-module@npm:^2.16.0":
+"is-core-module@npm:^2.16.0, is-core-module@npm:^2.5.0":
   version: 2.16.1
   resolution: "is-core-module@npm:2.16.1"
   dependencies:
@@ -10434,11 +10444,11 @@ __metadata:
   linkType: hard
 
 "jiti@npm:^1.21.6":
-  version: 1.21.6
-  resolution: "jiti@npm:1.21.6"
+  version: 1.21.7
+  resolution: "jiti@npm:1.21.7"
   bin:
     jiti: bin/jiti.js
-  checksum: 10c0/05b9ed58cd30d0c3ccd3c98209339e74f50abd9a17e716f65db46b6a35812103f6bde6e134be7124d01745586bca8cc5dae1d0d952267c3ebe55171949c32e56
+  checksum: 10c0/77b61989c758ff32407cdae8ddc77f85e18e1a13fc4977110dbd2e05fc761842f5f71bce684d9a01316e1c4263971315a111385759951080bbfe17cbb5de8f7a
   languageName: node
   linkType: hard
 
@@ -12959,6 +12969,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pod-install@npm:1.0.7":
+  version: 1.0.7
+  resolution: "pod-install@npm:1.0.7"
+  bin:
+    pod-install: build/index.js
+  checksum: 10c0/56d2d08d245c6f1f44642c31825b3e8c7aff0342ebd6eaff3f6a82126b371d7212f29c2e1a13af8eecc2a23905259e0c02898834b7d62b998f0f2aad776ab206
+  languageName: node
+  linkType: hard
+
 "portscanner@npm:^2.2.0":
   version: 2.2.0
   resolution: "portscanner@npm:2.2.0"
@@ -13001,12 +13020,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.4.2":
-  version: 3.4.2
-  resolution: "prettier@npm:3.4.2"
+"prettier@npm:^3.6.2":
+  version: 3.6.2
+  resolution: "prettier@npm:3.6.2"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/99e076a26ed0aba4ebc043880d0f08bbb8c59a4c6641cdee6cdadf2205bdd87aa1d7823f50c3aea41e015e99878d37c58d7b5f0e663bba0ef047f94e36b96446
+  checksum: 10c0/488cb2f2b99ec13da1e50074912870217c11edaddedeadc649b1244c749d15ba94e846423d062e2c4c9ae683e2d65f754de28889ba06e697ac4f988d44f45812
   languageName: node
   linkType: hard
 
@@ -13359,7 +13378,6 @@ __metadata:
     react: "npm:19.1.0"
     react-native: "npm:^0.81.1"
     react-native-test-app: "npm:^4.4.9"
-    react-native-uitextview: "npm:^2.1.0-rc.0"
     ts-node: "npm:^10.9.2"
     wdio-wait-for: "npm:^3.0.11"
   languageName: unknown
@@ -13372,7 +13390,7 @@ __metadata:
     "@changesets/cli": "npm:^2.29.6"
     "@commitlint/cli": "npm:^18.6.1"
     "@commitlint/config-conventional": "npm:^18.6.3"
-    "@evilmartians/lefthook": "npm:^1.10.10"
+    "@evilmartians/lefthook": "npm:^1.13.0"
     "@jest/globals": "npm:^29.7.0"
     "@manypkg/cli": "npm:^0.21.4"
     "@react-native/eslint-config": "npm:^0.81.1"
@@ -13381,15 +13399,15 @@ __metadata:
     eslint-config-prettier: "npm:^9.1.0"
     eslint-plugin-prettier: "npm:^5.2.3"
     jest: "npm:^29.7.0"
-    pod-install: "npm:1.0.1"
-    prettier: "npm:^3.4.2"
+    pod-install: "npm:1.0.7"
+    prettier: "npm:^3.6.2"
     typescript: "npm:^5.7.3"
   languageName: unknown
   linkType: soft
 
 "react-native-test-app@npm:^4.4.9":
-  version: 4.4.9
-  resolution: "react-native-test-app@npm:4.4.9"
+  version: 4.4.10
+  resolution: "react-native-test-app@npm:4.4.10"
   dependencies:
     "@rnx-kit/react-native-host": "npm:^0.5.11"
     "@rnx-kit/tools-react-native": "npm:^2.1.0"
@@ -13400,7 +13418,7 @@ __metadata:
     semver: "npm:^7.3.5"
     uuid: "npm:^11.0.0"
   peerDependencies:
-    "@callstack/react-native-visionos": 0.73 - 0.78
+    "@callstack/react-native-visionos": 0.73 - 0.79
     "@expo/config-plugins": ">=5.0"
     react: 18.1 - 19.1
     react-native: 0.70 - 0.81 || >=0.82.0-0 <0.82.0
@@ -13420,17 +13438,7 @@ __metadata:
     init: scripts/init.mjs
     init-test-app: scripts/init.mjs
     install-windows-test-app: windows/app.mjs
-  checksum: 10c0/b67033963763a8f125ca691a28ad8bf9e71379407eb16511aa0ae3f5755785aa633bc624b45d4ea522bd2acbfdde40a7861d11e7be41e0a71b7fa397cb245a43
-  languageName: node
-  linkType: hard
-
-"react-native-uitextview@npm:^2.1.0-rc.0":
-  version: 2.1.0-rc.0
-  resolution: "react-native-uitextview@npm:2.1.0-rc.0"
-  peerDependencies:
-    react: "*"
-    react-native: "*"
-  checksum: 10c0/0968832963372c254c3ef7aa09dabd2a3188cf7e2adff78efd95101886580df638b3e8441efe9631fe2cdf3a72f4ea010fdfaed8ef6c5ca7ab0804b729ecc22d
+  checksum: 10c0/b85c711b456ef77dd63733827568d33a621ac434d8ca5b2d70de5b2d42e8ada1bc43c0307d7e8b5f1df9c0fe2d4367e2747c7703f798edf442f39e982bbf102f
   languageName: node
   linkType: hard
 
@@ -14142,7 +14150,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:7.6.3, semver@npm:^7.0.0, semver@npm:^7.1.3, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.2, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.0, semver@npm:^7.6.3":
+"semver@npm:7.6.3, semver@npm:^7.0.0, semver@npm:^7.1.3, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.2, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.0, semver@npm:^7.6.3":
   version: 7.6.3
   resolution: "semver@npm:7.6.3"
   bin:
@@ -14157,6 +14165,15 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 10c0/e3d79b609071caa78bcb6ce2ad81c7966a46a7431d9d58b8800cfa9cb6a63699b3899a0e4bcce36167a284578212d9ae6942b6929ba4aa5015c079a67751d42d
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.3.4":
+  version: 7.7.2
+  resolution: "semver@npm:7.7.2"
+  bin:
+    semver: bin/semver.js
+  checksum: 10c0/aca305edfbf2383c22571cb7714f48cadc7ac95371b4b52362fb8eeffdfbc0de0669368b82b2b15978f8848f01d7114da65697e56cd8c37b0dab8c58e543f9ea
   languageName: node
   linkType: hard
 

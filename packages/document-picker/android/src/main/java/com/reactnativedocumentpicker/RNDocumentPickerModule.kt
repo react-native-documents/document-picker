@@ -83,12 +83,8 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun pick(opts: ReadableMap, promise: Promise) {
-    val currentActivity = currentActivity
+    val currentActivity = reactApplicationContext.currentActivity ?: return rejectWithNullActivity(promise)
 
-    if (currentActivity == null) {
-      rejectWithNullActivity(promise)
-      return
-    }
     if (!promiseWrapper.trySetPromiseRejectingIncoming(promise, "pick")) {
       return
     }
@@ -145,11 +141,8 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
 
   @ReactMethod
   override fun pickDirectory(opts: ReadableMap, promise: Promise) {
-    val currentActivity = currentActivity
-    if (currentActivity == null) {
-      rejectWithNullActivity(promise)
-      return
-    }
+    val currentActivity = reactApplicationContext.currentActivity ?: return rejectWithNullActivity(promise)
+
     if (!promiseWrapper.trySetPromiseRejectingIncoming(promise, "pickDirectory")) {
       return
     }
