@@ -4229,6 +4229,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prop-types@npm:*":
+  version: 15.7.15
+  resolution: "@types/prop-types@npm:15.7.15"
+  checksum: 10c0/b59aad1ad19bf1733cf524fd4e618196c6c7690f48ee70a327eb450a42aab8e8a063fbe59ca0a5701aebe2d92d582292c0fb845ea57474f6a15f6994b0e260b2
+  languageName: node
+  linkType: hard
+
 "@types/qs@npm:*":
   version: 6.9.17
   resolution: "@types/qs@npm:6.9.17"
@@ -4243,12 +4250,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.1.13":
-  version: 19.1.13
-  resolution: "@types/react@npm:19.1.13"
+"@types/react@npm:^18.3.18":
+  version: 18.3.24
+  resolution: "@types/react@npm:18.3.24"
   dependencies:
+    "@types/prop-types": "npm:*"
     csstype: "npm:^3.0.2"
-  checksum: 10c0/75e35b54883f5ed07d3b5cb16a4711b6dbb7ec6b74301bcb9bfa697c9d9fff022ec508e1719e7b2c69e2e8b042faac1125be7717b5e5e084f816a2c88e136920
+  checksum: 10c0/9e188fa8e50f172cf647fc48fea2e04d88602afff47190b697de281a8ac88df9ee059864757a2a438ff599eaf9276d9a9e0e60585e88f7d57f01a2e4877d37ec
   languageName: node
   linkType: hard
 
@@ -12952,6 +12960,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pod-install@npm:1.0.1":
+  version: 1.0.1
+  resolution: "pod-install@npm:1.0.1"
+  bin:
+    pod-install: build/index.js
+  checksum: 10c0/7b4a48c5baf80fb1d11bd8688716fa534ffe57e0a7fc894c1046335f622d6d0ec496b9407b9b6d7fb91a6f43e2a850c09c7818f4727b129ec56633789e628aea
+  languageName: node
+  linkType: hard
+
 "pod-install@npm:1.0.7":
   version: 1.0.7
   resolution: "pod-install@npm:1.0.7"
@@ -13348,7 +13365,7 @@ __metadata:
     "@react-native/metro-config": "npm:^0.81.1"
     "@types/invariant": "npm:^2.2.37"
     "@types/jasmine": "npm:^5.1.5"
-    "@types/react": "npm:^19.1.13"
+    "@types/react": "npm:^18.3.18"
     "@wdio/browserstack-service": "npm:^8.36.1"
     "@wdio/cli": "npm:^8.36.1"
     "@wdio/jasmine-framework": "npm:^8.36.1"
@@ -13357,10 +13374,11 @@ __metadata:
     appium: "npm:^2.5.4"
     appium-uiautomator2-driver: "npm:^3.1.0"
     invariant: "npm:^2.2.4"
-    pod-install: "npm:1.0.7"
+    pod-install: "npm:1.0.1"
     react: "npm:19.1.0"
     react-native: "npm:^0.81.1"
-    react-native-test-app: "npm:^4.4.10"
+    react-native-test-app: "npm:^4.4.9"
+    react-native-uitextview: "npm:^2.1.0-rc.0"
     ts-node: "npm:^10.9.2"
     wdio-wait-for: "npm:^3.0.11"
   languageName: unknown
@@ -13388,7 +13406,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-native-test-app@npm:^4.4.10":
+"react-native-test-app@npm:^4.4.9":
   version: 4.4.10
   resolution: "react-native-test-app@npm:4.4.10"
   dependencies:
@@ -13422,6 +13440,16 @@ __metadata:
     init-test-app: scripts/init.mjs
     install-windows-test-app: windows/app.mjs
   checksum: 10c0/b85c711b456ef77dd63733827568d33a621ac434d8ca5b2d70de5b2d42e8ada1bc43c0307d7e8b5f1df9c0fe2d4367e2747c7703f798edf442f39e982bbf102f
+  languageName: node
+  linkType: hard
+
+"react-native-uitextview@npm:^2.1.0-rc.0":
+  version: 2.1.0-rc.0
+  resolution: "react-native-uitextview@npm:2.1.0-rc.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/0968832963372c254c3ef7aa09dabd2a3188cf7e2adff78efd95101886580df638b3e8441efe9631fe2cdf3a72f4ea010fdfaed8ef6c5ca7ab0804b729ecc22d
   languageName: node
   linkType: hard
 
