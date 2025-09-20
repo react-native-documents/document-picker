@@ -15,6 +15,16 @@ on:
 jobs:
   android-build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [old, new]
+        include:
+          - arch: old
+            new-arch-enabled: false
+            description: "old architecture"
+          - arch: new
+            new-arch-enabled: true
+            description: "new architecture"
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js lts
@@ -27,23 +37,6 @@ jobs:
           java-version: '17'
       - name: Install dependencies
         run: yarn install --immutable
-      - name: Build android example app on old architecture
-        run: ./gradlew app:assembleDebug -PnewArchEnabled=false
-        working-directory: example/android
-  android-build-new-arch:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js lts
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Install dependencies
-        run: yarn install --immutable
-      - name: Build android example app on new architecture
-        run: ./gradlew app:assembleDebug -PnewArchEnabled=true
+      - name: Build android example app on ${{ matrix.description }}
+        run: ./gradlew app:assembleDebug -PnewArchEnabled=${{ matrix.new-arch-enabled }}
         working-directory: example/android
