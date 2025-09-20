@@ -153,7 +153,7 @@ const config: Config = {
         { to: 'docs/doc-picker-api', label: 'Picker API', position: 'left' },
         { to: 'docs/doc-viewer-api', label: 'Viewer API', position: 'left' },
         {
-          to: 'https://github.com/react-native-documents/document-picker/tree/main/packages/example',
+          to: 'https://github.com/react-native-documents/document-picker/tree/main/example',
           label: 'Example app',
           position: 'right',
         },
