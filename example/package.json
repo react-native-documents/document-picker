@@ -29,10 +29,10 @@
   "homepage": "https://github.com/react-native-documents/sponsors-only#readme",
   "devDependencies": {
     "@react-native-community/cli": "^20.0.2",
-    "@react-native/metro-config": "^0.81.1",
+    "@react-native/metro-config": "^0.81.4",
     "@types/invariant": "^2.2.37",
     "@types/jasmine": "^5.1.5",
-    "@types/react": "^18.3.18",
+    "@types/react": "^19.1.13",
     "@wdio/browserstack-service": "^8.36.1",
     "@wdio/cli": "^8.36.1",
     "@wdio/jasmine-framework": "^8.36.1",
@@ -40,8 +40,8 @@
     "@wdio/spec-reporter": "^8.36.1",
     "appium": "^2.5.4",
     "appium-uiautomator2-driver": "^3.1.0",
-    "pod-install": "1.0.1",
-    "react-native-test-app": "^4.4.9",
+    "pod-install": "1.0.7",
+    "react-native-test-app": "^4.4.10",
     "ts-node": "^10.9.2",
     "wdio-wait-for": "^3.0.11"
   },
@@ -64,6 +64,6 @@
     "@react-native-segmented-control/segmented-control": "^2.5.7",
     "invariant": "^2.2.4",
     "react": "19.1.0",
-    "react-native": "^0.81.1"
+    "react-native": "^0.81.4"
   }
 }
