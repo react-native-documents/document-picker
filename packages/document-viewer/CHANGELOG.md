@@ -1,5 +1,11 @@
 # @react-native-documents/viewer
 
+## 1.0.3
+
+### Patch Changes
+
+- 8dbbd95: fix: remove use of deprecated apis
+
 ## 1.0.2
 
 ### Patch Changes

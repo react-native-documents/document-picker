@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 10.1.7
+
+### Patch Changes
+
+- 8dbbd95: fix: remove use of deprecated apis
+
 ## 10.1.6
 
 ### Patch Changes
