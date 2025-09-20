@@ -14,10 +14,6 @@
 #import "react_native_document_picker-Swift.h"
 #endif
 
-// for UIModalPresentationStyle conversion
-// remove after https://github.com/facebook/react-native/commit/2d547a3252b328251e49dabfeec85f8d46c85411 is released
-#import <React/RCTModalHostViewManager.h>
-
 @interface RNDocumentPicker ()
 @end
 

@@ -138,7 +138,7 @@ class MetadataGetter(private val uriMap: MutableMap<String, Uri>) {
   private fun <T> getCursorValue(cursor: Cursor, columnName: String, valueType: Class<T>): T? {
     val columnIndex = cursor.getColumnIndex(columnName)
     if (columnIndex != -1 && !cursor.isNull(columnIndex)) {
-      return try {
+      return runCatching {
         when (valueType) {
           String::class.java -> cursor.getString(columnIndex) as T
           Int::class.java -> cursor.getInt(columnIndex) as T
@@ -147,10 +147,8 @@ class MetadataGetter(private val uriMap: MutableMap<String, Uri>) {
           Float::class.java -> cursor.getFloat(columnIndex) as T
           else -> null
         }
-      } catch (e: Exception) {
-        // this should not happen but if it does, we return null
-        null
-      }
+      // throw should not happen but if it does, we return null
+      }.getOrNull()
     }
     return null
   }

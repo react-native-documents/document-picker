@@ -16,7 +16,17 @@ on:
 
 jobs:
   ios-build:
-    runs-on: macos-latest
+    runs-on: macos-26
+    strategy:
+      matrix:
+        arch: [old, new]
+        include:
+          - arch: old
+            new-arch-enabled: 0
+            description: "old architecture"
+          - arch: new
+            new-arch-enabled: 1
+            description: "new architecture"
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js lts
@@ -31,29 +41,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
       - name: Install pods
-        run: RCT_NEW_ARCH_ENABLED=0 RCT_USE_PREBUILT_RNCORE=1 RCT_USE_RN_DEP=1 npx pod-install
+        run: RCT_NEW_ARCH_ENABLED=${{ matrix.new-arch-enabled }} RCT_USE_PREBUILT_RNCORE=1 RCT_USE_RN_DEP=1 npx pod-install
         working-directory: example/ios
-      - name: Build ios example app on old architecture
-        run: xcodebuild -scheme ReactTestApp -workspace document-picker-example.xcworkspace ONLY_ACTIVE_ARCH=NO -sdk iphonesimulator -configuration Debug
-        working-directory: example/ios
-  ios-build-new-arch:
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js lts
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7
-          working-directory: example/ios
-          bundler-cache: true
-      - name: Install dependencies
-        run: yarn install --immutable
-      - name: Install pods for new arch
-        run: RCT_NEW_ARCH_ENABLED=1 RCT_USE_PREBUILT_RNCORE=1 RCT_USE_RN_DEP=1 npx pod-install
-        working-directory: example/ios
-      - name: Build ios example app on new architecture
+      - name: Build ios example app on ${{ matrix.description }}
         run: xcodebuild -scheme ReactTestApp -workspace document-picker-example.xcworkspace ONLY_ACTIVE_ARCH=NO -sdk iphonesimulator -configuration Debug
         working-directory: example/ios
