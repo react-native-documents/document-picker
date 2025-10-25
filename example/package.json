@@ -41,7 +41,7 @@
     "appium": "^2.5.4",
     "appium-uiautomator2-driver": "^3.1.0",
     "pod-install": "1.0.7",
-    "react-native-test-app": "^4.4.10",
+    "react-native-test-app": "^4.4.12",
     "ts-node": "^10.9.2",
     "wdio-wait-for": "^3.0.11"
   },
