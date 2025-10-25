@@ -1,5 +1,15 @@
 # @react-native-documents/viewer
 
+## 2.0.0
+
+### Major Changes
+
+- da5479c: feat: do not ship commonjs
+
+### Patch Changes
+
+- cab6a51: Made file provider unique to package to prevent clash with other packages
+
 ## 1.0.3
 
 ### Patch Changes

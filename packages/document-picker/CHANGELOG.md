@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 11.0.0
+
+### Major Changes
+
+- da5479c: feat: do not ship commonjs
+
 ## 10.1.7
 
 ### Patch Changes
