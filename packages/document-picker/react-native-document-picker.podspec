@@ -14,7 +14,6 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/react-native-documents/sponsors-only.git", :tag => "v#{s.version}" }
 
   s.source_files = ["ios/**/*.{h,m,mm,swift}"]
-  s.frameworks = 'MobileCoreServices'
 
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {

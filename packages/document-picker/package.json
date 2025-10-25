@@ -2,11 +2,16 @@
   "name": "@react-native-documents/picker",
   "version": "10.1.7",
   "description": "A react native interface to access documents from dropbox, google drive, iCloud...",
-  "main": "lib/commonjs/index",
-  "module": "lib/module/index",
-  "types": "lib/typescript/index.d.ts",
-  "react-native": "src/index",
-  "source": "src/index",
+  "main": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./lib/typescript/src/index.d.ts",
+      "default": "./lib/module/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "src",
     "lib",
@@ -60,12 +65,12 @@
   },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",
-    "react-native-builder-bob": "^0.36.0",
+    "react-native-builder-bob": "^0.40.13",
     "typescript": "^5.7.3"
   },
   "peerDependencies": {
     "react": "*",
-    "react-native": "*"
+    "react-native": ">=0.79.0"
   },
   "jest": {
     "preset": "react-native",
@@ -77,8 +82,12 @@
     "source": "src",
     "output": "lib",
     "targets": [
-      "commonjs",
-      "module",
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
       [
         "typescript",
         {

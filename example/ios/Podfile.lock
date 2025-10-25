@@ -1282,7 +1282,7 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-  - react-native-document-picker (10.1.6):
+  - react-native-document-picker (10.1.7):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1304,7 +1304,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-document-viewer (1.0.2):
+  - react-native-document-viewer (1.0.3):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1702,7 +1702,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - ReactTestApp-DevSupport (4.4.10):
+  - ReactTestApp-DevSupport (4.4.12):
     - React-Core
     - React-jsi
   - ReactTestApp-Resources (1.0.0-dev)
@@ -1994,8 +1994,8 @@ SPEC CHECKSUMS:
   React-logger: 7b234de35acb469ce76d6bbb0457f664d6f32f62
   React-Mapbuffer: fbe1da882a187e5898bdf125e1cc6e603d27ecae
   React-microtasksnativemodule: 76905804171d8ccbe69329fc84c57eb7934add7f
-  react-native-document-picker: 10d97da5ab59c2430e122924a525380d498b5d43
-  react-native-document-viewer: 49cf47192ee7e15f4ad25f8fdaef6b4f1ab0cc9c
+  react-native-document-picker: a3c4ce6322b7aa9902fe8ffb8e03d5858b5d7beb
+  react-native-document-viewer: 6fc76b1f9f2773a39b155f10aae674cf731f21b2
   react-native-segmented-control: bf6e0032726727498e18dd437ae88afcdbc18e99
   React-NativeModulesApple: a9464983ccc0f66f45e93558671f60fc7536e438
   React-oscompat: 73db7dbc80edef36a9d6ed3c6c4e1724ead4236d
@@ -2029,7 +2029,7 @@ SPEC CHECKSUMS:
   ReactCommon: 149b6c05126f2e99f2ed0d3c63539369546f8cae
   ReactNativeDependencies: ed6d1e64802b150399f04f1d5728ec16b437251e
   ReactNativeHost: 7f059fda99bc0ba0187c19bfe91866c7692d90df
-  ReactTestApp-DevSupport: 9b7bbba5e8fed998e763809171d9906a1375f9d3
+  ReactTestApp-DevSupport: 963986104f003af978562535682fec417b4aadfa
   ReactTestApp-Resources: 1bd9ff10e4c24f2ad87101a32023721ae923bccf
   RNCAsyncStorage: 3a4f5e2777dae1688b781a487923a08569e27fe4
   Yoga: 051f086b5ccf465ff2ed38a2cf5a558ae01aaaa1

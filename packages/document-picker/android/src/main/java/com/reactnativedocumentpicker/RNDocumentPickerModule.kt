@@ -75,6 +75,7 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
   }
 
   override fun invalidate() {
+    fileCopyingCoroutine.cancel("module invalidated")
     reactApplicationContext.removeActivityEventListener(activityEventListener)
     // TODO verify this should be done (and order)
     // reactApplicationContext.removeLifecycleEventListener(this)
@@ -307,7 +308,7 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
           else -> emptyList()
         }
 
-    CoroutineScope(Dispatchers.IO).launch {
+    fileCopyingCoroutine.launch {
       try {
         val pickOptions = currentPickOptions
         require(pickOptions != null)
