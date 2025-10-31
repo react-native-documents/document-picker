@@ -1,5 +1,11 @@
 # @react-native-documents/viewer
 
+## 2.0.1
+
+### Patch Changes
+
+- 63d5c21: fix(android): couldn't find meta-data for provider
+
 ## 2.0.0
 
 ### Major Changes
