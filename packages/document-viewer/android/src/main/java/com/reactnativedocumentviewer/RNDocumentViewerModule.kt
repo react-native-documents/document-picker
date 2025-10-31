@@ -62,8 +62,8 @@ class RNDocumentViewerModule(reactContext: ReactApplicationContext) : NativeDocu
       UriWithFlags(Uri.parse(bookmarkOrUri), flags)
     } else if (bookmarkOrUri.startsWith("file://")) {
       val uri = Uri.parse(bookmarkOrUri)
-      // TODO package name may not be the same as applicationId
-      val authority = reactApplicationContext.packageName + ".provider"
+      // TODO package name may not be the same as applicationId. Also see document-viewer/android/src/main/AndroidManifest.xml
+      val authority = reactApplicationContext.packageName + ".reactnativedocumentviewer.provider"
       val uriPath = uri.path ?: throw IllegalArgumentException("file:// uri must have a path")
       val fileUri = FileProvider.getUriForFile(
         reactApplicationContext,
