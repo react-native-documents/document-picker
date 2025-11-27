@@ -1,5 +1,11 @@
 # @react-native-documents/viewer
 
+## 2.0.3
+
+### Patch Changes
+
+- d47ab3e: fix: clean up gradle files
+
 ## 2.0.2
 
 ### Patch Changes

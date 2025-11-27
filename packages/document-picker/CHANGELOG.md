@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 11.0.1
+
+### Patch Changes
+
+- d47ab3e: fix: clean up gradle files
+
 ## 11.0.0
 
 ### Major Changes
