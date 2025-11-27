@@ -3,9 +3,10 @@
 #import "RNDocumentViewer.h"
 #import <React/RCTUtils.h>
 #import "RNDPreviewController.h"
-// for UIModalPresentationStyle conversion
-// remove after https://github.com/facebook/react-native/commit/2d547a3252b328251e49dabfeec85f8d46c85411 is released
-#import <React/RCTModalHostViewManager.h>
+#import <React/RCTConvert.h>
+
+static NSString * const RNDocViewerErrorUnableToOpenFileType = @"UNABLE_TO_OPEN_FILE_TYPE";
+static NSString * const RNDocViewerErrorNullPresenter = @"NULL_PRESENTER";
 
 @interface RNDocumentViewer ()
 @property(nonatomic, nullable) NSURL *presentedUrl;
@@ -24,6 +25,7 @@ RCT_EXPORT_METHOD(viewDocument:(NSString *)bookmarkOrUri
                   permissions:(NSString *)permissions
                      mimeType:(NSString *)mimeType
                         title:(NSString *)title
+         androidApplicationId:(NSString *)androidApplicationId
             presentationStyle:(NSString *)presentationStyle
                       resolve:(RCTPromiseResolveBlock)resolve
                        reject:(RCTPromiseRejectBlock)reject) {
@@ -34,10 +36,10 @@ RCT_EXPORT_METHOD(viewDocument:(NSString *)bookmarkOrUri
     [self presentPreview:title restoredURL:restoredURL presentationStyle:_presentationStyle resolve:resolve reject:reject];
   } else {
     NSData *bookmarkData = [[NSData alloc] initWithBase64EncodedString:bookmarkOrUri options:0];
-    
+
     NSError *error = nil;
     BOOL isStale = NO;
-    
+
     NSURL *restoredURL = [NSURL URLByResolvingBookmarkData:bookmarkData
                                                    options:NSURLBookmarkResolutionWithoutUI
                                              relativeToURL:nil
@@ -50,7 +52,6 @@ RCT_EXPORT_METHOD(viewDocument:(NSString *)bookmarkOrUri
         reject(@"RNDocViewer", @"Bookmark was resolved but it's stale", nil);
         return;
       }
-      
       if ([restoredURL startAccessingSecurityScopedResource]) {
         [self presentPreview:title restoredURL:restoredURL presentationStyle:_presentationStyle resolve:resolve reject:reject];
       } else {
@@ -62,7 +63,7 @@ RCT_EXPORT_METHOD(viewDocument:(NSString *)bookmarkOrUri
   }
 }
 
-- (void)presentPreview:(NSString *)title 
+- (void)presentPreview:(NSString *)title
            restoredURL:(NSURL *)restoredURL
      presentationStyle:(UIModalPresentationStyle) presentationStyle
                resolve:(RCTPromiseResolveBlock)resolve
@@ -75,12 +76,16 @@ RCT_EXPORT_METHOD(viewDocument:(NSString *)bookmarkOrUri
     controller.delegate = self;
 
     if ([QLPreviewController canPreviewItem:item]) {
-      [RCTPresentedViewController() presentViewController:controller animated:YES completion:^{
+      UIViewController* presenter = RCTPresentedViewController();
+      if (presenter) {
+        [presenter presentViewController:controller animated:YES completion:nil];
         resolve([NSNull null]);
-      }];
+      } else {
+        reject(RNDocViewerErrorNullPresenter, @"RCTPresentedViewController was nil", nil);
+      }
     } else {
       [self.presentedUrl stopAccessingSecurityScopedResource];
-      reject(@"UNABLE_TO_OPEN_FILE_TYPE", @"unsupported file", nil);
+      reject(RNDocViewerErrorUnableToOpenFileType, @"unsupported file", nil);
     }
   });
 }

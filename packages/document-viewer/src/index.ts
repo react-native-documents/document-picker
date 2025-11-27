@@ -17,23 +17,28 @@ export type PresentationStyle =
 export type BaseOptions = {
   /**
    * Android only: The type of permission to grant to the receiving app that will open the document.
-   * This only has effect if you're viewing a file that lives in the app's sandboxed storage.
+   * This only has an effect if you're viewing a file that lives in the app's sandboxed storage.
    */
   grantPermissions?: 'read' | 'write'
   /**
    * iOS only: The title to display in the header of the document viewer.
-   * If not provided, the filename will be used.
+   * @default the file name.
    */
   headerTitle?: string
   /**
-   * Optional, but recommended: the mimetype of the document. This will help the Android OS to find the right app(s) to open the document.
+   * Optional, but strongly recommended: the mimetype of the document. This helps the Android OS to find the right app(s) to open the document.
    */
   mimeType?: string
-
   /**
-   * iOS only - Controls how the picker is presented, e.g. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`.
+   * iOS only - Controls how the picker is presented, e.g. on an iPad you may want to present it fullscreen.
+   * @default `pageSheet`.
    * */
   presentationStyle?: PresentationStyle
+  /**
+   * Android only - Optional, only provide a value if `viewDocument` rejects with `IllegalArgumentException`. Represents the unique identifier for an Android application.
+   * @default application package name, which usually is the same as the application id.
+   */
+  androidApplicationId?: string
 }
 
 /**
@@ -74,6 +79,7 @@ export function viewDocument(data: ViewDocumentOptions): Promise<null> {
     data?.grantPermissions ?? 'read',
     data?.mimeType,
     data?.headerTitle,
+    data?.androidApplicationId,
     data?.presentationStyle,
   )
 }
