@@ -34,5 +34,5 @@ public abstract class NativeDocumentViewerSpec extends ReactContextBaseJavaModul
 
   @ReactMethod
   @DoNotStrip
-  public abstract void viewDocument(String bookmarkOrUri, String permissions, @Nullable String mimeType, @Nullable String title, @Nullable String presentationStyle, Promise promise);
+  public abstract void viewDocument(String bookmarkOrUri, String permissions, @Nullable String mimeType, @Nullable String title, @Nullable String androidApplicationId, @Nullable String presentationStyle, Promise promise);
 }
