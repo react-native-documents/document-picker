@@ -34,10 +34,7 @@ if (isNewArchitectureEnabled()) {
 
 
 android {
-    def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
-    if (agpVersion.tokenize('.')[0].toInteger() >= 7) {
-      namespace "com.reactnativedocumentpicker"
-    }
+    namespace "com.reactnativedocumentpicker"
     compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
 
     // Used to override the NDK path/version on internal CI or by allowing
@@ -70,11 +67,8 @@ repositories {
     mavenCentral()
 }
 
-def kotlin_version = getExtOrIntegerDefault("kotlinVersion")
-
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+' // from node_modules
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1"
 }

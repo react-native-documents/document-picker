@@ -1282,7 +1282,7 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-  - react-native-document-picker (10.1.7):
+  - react-native-document-picker (11.0.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1304,7 +1304,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-document-viewer (1.0.3):
+  - react-native-document-viewer (2.0.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1994,8 +1994,8 @@ SPEC CHECKSUMS:
   React-logger: 7b234de35acb469ce76d6bbb0457f664d6f32f62
   React-Mapbuffer: fbe1da882a187e5898bdf125e1cc6e603d27ecae
   React-microtasksnativemodule: 76905804171d8ccbe69329fc84c57eb7934add7f
-  react-native-document-picker: a3c4ce6322b7aa9902fe8ffb8e03d5858b5d7beb
-  react-native-document-viewer: 6fc76b1f9f2773a39b155f10aae674cf731f21b2
+  react-native-document-picker: 82f4a016ec665949ac859dfed0b38fc5f4121d88
+  react-native-document-viewer: e88dc4e4c5b27b261628dddc07e254dace79ac68
   react-native-segmented-control: bf6e0032726727498e18dd437ae88afcdbc18e99
   React-NativeModulesApple: a9464983ccc0f66f45e93558671f60fc7536e438
   React-oscompat: 73db7dbc80edef36a9d6ed3c6c4e1724ead4236d
