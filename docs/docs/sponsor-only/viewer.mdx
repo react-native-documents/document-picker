@@ -7,7 +7,7 @@ sidebar_class_name: larger-heading
 
 The viewer module is designed to work with the files that the document picker module returns. It supports both `uri` and `bookmark` coming from `open` and `import` modes, also supports virtual files and long-term access to the files.
 
-The call to `viewDocument` returns a promise that resolves with `null` in case of success or rejects with error.
+The call to `viewDocument` returns a promise that resolves with `null` in case of success or rejects with an error. It is a "fire-and-forget" function, meaning that the promise resolves right after the package asks the OS to present the preview.
 
 ### How it works
 
