@@ -8,6 +8,7 @@ export interface Spec extends TurboModule {
     permissions: string,
     mimeType?: string,
     title?: string,
+    androidApplicationId?: string,
     presentationStyle?: string,
   ): Promise<null>
 }

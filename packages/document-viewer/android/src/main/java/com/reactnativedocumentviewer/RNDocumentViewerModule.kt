@@ -19,21 +19,18 @@ class RNDocumentViewerModule(reactContext: ReactApplicationContext) : NativeDocu
     permissions: String,
     mimeType: String?,
     title: String?,
+    androidApplicationId: String?,
     presentation: String?,
     promise: Promise
   ) {
-    val currentActivity = reactApplicationContext.currentActivity
-    if (currentActivity == null) {
-      rejectWithNullActivity(promise)
-      return
-    }
+    val currentActivity = reactApplicationContext.currentActivity ?: return rejectWithNullActivity(promise)
     if (BuildConfig.DEBUG && mimeType != null && !MimeTypeMap.getSingleton().hasMimeType(mimeType)) {
       RNLog.w(
         reactApplicationContext, "$mimeType appears to be an unusual mime type, are you sure it's correct?")
     }
 
     try {
-      val (uriToOpen, intentFlags) = constructUri(bookmarkOrUri, permissions)
+      val (uriToOpen, intentFlags) = constructUri(bookmarkOrUri, permissions, androidApplicationId)
 
       // grantUriPermission is not needed (for file uris WE OWN), we're using the Flags
       // on a Uri returned by FileProvider.getUriForFile()
@@ -53,7 +50,7 @@ class RNDocumentViewerModule(reactContext: ReactApplicationContext) : NativeDocu
     }
   }
 
-  private fun constructUri(bookmarkOrUri: String, permissions: String): UriWithFlags {
+  private fun constructUri(bookmarkOrUri: String, permissions: String, androidApplicationId: String?): UriWithFlags {
     val flags = when (permissions) {
       "write" -> Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
       else -> Intent.FLAG_GRANT_READ_URI_PERMISSION
@@ -61,9 +58,11 @@ class RNDocumentViewerModule(reactContext: ReactApplicationContext) : NativeDocu
     return if (bookmarkOrUri.startsWith("content://")) {
       UriWithFlags(Uri.parse(bookmarkOrUri), flags)
     } else if (bookmarkOrUri.startsWith("file://")) {
+      // Package name may not be the same as applicationId but usually is.
+      // Also see document-viewer/android/src/main/AndroidManifest.xml
+      val applicationId = androidApplicationId ?: reactApplicationContext.packageName
+      val authority = "$applicationId.reactnativedocumentviewer.fileprovider"
       val uri = Uri.parse(bookmarkOrUri)
-      // TODO package name may not be the same as applicationId. Also see document-viewer/android/src/main/AndroidManifest.xml
-      val authority = reactApplicationContext.packageName + ".reactnativedocumentviewer.fileprovider"
       val uriPath = uri.path ?: throw IllegalArgumentException("file:// uri must have a path")
       val fileUri = FileProvider.getUriForFile(
         reactApplicationContext,
@@ -81,10 +80,10 @@ class RNDocumentViewerModule(reactContext: ReactApplicationContext) : NativeDocu
 
   companion object {
     fun rejectWithNullActivity(promise: Promise) {
-      promise.reject(E_ACTIVITY_DOES_NOT_EXIST, "activity is null")
+      promise.reject(NULL_PRESENTER, "current activity is null")
     }
 
-    private const val E_ACTIVITY_DOES_NOT_EXIST = "ACTIVITY_DOES_NOT_EXIST"
+    private const val NULL_PRESENTER = "NULL_PRESENTER"
     private const val UNABLE_TO_OPEN_FILE_TYPE = "UNABLE_TO_OPEN_FILE_TYPE"
   }
 }
