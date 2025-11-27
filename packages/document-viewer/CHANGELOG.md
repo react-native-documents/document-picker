@@ -1,5 +1,11 @@
 # @react-native-documents/viewer
 
+## 3.0.0
+
+### Major Changes
+
+- ac2b994: fix: viewer module errorCodes
+
 ## 2.0.3
 
 ### Patch Changes
