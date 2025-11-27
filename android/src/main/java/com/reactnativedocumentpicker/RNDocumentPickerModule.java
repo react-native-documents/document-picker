@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.provider.OpenableColumns;
 import android.util.Log;
@@ -18,10 +20,8 @@ import androidx.annotation.NonNull;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
-import com.facebook.react.bridge.GuardedResultAsyncTask;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
@@ -32,12 +32,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
+  private final Executor executor = Executors.newSingleThreadExecutor();
+  private final Handler handler = new Handler(Looper.getMainLooper());
+  private final ReactApplicationContext reactContext;
   public static final String NAME = "RNDocumentPicker";
   private static final int READ_REQUEST_CODE = 41;
   private static final int PICK_DIR_REQUEST_CODE = 42;
@@ -66,6 +70,7 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
 
   public RNDocumentPickerModule(ReactApplicationContext reactContext) {
     super(reactContext);
+    this.reactContext = reactContext;
     reactContext.addActivityEventListener(activityEventListener);
   }
 
@@ -136,7 +141,7 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
           if (types.size() > 1) {
             String[] mimeTypes = readableArrayToStringArray(types);
             intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
-            intent.setType(String.join("|",mimeTypes));
+            intent.setType(String.join("|", mimeTypes));
           } else if (types.size() == 1) {
             intent.setType(types.getString(0));
           }
@@ -222,128 +227,117 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
         sendError(E_INVALID_DATA_RETURNED, "Invalid data returned by intent");
         return;
       }
-
-      new ProcessDataTask(getReactApplicationContext(), uris, copyTo, promise).execute();
+      executor.execute(() -> {
+        try {
+          ReadableArray result = processData(uris);
+          handler.post(() -> {
+            promise.resolve(result);
+          });
+        } catch (IOException e) {
+          handler.post(() -> {
+            promise.reject("DocumentPicker_ERROR", e);
+          });
+        }
+      });
     } catch (Exception e) {
       sendError(E_UNEXPECTED_EXCEPTION, e.getLocalizedMessage(), e);
     }
   }
 
-  private static class ProcessDataTask extends GuardedResultAsyncTask<ReadableArray> {
-    private final WeakReference<Context> weakContext;
-    private final List<Uri> uris;
-    private final String copyTo;
-    private final Promise promise;
-
-    protected ProcessDataTask(ReactContext reactContext, List<Uri> uris, String copyTo, Promise promise) {
-      super(reactContext.getExceptionHandler());
-      this.weakContext = new WeakReference<>(reactContext.getApplicationContext());
-      this.uris = uris;
-      this.copyTo = copyTo;
-      this.promise = promise;
+  private ReadableArray processData(List<Uri> uris) throws IOException {
+    WritableArray results = Arguments.createArray();
+    for (Uri uri : uris) {
+      results.pushMap(getMetadata(uri));
     }
+    return results;
+  }
 
-    @Override
-    protected ReadableArray doInBackgroundGuarded() {
-      WritableArray results = Arguments.createArray();
-      for (Uri uri : uris) {
-        results.pushMap(getMetadata(uri));
-      }
-      return results;
+  private WritableMap getMetadata(Uri uri) {
+    Context context = reactContext;
+    if (context == null) {
+      return Arguments.createMap();
     }
-
-    @Override
-    protected void onPostExecuteGuarded(ReadableArray readableArray) {
-      promise.resolve(readableArray);
-    }
-
-    private WritableMap getMetadata(Uri uri) {
-      Context context = weakContext.get();
-      if (context == null) {
-        return Arguments.createMap();
-      }
-      ContentResolver contentResolver = context.getContentResolver();
-      WritableMap map = Arguments.createMap();
-      map.putString(FIELD_URI, uri.toString());
-      map.putString(FIELD_TYPE, contentResolver.getType(uri));
-      try (Cursor cursor = contentResolver.query(uri, null, null, null, null, null)) {
-        if (cursor != null && cursor.moveToFirst()) {
-          int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-          if (!cursor.isNull(displayNameIndex)) {
-            String fileName = cursor.getString(displayNameIndex);
-            map.putString(FIELD_NAME, fileName);
-          } else {
-            map.putNull(FIELD_NAME);
-          }
-          int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
-          if (!cursor.isNull(mimeIndex)) {
-            map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
-          }
-          int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-          if (cursor.isNull(sizeIndex)) {
-            map.putNull(FIELD_SIZE);
-          } else {
-            map.putDouble(FIELD_SIZE, cursor.getLong(sizeIndex));
-          }
+    ContentResolver contentResolver = context.getContentResolver();
+    WritableMap map = Arguments.createMap();
+    map.putString(FIELD_URI, uri.toString());
+    map.putString(FIELD_TYPE, contentResolver.getType(uri));
+    try (Cursor cursor = contentResolver.query(uri, null, null, null, null, null)) {
+      if (cursor != null && cursor.moveToFirst()) {
+        int displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+        if (!cursor.isNull(displayNameIndex)) {
+          String fileName = cursor.getString(displayNameIndex);
+          map.putString(FIELD_NAME, fileName);
+        } else {
+          map.putNull(FIELD_NAME);
+        }
+        int mimeIndex = cursor.getColumnIndex(DocumentsContract.Document.COLUMN_MIME_TYPE);
+        if (!cursor.isNull(mimeIndex)) {
+          map.putString(FIELD_TYPE, cursor.getString(mimeIndex));
+        }
+        int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
+        if (cursor.isNull(sizeIndex)) {
+          map.putNull(FIELD_SIZE);
+        } else {
+          map.putDouble(FIELD_SIZE, cursor.getLong(sizeIndex));
         }
       }
-
-      prepareFileUri(context, map, uri);
-      return map;
     }
 
-    private void prepareFileUri(Context context, WritableMap map, Uri uri) {
-      if (copyTo == null) {
-        map.putNull(FIELD_FILE_COPY_URI);
-      } else {
-        copyFileToLocalStorage(context, map, uri);
-      }
-    }
+    prepareFileUri(context, map, uri);
+    return map;
+  }
 
-    private void copyFileToLocalStorage(Context context, WritableMap map, Uri uri) {
-      File dir = context.getCacheDir();
-      if (copyTo.equals("documentDirectory")) {
-        dir = context.getFilesDir();
-      }
-      // we don't want to rename the file so we put it into a unique location
-      dir = new File(dir, UUID.randomUUID().toString());
-      try {
-        boolean didCreateDir = dir.mkdir();
-        if (!didCreateDir) {
-          throw new IOException("failed to create directory at " + dir.getAbsolutePath());
-        }
-        String fileName = map.getString(FIELD_NAME);
-        if (fileName == null) {
-          fileName = String.valueOf(System.currentTimeMillis());
-        }
-        File destFile = safeGetDestination(new File(dir, fileName), dir.getCanonicalPath());
-        Uri copyPath = copyFile(context, uri, destFile);
-        map.putString(FIELD_FILE_COPY_URI, copyPath.toString());
-      } catch (Exception e) {
-        e.printStackTrace();
-        map.putNull(FIELD_FILE_COPY_URI);
-        map.putString(FIELD_COPY_ERROR, e.getLocalizedMessage());
-      }
+  private void prepareFileUri(Context context, WritableMap map, Uri uri) {
+    if (copyTo == null) {
+      map.putNull(FIELD_FILE_COPY_URI);
+    } else {
+      copyFileToLocalStorage(context, map, uri);
     }
+  }
 
-    public File safeGetDestination(File destFile, String expectedDir) throws IllegalArgumentException, IOException {
-      String canonicalPath = destFile.getCanonicalPath();
-      if (!canonicalPath.startsWith(expectedDir)) {
-        throw new IllegalArgumentException("The copied file is attempting to write outside of the target directory.");
-      }
-      return destFile;
+  private void copyFileToLocalStorage(Context context, WritableMap map, Uri uri) {
+    File dir = context.getCacheDir();
+    if (copyTo.equals("documentDirectory")) {
+      dir = context.getFilesDir();
     }
-
-    public static Uri copyFile(Context context, Uri uri, File destFile) throws IOException {
-      try(InputStream inputStream = context.getContentResolver().openInputStream(uri);
-          FileOutputStream outputStream = new FileOutputStream(destFile)) {
-        byte[] buf = new byte[8192];
-        int len;
-        while ((len = inputStream.read(buf)) > 0) {
-          outputStream.write(buf, 0, len);
-        }
-        return Uri.fromFile(destFile);
+    // we don't want to rename the file so we put it into a unique location
+    dir = new File(dir, UUID.randomUUID().toString());
+    try {
+      boolean didCreateDir = dir.mkdir();
+      if (!didCreateDir) {
+        throw new IOException("failed to create directory at " + dir.getAbsolutePath());
       }
+      String fileName = map.getString(FIELD_NAME);
+      if (fileName == null) {
+        fileName = String.valueOf(System.currentTimeMillis());
+      }
+      File destFile = safeGetDestination(new File(dir, fileName), dir.getCanonicalPath());
+      Uri copyPath = copyFile(context, uri, destFile);
+      map.putString(FIELD_FILE_COPY_URI, copyPath.toString());
+    } catch (Exception e) {
+      e.printStackTrace();
+      map.putNull(FIELD_FILE_COPY_URI);
+      map.putString(FIELD_COPY_ERROR, e.getLocalizedMessage());
+    }
+  }
+
+  public File safeGetDestination(File destFile, String expectedDir) throws IllegalArgumentException, IOException {
+    String canonicalPath = destFile.getCanonicalPath();
+    if (!canonicalPath.startsWith(expectedDir)) {
+      throw new IllegalArgumentException("The copied file is attempting to write outside of the target directory.");
+    }
+    return destFile;
+  }
+
+  public static Uri copyFile(Context context, Uri uri, File destFile) throws IOException {
+    try (InputStream inputStream = context.getContentResolver().openInputStream(uri);
+         FileOutputStream outputStream = new FileOutputStream(destFile)) {
+      byte[] buf = new byte[8192];
+      int len;
+      while ((len = inputStream.read(buf)) > 0) {
+        outputStream.write(buf, 0, len);
+      }
+      return Uri.fromFile(destFile);
     }
   }
 
