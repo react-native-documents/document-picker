@@ -96,9 +96,9 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
       val intent = IntentFactory.getPickIntent(options)
       currentActivity.startActivityForResult(intent, PICK_FILES_REQUEST_CODE)
     } catch (e: ActivityNotFoundException) {
-      promise.reject(UNABLE_TO_OPEN_FILE_TYPE, e)
+      promiseWrapper.reject(UNABLE_TO_OPEN_FILE_TYPE, e)
     } catch (e: Exception) {
-      promise.reject(E_OTHER_PRESENTING_ERROR, e)
+      promiseWrapper.reject(E_OTHER_PRESENTING_ERROR, e)
     }
   }
 
@@ -134,9 +134,9 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
       }
       currentActivity.startActivityForResult(intent, SAVE_DOC_REQUEST_CODE)
     } catch (e: ActivityNotFoundException) {
-      promise.reject(UNABLE_TO_OPEN_FILE_TYPE, e)
+      promiseWrapper.reject(UNABLE_TO_OPEN_FILE_TYPE, e)
     } catch (e: Exception) {
-      promise.reject(E_OTHER_PRESENTING_ERROR, e)
+      promiseWrapper.reject(E_OTHER_PRESENTING_ERROR, e)
     }
   }
 
@@ -163,9 +163,9 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
       // TODO option for extra task on stack?
       currentActivity.startActivityForResult(intent, PICK_DIR_REQUEST_CODE)
     } catch (e: ActivityNotFoundException) {
-      promise.reject(UNABLE_TO_OPEN_FILE_TYPE, e)
+      promiseWrapper.reject(UNABLE_TO_OPEN_FILE_TYPE, e)
     } catch (e: Exception) {
-      promise.reject(E_OTHER_PRESENTING_ERROR, e)
+      promiseWrapper.reject(E_OTHER_PRESENTING_ERROR, e)
     }
   }
 
