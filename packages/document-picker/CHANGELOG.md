@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 11.0.2
+
+### Patch Changes
+
+- 2e79028: fix: use promiseWrapper for all rejections in pick, pickDirectory, and saveDocument
+
 ## 11.0.1
 
 ### Patch Changes

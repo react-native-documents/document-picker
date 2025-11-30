@@ -1,6 +1,6 @@
 {
   "name": "@react-native-documents/picker",
-  "version": "11.0.1",
+  "version": "11.0.2",
   "description": "A react native interface to access documents from dropbox, google drive, iCloud...",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
