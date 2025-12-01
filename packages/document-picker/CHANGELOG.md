@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 11.0.3
+
+### Patch Changes
+
+- d166bae: fix: remove use of deprecated currentActivity getter
+
 ## 11.0.2
 
 ### Patch Changes
