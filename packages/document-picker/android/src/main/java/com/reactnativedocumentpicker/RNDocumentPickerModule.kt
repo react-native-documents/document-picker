@@ -103,11 +103,7 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
   }
 
   override fun saveDocument(options: ReadableMap, promise: Promise) {
-    val currentActivity = currentActivity
-    if (currentActivity == null) {
-      rejectWithNullActivity(promise)
-      return
-    }
+    val currentActivity = reactApplicationContext.currentActivity ?: return rejectWithNullActivity(promise)
     if (!promiseWrapper.trySetPromiseRejectingIncoming(promise, "saveDocuments")) {
       return
     }
