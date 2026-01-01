@@ -15,13 +15,11 @@ enum LocalCopyResponse {
   case error(sourceUri: String?, copyError: String)
 
   var dictionaryRepresentation: [String: String?] {
-    switch self {
+    return switch self {
     case .success(let sourceUri, let localUri):
-      return ["sourceUri": sourceUri, "localUri": localUri, "status": "success"]
+      ["sourceUri": sourceUri, "localUri": localUri, "status": "success"]
     case .error(let sourceUri, let copyError):
-      var result = ["copyError": copyError, "status": "error"]
-      result["sourceUri"] = sourceUri ?? nil
-      return result
+      ["sourceUri": sourceUri, "copyError": copyError, "status": "error"]
     }
   }
 }

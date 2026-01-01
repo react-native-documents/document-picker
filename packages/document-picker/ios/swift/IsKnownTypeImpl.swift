@@ -10,20 +10,26 @@ import Foundation
 import UniformTypeIdentifiers
 
 @objc public class IsKnownTypeImpl: NSObject {
-  
-  @objc public static func checkType(_ kind: String, value: String) -> NSDictionary {
-    let dict = getTypeResult(kind, value: value)
-    return NSDictionary(dictionary: dict as [AnyHashable: Any])
+
+  @objc public static func checkType(_ kind: String, value: String) -> [String: Any] {
+    return getTypeResult(kind, value: value)
   }
 
-  static func getTypeResult(_ kind: String, value: String) -> Dictionary<String, Any?> {
+  static func getTypeResult(_ kind: String, value: String) -> [String: Any] {
     if let utType = createUTType(kind: kind, value: value), utType.isDeclared == true {
-      return ["isKnown": true,
-              "UTType": utType.identifier,
-              "preferredFilenameExtension": utType.preferredFilenameExtension,
-              "mimeType": utType.preferredMIMEType]
+      return [
+        "isKnown": true,
+        "UTType": utType.identifier,
+        "preferredFilenameExtension": utType.preferredFilenameExtension ?? NSNull(),
+        "mimeType": utType.preferredMIMEType ?? NSNull()
+      ]
     }
-    return ["isKnown": false, "UTType": nil, "preferredFilenameExtension": nil, "mimeType": nil]
+    return [
+      "isKnown": false,
+      "UTType": NSNull(),
+      "preferredFilenameExtension": NSNull(),
+      "mimeType": NSNull()
+    ]
   }
 
   static func createUTType(kind: String, value: String) -> UTType? {

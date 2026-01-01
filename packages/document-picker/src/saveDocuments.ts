@@ -15,7 +15,7 @@ export type SaveDocumentsOptions = {
   sourceUris: string[]
   /**
    * Android-only: The MIME type of the file to be stored.
-   * It is recommended to provide this value, otherwise the system will try to infer it from the sourceUri using ContentResolver.
+   * It is recommended to provide this value, otherwise the system tries to infer it from the sourceUri using ContentResolver.
    * */
   mimeType?: string
   /**

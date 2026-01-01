@@ -18,20 +18,23 @@
 @end
 
 @implementation RNDocumentPicker {
-  DocPicker *docPicker;
-  DocSaver *docSaver;
+  DocPicker *_docPicker;
+  DocSaver *_docSaver;
 }
 
-- (instancetype)init {
-  if ((self = [super init])) {
-    docPicker = [DocPicker new];
-    docSaver = [DocSaver new];
+// initialization happens on serial queue so there are no races
+- (DocPicker *)docPicker {
+  if (!_docPicker) {
+    _docPicker = [DocPicker new];
   }
-  return self;
+  return _docPicker;
 }
 
-+ (BOOL)requiresMainQueueSetup {
-  return NO;
+- (DocSaver *)docSaver {
+  if (!_docSaver) {
+    _docSaver = [DocSaver new];
+  }
+  return _docSaver;
 }
 
 RCT_EXPORT_MODULE()
@@ -43,26 +46,9 @@ RCT_EXPORT_METHOD(pick:
                   reject:
                   (RCTPromiseRejectBlock) reject)
 {
-  // https://stackoverflow.com/questions/5270519/what-is-difference-between-uimodaltransitionstyle-and-uimodalpresentationstyle
-  UIModalPresentationStyle presentationStyle = [RCTConvert UIModalPresentationStyle:options[@"presentationStyle"]];
-  UIModalTransitionStyle transitionStyle = [RCTConvert UIModalTransitionStyle:options[@"transitionStyle"]];
-  NSArray *allowedUTIs = [RCTConvert NSArray:options[@"type"]];
-  BOOL allowMultiple = [RCTConvert BOOL:options[@"allowMultiSelection"]];
-  BOOL showExtensions = [RCTConvert BOOL:options[@"showFileExtensions"]];
-  NSString *mode = options[@"mode"];
-  NSString *initialDir = options[@"initialDirectoryUrl"];
-  BOOL requestLongTermAccess = [RCTConvert BOOL:options[@"requestLongTermAccess"]];
-  
-  PickerOptions *pickerOptions = [[PickerOptions alloc] initWithTypes:allowedUTIs
-                                                                 mode:mode
-                                                  initialDirectoryUrl:initialDir
-                                                  allowMultiSelection:allowMultiple
-                                             shouldShowFileExtensions:showExtensions
-                                                      transitionStyle:transitionStyle
-                                                    presentationStyle:presentationStyle
-                                                requestLongTermAccess:requestLongTermAccess];
-  
-  [docPicker presentWithOptions:pickerOptions resolve:resolve reject:reject];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self.docPicker presentWithOptionsDict:options resolve:resolve reject:reject];
+  });
 }
 
 RCT_EXPORT_METHOD(pickDirectory:(NSDictionary *)options resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
@@ -92,21 +78,13 @@ RCT_EXPORT_SYNCHRONOUS_TYPED_METHOD(NSDictionary *, isKnownType:(NSString *)kind
 }
 
 RCT_EXPORT_METHOD(writeDocuments:(NSDictionary *)options resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-  UIModalPresentationStyle presentationStyle = [RCTConvert UIModalPresentationStyle:options[@"presentationStyle"]];
-  UIModalTransitionStyle transitionStyle = [RCTConvert UIModalTransitionStyle:options[@"transitionStyle"]];
-  BOOL showExtensions = [RCTConvert BOOL:options[@"showFileExtensions"]];
-  BOOL asCopy = [RCTConvert BOOL:options[@"copy"]];
-
-  NSString *initialDir = options[@"initialDirectoryUri"];
-  NSArray<NSString*> *documentUrl = options[@"sourceUris"];
-  
-  SaverOptions* saverOptions = [[SaverOptions alloc] initWithSourceUrlStrings:documentUrl asCopy:asCopy initialDirectoryUrl:initialDir shouldShowFileExtensions:showExtensions transitionStyle:transitionStyle presentationStyle:presentationStyle];
-  
-  [docSaver presentWithOptions:saverOptions resolve:resolve reject:reject];
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self.docSaver presentWithOptionsDict:options resolve:resolve reject:reject];
+  });
 }
 
 RCT_EXPORT_METHOD(releaseSecureAccess:(NSArray *)uris resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
-  [docPicker stopAccessingOpenedUrls:uris];
+  [self.docPicker stopAccessingOpenedUrls:uris];
   resolve([NSNull null]);
 }
 

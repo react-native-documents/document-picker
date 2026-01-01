@@ -4,6 +4,7 @@ exports[`DocumentPicker mock should have the expected methods 1`] = `
 {
   "errorCodes": {
     "IN_PROGRESS": "ASYNC_OP_IN_PROGRESS",
+    "NULL_PRESENTER": "NULL_PRESENTER",
     "OPERATION_CANCELED": "OPERATION_CANCELED",
     "UNABLE_TO_OPEN_FILE_TYPE": "UNABLE_TO_OPEN_FILE_TYPE",
   },

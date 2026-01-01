@@ -1,61 +1,45 @@
 // LICENSE: see License.md in the package root
 
 import Foundation
+import React
 
-class PromiseWrapper {
-  private var promiseResolve: RNDPPromiseResolveBlock?
-  private var promiseReject: RNDPPromiseRejectBlock?
-  private var nameOfCallInProgress: String?
+/// React Native promise blocks are safe to call from background queues, but they are not annotated
+/// as `Sendable`. Wrap them so Swift 6 doesn't warn when captured by `@Sendable` closures
+/// (e.g. `Task.detached`, GCD `DispatchQueue.async`).
+struct ResolveCallback: @unchecked Sendable {
+  let resolve: RCTPromiseResolveBlock
+}
+
+/// React Native promise blocks are safe to call from background queues, but they are not annotated
+/// as `Sendable`. Wrap them so Swift 6 doesn't warn when captured by `@Sendable` closures
+/// (e.g. `Task.detached`, GCD `DispatchQueue.async`).
+struct RejectCallback: @unchecked Sendable {
+  let reject: RCTPromiseRejectBlock
+}
+
+/// Promise callbacks for React Native bridges.
+///
+/// React Native promise blocks are safe to call from background queues, but they are not annotated
+/// as `Sendable`. We wrap them so this value can be captured by `@Sendable` closures without
+/// Swift 6 warnings.
+struct PromiseCallbacks: @unchecked Sendable {
+  private let resolveCallback: ResolveCallback
+  private let rejectCallback: RejectCallback
 
   private let E_DOCUMENT_PICKER_CANCELED = "OPERATION_CANCELED"
-  private let ASYNC_OP_IN_PROGRESS = "ASYNC_OP_IN_PROGRESS"
 
-  func setPromiseRejectingPrevious(_ resolve: @escaping RNDPPromiseResolveBlock,
-                                   rejecter reject: @escaping RNDPPromiseRejectBlock,
-                                   fromCallSite callsite: String) {
-    if let previousReject = promiseReject {
-      rejectPreviousPromiseBecauseNewOneIsInProgress(previousReject, requestedOperation: callsite)
-    }
-    promiseResolve = resolve
-    promiseReject = reject
-    nameOfCallInProgress = callsite
-  }
-
-  func trySetPromiseRejectingIncoming(_ resolve: @escaping RNDPPromiseResolveBlock,
-                                      rejecter reject: @escaping RNDPPromiseRejectBlock,
-                                      fromCallSite callsite: String) -> Bool {
-    if promiseReject != nil {
-      rejectNewPromiseBecauseOldOneIsInProgress(reject, requestedOperation: callsite)
-      return false
-    }
-    promiseResolve = resolve
-    promiseReject = reject
-    nameOfCallInProgress = callsite
-    return true
+  init(resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+    self.resolveCallback = ResolveCallback(resolve: resolve)
+    self.rejectCallback = RejectCallback(reject: reject)
   }
 
   func resolve(_ result: Any?) {
-    guard let resolver = promiseResolve else {
-      print("cannot resolve promise because it's null")
-      return
-    }
-    resetMembers()
-    resolver(result)
+    resolveCallback.resolve(result)
   }
 
-  func reject(_ message: String, withError error: NSError) {
-    let errorCode = String(error.code)
-    reject(message, withCode: errorCode, withError: error)
-  }
-
-  func reject(_ message: String, withCode errorCode: String, withError error: NSError) {
-    guard let rejecter = promiseReject else {
-      print("cannot reject promise because it's null")
-      return
-    }
-    let errorMessage = "RNDPPromiseWrapper: \(message), \(error.description)"
-    resetMembers()
-    rejecter(errorCode, errorMessage, error)
+  func reject(_ message: String, withCode code: String, withError error: NSError?) {
+    let errorMessage = "RNDocumentPicker: \(message)\(error.map { ", \($0.description)" } ?? "")"
+    rejectCallback.reject(code, errorMessage, error)
   }
 
   func rejectAsUserCancelledOperation() {
@@ -66,27 +50,56 @@ class PromiseWrapper {
            withCode: E_DOCUMENT_PICKER_CANCELED,
            withError: error)
   }
+}
 
-  private func resetMembers() {
-    promiseResolve = nil
-    promiseReject = nil
+/// Promise lifecycle manager.
+///
+/// **Lifecycle:** Stores the promise callbacks between the initial call and delegate callbacks.
+/// Call `takeCallbacks()` to extract callbacks for async operations.
+///
+/// **Usage:** Cancellation/dismissal settles the in-flight promise (on whatever queue calls it).
+final class PromiseWrapper {
+  private var callbacks: PromiseCallbacks?
+  private var nameOfCallInProgress: String?
+
+  private let ASYNC_OP_IN_PROGRESS = "ASYNC_OP_IN_PROGRESS"
+
+  func trySetPromiseRejectingIncoming(_ resolve: @escaping RCTPromiseResolveBlock,
+                                      rejecter reject: @escaping RCTPromiseRejectBlock,
+                                      fromCallSite callsite: String = #function) -> Bool {
+    if callbacks != nil {
+      let newCallbacks = PromiseCallbacks(resolve: resolve, reject: reject)
+      rejectNewPromiseBecauseOldOneIsInProgress(newCallbacks, requestedOperation: callsite)
+      return false
+    }
+    callbacks = PromiseCallbacks(resolve: resolve, reject: reject)
+    nameOfCallInProgress = callsite
+    return true
+  }
+
+  /// Extract callbacks for async work (e.g. file I/O off the main thread).
+  /// After extraction, this wrapper is cleared and the callbacks are moved out.
+  func takeCallbacks(caller: String = #function) -> PromiseCallbacks? {
+    guard let cb = callbacks else {
+      NSLog("RNDocumentPicker: \(caller) called with no in-flight promise. Dropping result.")
+      return nil
+    }
+
+    callbacks = nil
     nameOfCallInProgress = nil
+    return cb
   }
 
-  // TODO error messages
-  private func rejectPreviousPromiseBecauseNewOneIsInProgress(_ reject: RNDPPromiseRejectBlock,
-                                                              requestedOperation callSiteName: String) {
-    let msg = "Warning: previous promise did not settle and was overwritten. " +
-    "You've called \"\(callSiteName)\" while \"\(nameOfCallInProgress ?? "")\" " +
-    "was already in progress and has not completed yet."
-    reject(ASYNC_OP_IN_PROGRESS, msg, nil)
+  func rejectAsUserCancelledOperation() {
+    takeCallbacks()?.rejectAsUserCancelledOperation()
   }
 
-  private func rejectNewPromiseBecauseOldOneIsInProgress(_ reject: RNDPPromiseRejectBlock,
+  private func rejectNewPromiseBecauseOldOneIsInProgress(_ callbacks: PromiseCallbacks,
                                                          requestedOperation callSiteName: String) {
     let msg = "Warning: previous promise did not settle and you attempted to overwrite it. " +
     "You've called \"\(callSiteName)\" while \"\(nameOfCallInProgress ?? "")\" " +
     "was already in progress and has not completed yet."
-    reject(ASYNC_OP_IN_PROGRESS, msg, nil)
+    let error = NSError(domain: NSCocoaErrorDomain, code: 0, userInfo: [NSLocalizedDescriptionKey: msg])
+    callbacks.reject(msg, withCode: ASYNC_OP_IN_PROGRESS, withError: error)
   }
 }

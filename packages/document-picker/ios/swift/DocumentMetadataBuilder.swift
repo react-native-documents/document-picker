@@ -39,7 +39,7 @@ public class DocumentMetadataBuilder {
   
   func build() -> [String: Any?] {
     var dictionary: [String: Any?] = [:]
-    if (resourceValues?.isDirectory ?? false == false) {
+    if resourceValues?.isDirectory != true {
       let utTypeFromFile: UTType? = resourceValues?.contentType
       let utType: UTType? = utTypeFromFile ?? UTType(filenameExtension: uri.pathExtension)
 

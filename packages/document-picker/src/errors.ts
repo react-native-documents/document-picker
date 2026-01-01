@@ -1,10 +1,7 @@
-export interface NativeModuleError extends Error {
-  code: string
-}
-
 const OPERATION_CANCELED = 'OPERATION_CANCELED'
 const IN_PROGRESS = 'ASYNC_OP_IN_PROGRESS'
 const UNABLE_TO_OPEN_FILE_TYPE = 'UNABLE_TO_OPEN_FILE_TYPE'
+const NULL_PRESENTER = 'NULL_PRESENTER'
 
 /**
  * Error codes that can be returned by the module, and are available on the `code` property of the error.
@@ -36,7 +33,14 @@ export const errorCodes = Object.freeze({
   OPERATION_CANCELED,
   IN_PROGRESS,
   UNABLE_TO_OPEN_FILE_TYPE,
+  NULL_PRESENTER,
 })
+
+type ErrorCodes = (typeof errorCodes)[keyof typeof errorCodes]
+
+export interface NativeModuleError extends Error {
+  code: ErrorCodes | (string & {})
+}
 
 /**
  * TypeScript helper to check if an object has the `code` property.
