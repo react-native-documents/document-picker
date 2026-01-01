@@ -86,11 +86,11 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
     if (!promiseWrapper.trySetPromiseRejectingIncoming(promise, "pick")) {
       return
     }
-    val options = parsePickOptions(opts)
+    val options = PickOptions(opts)
     currentPickOptions = options
 
     try {
-      val intent = IntentFactory.getPickIntent(options)
+      val intent = options.getPickIntent()
       currentActivity.startActivityForResult(intent, PICK_FILES_REQUEST_CODE)
     } catch (e: ActivityNotFoundException) {
       promiseWrapper.reject(UNABLE_TO_OPEN_FILE_TYPE, e)
@@ -140,7 +140,7 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
     if (!promiseWrapper.trySetPromiseRejectingIncoming(promise, "pickDirectory")) {
       return
     }
-    val options = parsePickOptions(opts)
+    val options = PickOptions(opts)
     currentPickOptions = options
     try {
       val intent =
@@ -316,13 +316,13 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
 
   companion object {
     fun rejectWithNullActivity(promise: Promise) {
-      promise.reject(PRESENTER_IS_NULL, PRESENTER_IS_NULL)
+      promise.reject(NULL_PRESENTER, "Current activity is null. Cannot present sign-in UI. Make sure there are no modal windows being presented or dismissed.")
     }
 
     private const val PICK_FILES_REQUEST_CODE = 41
     private const val PICK_DIR_REQUEST_CODE = 42
     private const val SAVE_DOC_REQUEST_CODE = 43
-    private const val PRESENTER_IS_NULL = "NULL_PRESENTER"
+    private const val NULL_PRESENTER = "NULL_PRESENTER"
     private const val UNABLE_TO_OPEN_FILE_TYPE = "UNABLE_TO_OPEN_FILE_TYPE"
     private const val E_OTHER_PRESENTING_ERROR = "OTHER_PRESENTING_ERROR"
     private const val E_INVALID_DATA_RETURNED = "INVALID_DATA_RETURNED"

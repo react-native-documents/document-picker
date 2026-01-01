@@ -2,6 +2,8 @@
 package com.reactnativedocumentpicker
 
 import android.content.Intent
+import android.os.Build
+import android.provider.DocumentsContract
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 
@@ -14,6 +16,20 @@ data class PickOptions(
   val requestLongTermAccess: Boolean,
   val allowVirtualFiles: Boolean,
 ) {
+  constructor(readableMap: ReadableMap) : this(
+    mode = readableMap.getString("mode"),
+    mimeTypes = if (readableMap.hasKey("type") && !readableMap.isNull("type")) {
+      readableMap.getArray("type")?.let { readableArrayToStringArray(it) } ?: arrayOf("*/*")
+    } else {
+      arrayOf("*/*")
+    },
+    initialDirectoryUrl = if (readableMap.hasKey("initialDirectoryUrl")) readableMap.getString("initialDirectoryUrl") else null,
+    localOnly = readableMap.hasKey("localOnly") && readableMap.getBoolean("localOnly"),
+    multiple = readableMap.hasKey("allowMultiSelection") && readableMap.getBoolean("allowMultiSelection"),
+    requestLongTermAccess = readableMap.hasKey("requestLongTermAccess") && readableMap.getBoolean("requestLongTermAccess"),
+    allowVirtualFiles = readableMap.hasKey("allowVirtualFiles") && readableMap.getBoolean("allowVirtualFiles")
+  )
+
   val action: String
     get() = if ("open" == mode) Intent.ACTION_OPEN_DOCUMENT else Intent.ACTION_GET_CONTENT
 
@@ -26,33 +42,37 @@ data class PickOptions(
       mimeTypes.joinToString("|")
     }
   }
-}
 
-fun parsePickOptions(readableMap: ReadableMap): PickOptions {
-  val mode = readableMap.getString("mode")
+  fun getPickIntent(): Intent {
+    // TODO option for extra task on stack?
+    // reminder - flags are for granting rights to others
 
-  val mimeTypes = if (readableMap.hasKey("type") && !readableMap.isNull("type")) {
-    readableMap.getArray("type")?.let { readableArrayToStringArray(it) } ?: arrayOf("*/*")
-  } else {
-    arrayOf("*/*")
+    return Intent(action).apply {
+      val types = mimeTypes
+
+      type =
+        if (types.size > 1) {
+          putExtra(Intent.EXTRA_MIME_TYPES, types)
+          intentFilterTypes
+        } else {
+          types[0]
+        }
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+        initialDirectoryUrl != null
+      ) {
+        // only works for ACTION_OPEN_DOCUMENT
+        // TODO must be URI
+        putExtra(DocumentsContract.EXTRA_INITIAL_URI, initialDirectoryUrl)
+      }
+      if (!allowVirtualFiles) {
+        addCategory(Intent.CATEGORY_OPENABLE)
+      }
+      putExtra(Intent.EXTRA_LOCAL_ONLY, localOnly)
+      putExtra(Intent.EXTRA_ALLOW_MULTIPLE, multiple)
+    }
   }
-
-  val initialDirectoryUrl = if (readableMap.hasKey("initialDirectoryUrl")) readableMap.getString("initialDirectoryUrl") else null
-  val localOnly = readableMap.hasKey("localOnly") && readableMap.getBoolean("localOnly")
-  val multiple = readableMap.hasKey("allowMultiSelection") && readableMap.getBoolean("allowMultiSelection")
-  val requestLongTermAccess = readableMap.hasKey("requestLongTermAccess") && readableMap.getBoolean("requestLongTermAccess")
-  val allowVirtualFiles = readableMap.hasKey("allowVirtualFiles") && readableMap.getBoolean("allowVirtualFiles")
-
-  return PickOptions(
-    mode = mode,
-    mimeTypes = mimeTypes,
-    initialDirectoryUrl = initialDirectoryUrl,
-    localOnly = localOnly,
-    multiple = multiple,
-    requestLongTermAccess = requestLongTermAccess,
-    allowVirtualFiles = allowVirtualFiles,
-  )
 }
+
 fun readableArrayToStringArray(readableArray: ReadableArray): Array<String> {
   /**
    * MIME type and Uri scheme matching in the
