@@ -21,7 +21,9 @@ import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.WritableMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
@@ -32,7 +34,18 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
   private val pickedFilesUriMap = mutableMapOf<String, Uri>()
   private val metadataGetter = MetadataGetter(pickedFilesUriMap)
   private val fileOps = FileOperations(pickedFilesUriMap)
-  private val fileCopyingCoroutine = CoroutineScope(Dispatchers.IO)
+  private var fileCopyingCoroutine = createCoroutineScope()
+
+  private fun createCoroutineScope(): CoroutineScope {
+    return CoroutineScope(SupervisorJob() + Dispatchers.IO)
+  }
+
+  private fun ensureScopeActive(): CoroutineScope {
+    if (!fileCopyingCoroutine.isActive) {
+      fileCopyingCoroutine = createCoroutineScope()
+    }
+    return fileCopyingCoroutine
+  }
 
   private val activityEventListener: ActivityEventListener =
       object : BaseActivityEventListener() {
@@ -174,7 +187,8 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
         "You did not provide the correct options. Expected 'files' and 'destination', got: ${options.toHashMap().keys}"
       )
     }
-    fileCopyingCoroutine.launch {
+    val scope = ensureScopeActive()
+    val job = scope.launch {
       val results = fileOps.copyFilesToLocalStorage(
               reactApplicationContext,
               filesToCopy,
@@ -257,7 +271,8 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
   }
 
   override fun writeDocuments(options: ReadableMap, promise: Promise) {
-    fileCopyingCoroutine.launch {
+    val scope = ensureScopeActive()
+    val job = scope.launch {
       try {
         val targetUriString = if (options.hasKey("uri")) options.getString("uri") else null
 
@@ -304,7 +319,8 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
           else -> emptyList()
         }
 
-    fileCopyingCoroutine.launch {
+    val scope = ensureScopeActive()
+    val job = scope.launch {
       try {
         val pickOptions = currentPickOptions
         require(pickOptions != null)
