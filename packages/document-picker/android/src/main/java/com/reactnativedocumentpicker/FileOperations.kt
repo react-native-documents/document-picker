@@ -189,8 +189,8 @@ class FileOperations(private val uriMap: MutableMap<String, Uri>) {
   }
 
   val copyStreamToAnother: (InputStream, OutputStream) -> Long = { inputStream, outputStream ->
-    inputStream.use { input ->
-      outputStream.use { output ->
+    inputStream.use { _ ->
+      outputStream.use { _ ->
         val bytesCopied = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
           FileUtils.copy(inputStream, outputStream)
         } else {

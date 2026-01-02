@@ -52,10 +52,11 @@ class DocumentMetadataBuilder(forUri: Uri) {
     openableMimeTypes?.let {
       val arrayOfExtensionsAndMime = Arguments.createArray()
       it.forEach { mimeType ->
-        val virtualFileDetails = Arguments.createMap()
         val maybeExtension = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
-        virtualFileDetails.putString("mimeType", mimeType)
-        virtualFileDetails.putString("extension", maybeExtension)
+        val virtualFileDetails = Arguments.createMap().apply {
+          putString("mimeType", mimeType)
+          putString("extension", maybeExtension)
+        }
         arrayOfExtensionsAndMime.pushMap(virtualFileDetails)
       }
       map.putArray("convertibleToMimeTypes", arrayOfExtensionsAndMime)
