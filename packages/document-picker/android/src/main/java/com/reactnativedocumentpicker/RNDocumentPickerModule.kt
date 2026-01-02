@@ -25,7 +25,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
-    NativeDocumentPickerSpec(reactContext), LifecycleEventListener {
+    NativeDocumentPickerSpec(reactContext) {
   private var currentPickOptions: PickOptions? = null
   private var currentUriOfFileBeingExported: Uri? = null
   private val promiseWrapper = PromiseWrapper(NAME)
@@ -70,15 +70,12 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
       }
 
   init {
-    reactContext.addActivityEventListener(activityEventListener)
-    reactContext.addLifecycleEventListener(this)
+    reactApplicationContext.addActivityEventListener(activityEventListener)
   }
 
   override fun invalidate() {
     fileCopyingCoroutine.cancel("module invalidated")
     reactApplicationContext.removeActivityEventListener(activityEventListener)
-    // TODO verify this should be done (and order)
-    // reactApplicationContext.removeLifecycleEventListener(this)
     super.invalidate()
   }
 
@@ -329,13 +326,5 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
     private const val UNABLE_TO_OPEN_FILE_TYPE = "UNABLE_TO_OPEN_FILE_TYPE"
     private const val E_OTHER_PRESENTING_ERROR = "OTHER_PRESENTING_ERROR"
     private const val E_INVALID_DATA_RETURNED = "INVALID_DATA_RETURNED"
-  }
-
-  override fun onHostResume() {}
-
-  override fun onHostPause() {}
-
-  override fun onHostDestroy() {
-    fileCopyingCoroutine.cancel("host destroyed")
   }
 }
