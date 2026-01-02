@@ -1,5 +1,15 @@
 # @react-native-documents/picker
 
+## 12.0.0
+
+### Major Changes
+
+- ed0782f: feat(ios): support swift 6 concurrency
+
+### Patch Changes
+
+- f2be0db: chore(android): improve error handling when querying files metadata
+
 ## 11.0.4
 
 ### Patch Changes
