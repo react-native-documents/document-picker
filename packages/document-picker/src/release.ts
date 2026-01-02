@@ -1,7 +1,7 @@
 import { NativeDocumentPicker } from './spec/NativeDocumentPicker'
 
 /**
- * For each uri whose release was requested, the result will contain an object with the uri and a status.
+ * For each uri whose release was requested, the result contains an object with the uri and a status.
  * */
 export type ReleaseLongTermAccessResult = Array<
   | {

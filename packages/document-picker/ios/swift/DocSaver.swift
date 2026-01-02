@@ -9,33 +9,28 @@
 
 import Foundation
 import UniformTypeIdentifiers
-import MobileCoreServices
 
-@objc public class DocSaver: PickerWithMetadataImpl {
+@objc public class DocSaver: PickerBase {
 
-  @objc public func present(options: SaverOptions, resolve: @escaping (Any?) -> Void, reject: @escaping (String?, String?, Error?) -> Void) {
-    if (!promiseWrapper.trySetPromiseRejectingIncoming(resolve, rejecter: reject, fromCallSite: "saveDocuments")) {
-      return;
-    }
-    DispatchQueue.main.async {
-      let documentPicker = UIDocumentPickerViewController(forExporting: options.sourceUrls, asCopy: options.asCopy)
-
-      documentPicker.modalPresentationStyle = options.presentationStyle
-      documentPicker.modalTransitionStyle = options.transitionStyle
-      //        documentPicker.directoryURL = options.initialDirectoryUrl
-      //        documentPicker.shouldShowFileExtensions = options.shouldShowFileExtensions
-
-      self.presentInternal(documentPicker: documentPicker)
-    }
+  @MainActor
+  override func createDocumentPicker(from dictionary: NSDictionary) -> UIDocumentPickerViewController {
+    let options = SaverOptions(dictionary: dictionary)
+    return options.createDocumentPicker()
   }
 
-  public func getMetadataFor(url: URL) throws -> DocumentMetadataBuilder {
-    let name = url.lastPathComponent.removingPercentEncoding
+  public override func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    guard let promise = promiseWrapper.takeCallbacks() else { return }
 
-    var resourceValues = URLResourceValues()
-    resourceValues.name = name
-
-    return DocumentMetadataBuilder(forUri: url, resourceValues: resourceValues)
+    Task.detached(priority: .userInitiated) {
+      // runs off main thread - preserves I/O performance
+      let documentsInfo = urls.compactMap { url -> [String: Any?]? in
+        let name = url.lastPathComponent.removingPercentEncoding
+        var resourceValues = URLResourceValues()
+        resourceValues.name = name
+        return DocumentMetadataBuilder(forUri: url, resourceValues: resourceValues).build()
+      }
+      promise.resolve(documentsInfo)
+    }
   }
 
 }

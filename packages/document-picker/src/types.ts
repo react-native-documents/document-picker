@@ -25,7 +25,7 @@ export type VirtualFileMeta = {
   /**
    * The registered extension for the given MIME type. Note that some MIME types map to multiple extensions.
    *
-   * This call will return the most common extension for the given MIME type.
+   * This call returns the most common extension for the given MIME type.
    *
    * Example: `pdf`
    */
@@ -68,7 +68,7 @@ export type DocumentPickerResponse = {
   size: number | null
 
   /**
-   * Android: whether the file is a virtual file (such as Google docs or sheets). Will be `null` on pre-Android 7.0 devices. On iOS, it's always `false`.
+   * Android: whether the file is a virtual file (such as Google docs or sheets). This is `null` on pre-Android 7.0 devices. On iOS, it's always `false`.
    * */
   isVirtual: boolean | null
   /**
@@ -80,7 +80,7 @@ export type DocumentPickerResponse = {
   /**
    * Android: Some document providers on Android (especially those popular in Asia, it seems)
    * do not respect the request for limiting selectable file types.
-   * `hasRequestedType` will be false if the user picked a file that does not have one of the requested types.
+   * `hasRequestedType` is false if the user picked a file that does not have one of the requested types.
    *
    * You need to do your own post-processing and display an error to the user if this is important to your app.
    *

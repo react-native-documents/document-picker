@@ -2,40 +2,48 @@
 
 import Foundation
 import UniformTypeIdentifiers
-import MobileCoreServices
 
-@objc public class DocPicker: PickerWithMetadataImpl {
+@objc public class DocPicker: PickerBase {
+  var pickerOptions: PickerOptions?
+  var openedUrls: Set<URL> = []
 
-  var currentOptions: PickerOptions? = nil
+  @MainActor
+  override func createDocumentPicker(from dictionary: NSDictionary) -> UIDocumentPickerViewController {
+    let options = PickerOptions(dictionary: dictionary)
+    self.pickerOptions = options
+    return options.createDocumentPicker()
+  }
 
-  @objc public func present(options: PickerOptions, resolve: @escaping RNDPPromiseResolveBlock, reject: @escaping RNDPPromiseRejectBlock) {
-    // TODO fix callsite param
-    if (!promiseWrapper.trySetPromiseRejectingIncoming(resolve, rejecter: reject, fromCallSite: "pick")) {
-      return;
-    }
-    currentOptions = options;
-    DispatchQueue.main.async {
-      let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: options.allowedTypes, asCopy: options.modeAsCopy())
+  public override func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    guard let promise = promiseWrapper.takeCallbacks() else { return }
+    let options = self.pickerOptions
 
-      documentPicker.modalPresentationStyle = options.presentationStyle
-      documentPicker.allowsMultipleSelection = options.allowMultiSelection
-      documentPicker.modalTransitionStyle = options.transitionStyle
-      //        documentPicker.directoryURL = options.initialDirectoryUrl
-      //        documentPicker.shouldShowFileExtensions = options.shouldShowFileExtensions
-
-      self.presentInternal(documentPicker: documentPicker)
+    Task.detached(priority: .userInitiated) {
+      let documentsInfo = self.createDocumentMetadataWithOptions(for: urls, options: options)
+        .compactMap { $0.build() }
+      promise.resolve(documentsInfo)
     }
   }
 
-  public func getMetadataFor(url: URL) throws -> DocumentMetadataBuilder {
-    return if (currentOptions?.isOpenMode() == true) {
-      try self.getOpenedDocumentInfo(url: url, requestLongTermAccess: currentOptions?.requestLongTermAccess ?? false)
+  nonisolated private func createDocumentMetadataWithOptions(for urls: [URL], options: PickerOptions?) -> [DocumentMetadataBuilder] {
+    return urls.compactMap { url in
+      do {
+        return try self.getMetadataForWithOptions(url: url, options: options)
+      } catch {
+        return DocumentMetadataBuilder(forUri: url, error: error)
+      }
+    }
+  }
+
+  nonisolated private func getMetadataForWithOptions(url: URL, options: PickerOptions?) throws -> DocumentMetadataBuilder {
+    return if options?.isOpenMode() == true {
+      try self.getOpenedDocumentInfo(url: url, requestLongTermAccess: options?.requestLongTermAccess ?? false)
     } else {
       try self.getAnyModeMetadata(url: url)
     }
   }
 
-  private func getAnyModeMetadata(url: URL) throws -> DocumentMetadataBuilder {
+  nonisolated private func getAnyModeMetadata(url: URL) throws -> DocumentMetadataBuilder {
     let resourceValues = try url.resourceValues(forKeys: [.fileSizeKey, .nameKey, .isDirectoryKey, .contentTypeKey])
 
     return DocumentMetadataBuilder(forUri: url, resourceValues: resourceValues)
@@ -45,18 +53,20 @@ import MobileCoreServices
     case sourceAccessError
   }
 
-  func getOpenedDocumentInfo(url: URL, requestLongTermAccess: Bool) throws -> DocumentMetadataBuilder {
+  nonisolated private func getOpenedDocumentInfo(url: URL, requestLongTermAccess: Bool) throws -> DocumentMetadataBuilder {
     guard url.startAccessingSecurityScopedResource() else {
       throw KeepLocalCopyError.sourceAccessError
     }
 
-    // url.stopAccessingSecurityScopedResource() must be called later
-    openedUrls.append(url)
+    // url.stopAccessingSecurityScopedResource() must be called later by user
+    DispatchQueue.main.async { [weak self] in
+      self?.openedUrls.insert(url)
+    }
 
-    // Use file coordination for reading and writing any of the URL’s content.
+    // Use file coordination for reading and writing any of the URL's content.
     var error: NSError? = nil
     var success = false
-    var metadataBuilder: DocumentMetadataBuilder = DocumentMetadataBuilder(forUri: url)
+    var metadataBuilder = DocumentMetadataBuilder(forUri: url)
 
     NSFileCoordinator().coordinate(readingItemAt: url, error: &error) { (url) in
       do {
@@ -66,7 +76,7 @@ import MobileCoreServices
         metadataBuilder.setMetadataReadingError(error)
       }
 
-      if (requestLongTermAccess == true) {
+      if requestLongTermAccess {
         do {
           let bookmarkData = try url.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil)
           metadataBuilder.setBookmark(bookmarkData)
@@ -75,10 +85,18 @@ import MobileCoreServices
         }
       }
     }
-    if let err = error, success == false {
+    if let err = error, !success {
       throw err
     }
     return metadataBuilder
+  }
+
+  @objc public func stopAccessingOpenedUrls(_ urlStrings: [String]) {
+    let incomingUrls = Set(urlStrings.compactMap { URL(string: $0) })
+    for url in openedUrls.intersection(incomingUrls) {
+      url.stopAccessingSecurityScopedResource()
+      openedUrls.remove(url)
+    }
   }
 
 }
