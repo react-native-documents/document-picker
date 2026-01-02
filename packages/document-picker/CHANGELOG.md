@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 11.0.4
+
+### Patch Changes
+
+- b616eb2: fix: simplify coroutine cancelation to avoid hanging promises on Android
+
 ## 11.0.3
 
 ### Patch Changes
