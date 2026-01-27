@@ -4,28 +4,62 @@
 
 ### BaseOptions
 
-> **BaseOptions**: \{`grantPermissions`: `"read"` \| `"write"`;`headerTitle`: `string`;`mimeType`: `string`;`presentationStyle`: [`PresentationStyle`](index.md#presentationstyle); \}
+> **BaseOptions** = \{ `androidApplicationId?`: `string`; `grantPermissions?`: `"read"` \| `"write"`; `headerTitle?`: `string`; `mimeType?`: `string`; `presentationStyle?`: [`PresentationStyle`](#presentationstyle-1); \}
 
-#### Type declaration
+#### Properties
 
-| Name | Type | Description |
-| ------ | ------ | ------ |
-| `grantPermissions`? | `"read"` \| `"write"` | Android only: The type of permission to grant to the receiving app that will open the document. This only has effect if you're viewing a file that lives in the app's sandboxed storage. |
-| `headerTitle`? | `string` | iOS only: The title to display in the header of the document viewer. If not provided, the filename will be used. |
-| `mimeType`? | `string` | Optional, but recommended: the mimetype of the document. This will help the Android OS to find the right app(s) to open the document. |
-| `presentationStyle`? | [`PresentationStyle`](index.md#presentationstyle) | iOS only - Controls how the picker is presented, e.g. on an iPad you may want to present it fullscreen. Defaults to `pageSheet`. |
+##### androidApplicationId?
+
+> `optional` **androidApplicationId**: `string`
+
+Android only - Optional, only provide a value if calling [viewDocument](#viewdocument) rejects with `IllegalArgumentException`. Represents the unique identifier for an Android application. Defaults to application package name, which usually is the same as the application id.
+
+##### grantPermissions?
+
+> `optional` **grantPermissions**: `"read"` \| `"write"`
+
+Android only: The type of permission to grant to the receiving app that will open the document.
+This only has an effect if you're viewing a file that lives in the app's sandboxed storage.
+
+##### headerTitle?
+
+> `optional` **headerTitle**: `string`
+
+iOS only: The title to display in the header of the document viewer.
+
+###### Default
+
+```ts
+the file name.
+```
+
+##### mimeType?
+
+> `optional` **mimeType**: `string`
+
+Optional, but strongly recommended: the mimetype of the document. This helps the Android OS to find the right app(s) to open the document.
+
+##### presentationStyle?
+
+> `optional` **presentationStyle**: [`PresentationStyle`](#presentationstyle-1)
+
+iOS only - Controls how the picker is presented, e.g. on an iPad you may want to present it fullscreen.
+
+###### Default
+
+`pageSheet`.
 
 ***
 
 ### OptionsViewBookmark
 
-> **OptionsViewBookmark**: [`BaseOptions`](index.md#baseoptions) & \{`bookmark`: `string`; \}
+> **OptionsViewBookmark** = [`BaseOptions`](#baseoptions) & \{ `bookmark`: `string`; \}
 
 BaseOptions with the bookmark data from the DocumentPicker module. Obtain the bookmark using the "open" mode, with `requestLongTermAccess` flag set to true.
 
 A bookmark enables long-term access to a file.
 
-#### Type declaration
+#### Type Declaration
 
 | Name | Type | Description |
 | ------ | ------ | ------ |
@@ -35,11 +69,11 @@ A bookmark enables long-term access to a file.
 
 ### OptionsViewUri
 
-> **OptionsViewUri**: [`BaseOptions`](index.md#baseoptions) & \{`uri`: `string`; \}
+> **OptionsViewUri** = [`BaseOptions`](#baseoptions) & \{ `uri`: `string`; \}
 
 BaseOptions with the uri of the document to view
 
-#### Type declaration
+#### Type Declaration
 
 | Name | Type | Description |
 | ------ | ------ | ------ |
@@ -49,7 +83,7 @@ BaseOptions with the uri of the document to view
 
 ### PresentationStyle
 
-> **PresentationStyle**: `"fullScreen"` \| `"pageSheet"` \| `"formSheet"` \| `"overFullScreen"` \| `undefined`
+> **PresentationStyle** = `"fullScreen"` \| `"pageSheet"` \| `"formSheet"` \| `"overFullScreen"` \| `undefined`
 
 iOS only. Configure the presentation style of the picker.
 
@@ -57,7 +91,7 @@ iOS only. Configure the presentation style of the picker.
 
 ### ViewDocumentOptions
 
-> **ViewDocumentOptions**: [`OptionsViewBookmark`](index.md#optionsviewbookmark) \| [`OptionsViewUri`](index.md#optionsviewuri)
+> **ViewDocumentOptions** = [`OptionsViewBookmark`](#optionsviewbookmark) \| [`OptionsViewUri`](#optionsviewuri)
 
 options for viewing a document
 
@@ -67,21 +101,13 @@ If you're trying to open a file that you have long-term permission to access, yo
 
 ### errorCodes
 
-> `const` **errorCodes**: `Readonly`\<\{`IN_PROGRESS`: `"ASYNC_OP_IN_PROGRESS"`;`OPERATION_CANCELED`: `"OPERATION_CANCELED"`;`UNABLE_TO_OPEN_FILE_TYPE`: `"UNABLE_TO_OPEN_FILE_TYPE"`; \}\>
-
-#### Type declaration
-
-| Name | Type |
-| ------ | ------ |
-| `IN_PROGRESS` | `"ASYNC_OP_IN_PROGRESS"` |
-| `OPERATION_CANCELED` | `"OPERATION_CANCELED"` |
-| `UNABLE_TO_OPEN_FILE_TYPE` | `"UNABLE_TO_OPEN_FILE_TYPE"` |
+> `const` **errorCodes**: `Readonly`\<\{ `NULL_PRESENTER`: `"NULL_PRESENTER"`; `UNABLE_TO_OPEN_FILE_TYPE`: `"UNABLE_TO_OPEN_FILE_TYPE"`; \}\>
 
 ## Functions
 
 ### isErrorWithCode()
 
-> **isErrorWithCode**(`error`: `any`): `error is NativeModuleError`
+> **isErrorWithCode**(`error`: `unknown`): `error is NativeModuleError`
 
 TypeScript helper to check if an object has the `code` property.
 This is used to avoid `as` casting when you access the `code` property on errors returned by the module.
@@ -90,7 +116,7 @@ This is used to avoid `as` casting when you access the `code` property on errors
 
 | Parameter | Type |
 | ------ | ------ |
-| `error` | `any` |
+| `error` | `unknown` |
 
 #### Returns
 
@@ -100,13 +126,13 @@ This is used to avoid `as` casting when you access the `code` property on errors
 
 ### viewDocument()
 
-> **viewDocument**(`data`: [`ViewDocumentOptions`](index.md#viewdocumentoptions)): `Promise`\<`null`\>
+> **viewDocument**(`data`: [`ViewDocumentOptions`](#viewdocumentoptions)): `Promise`\<`null`\>
 
 #### Parameters
 
 | Parameter | Type |
 | ------ | ------ |
-| `data` | [`ViewDocumentOptions`](index.md#viewdocumentoptions) |
+| `data` | [`ViewDocumentOptions`](#viewdocumentoptions) |
 
 #### Returns
 
