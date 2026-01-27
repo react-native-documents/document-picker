@@ -69,7 +69,6 @@ RCT_EXPORT_METHOD(viewDocument:(NSString *)bookmarkOrUri
                resolve:(RCTPromiseResolveBlock)resolve
                 reject:(RCTPromiseRejectBlock)reject {
   RNDPreviewItem *item = [[RNDPreviewItem alloc] initWithURL:restoredURL title:title];
-  
   dispatch_async(dispatch_get_main_queue(), ^{
     QLPreviewController *controller = [[RNDPreviewController alloc] initWithPreviewItem:item];
     controller.modalPresentationStyle = presentationStyle;
@@ -85,7 +84,7 @@ RCT_EXPORT_METHOD(viewDocument:(NSString *)bookmarkOrUri
       }
     } else {
       [self.presentedUrl stopAccessingSecurityScopedResource];
-      reject(RNDocViewerErrorUnableToOpenFileType, @"unsupported file", nil);
+      reject(RNDocViewerErrorUnableToOpenFileType, @"QLPreviewController cannot preview this file. It may not be supported, or deleted.", nil);
     }
   });
 }
