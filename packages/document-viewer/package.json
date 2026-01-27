@@ -2,6 +2,7 @@
   "name": "@react-native-documents/viewer",
   "version": "3.0.0",
   "description": "A react native interface to preview documents",
+  "funding": "https://github.com/react-native-documents/document-picker?sponsor=1",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
