@@ -57,10 +57,7 @@ function mockFactory() {
 jest.mock('../src/spec/NativeDocumentPicker', () => mockFactory())
 // the following are for jest testing outside of the library, where the paths are different
 // alternative is to use moduleNameMapper in user space
-const mockModulePaths = [
-  '../../../lib/commonjs/spec/NativeDocumentPicker',
-  '../../../lib/module/spec/NativeDocumentPicker',
-]
+const mockModulePaths = ['../../../lib/module/spec/NativeDocumentPicker']
 mockModulePaths.forEach((path) => {
   try {
     require.resolve(path)
