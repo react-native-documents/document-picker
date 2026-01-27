@@ -1,5 +1,11 @@
 # @react-native-documents/viewer
 
+## 3.0.1
+
+### Patch Changes
+
+- b1ee2a9: fix: improve error message
+
 ## 3.0.0
 
 ### Major Changes

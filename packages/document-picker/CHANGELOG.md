@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 12.0.1
+
+### Patch Changes
+
+- 0dc492a: fix: jest setup warnings from trying to reading commonjs module
+
 ## 12.0.0
 
 ### Major Changes
