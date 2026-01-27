@@ -14,7 +14,13 @@ const FeatureList: FeatureItem[] = [
     title: 'Open-source and free',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
-      <>Support the project by contributing PRs on GitHub, or sponsor the author to say thanks!</>
+      <>
+        Support the project by contributing PRs on GitHub, or{' '}
+        <a href="https://github.com/sponsors/vonovak" target="_blank">
+          sponsor the author
+        </a>{' '}
+        to say thanks!
+      </>
     ),
   },
   {

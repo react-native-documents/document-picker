@@ -29,7 +29,7 @@ export type IsKnownTypeOptions = {
    * */
   kind: 'UTType' | 'mimeType' | 'extension'
   /**
-   * the value you're checking, for example: application/pdf, com.adobe.pdf, pdf
+   * the value you're checking, for example: `application/pdf`, `com.adobe.pdf`, `pdf`
    * */
   value: string
 }

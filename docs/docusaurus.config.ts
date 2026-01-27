@@ -5,6 +5,10 @@ import type * as Preset from '@docusaurus/preset-classic'
 const typedocWatch = false
 
 const config: Config = {
+  future: {
+    v4: true,
+    experimental_faster: true,
+  },
   title: 'React Native document picker & viewer',
   tagline: 'Modules for picking and previewing documents in React Native applications',
   favicon: 'img/favicon.ico',
@@ -24,7 +28,11 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
   onBrokenAnchors: 'throw',
-  onBrokenMarkdownLinks: 'throw',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'throw',
+    },
+  },
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -63,6 +71,15 @@ const config: Config = {
     //     themes: ['min-light', 'nord'],
     //   },
     // ],
+    [
+      'docusaurus-plugin-llms',
+      {
+        // Enable both content cleaning options for optimal LLM output
+        ignoreFiles: ['license**', 'other-libs**'],
+        fullContent: true,
+        removeDuplicateHeadings: true,
+      },
+    ],
     ...(process.env.ENABLE_DOC_GEN === 'true'
       ? [
           [
@@ -71,6 +88,7 @@ const config: Config = {
               // https://typedoc.org/options/input
               id: 'docPickerAPI',
               entryPoints: ['../packages/document-picker/src/index.ts'],
+              name: 'document-picker API',
               tsconfig: '../tsconfig.json',
               watch: typedocWatch,
               outputFileStrategy: 'modules',
@@ -80,7 +98,6 @@ const config: Config = {
               expandObjects: true,
               expandParameters: true, // this is nice and doesn't need much space
               readme: 'none',
-              name: 'document-picker API',
               parametersFormat: 'table',
               typeDeclarationFormat: 'table',
               classPropertiesFormat: 'table',
@@ -92,6 +109,7 @@ const config: Config = {
               id: 'docViewerAPI',
               // https://typedoc.org/options/input
               entryPoints: ['../packages/document-viewer/src/index.ts'],
+              name: 'document-viewer API',
               tsconfig: '../tsconfig.json',
               watch: typedocWatch,
               outputFileStrategy: 'modules',
@@ -101,7 +119,6 @@ const config: Config = {
               expandObjects: true,
               expandParameters: true, // this is nice and doesn't need much space
               readme: 'none',
-              name: 'document-viewer API',
               parametersFormat: 'table',
               typeDeclarationFormat: 'table',
               classPropertiesFormat: 'table',
@@ -153,6 +170,20 @@ const config: Config = {
         { to: 'docs/doc-picker-api', label: 'Picker API', position: 'left' },
         { to: 'docs/doc-viewer-api', label: 'Viewer API', position: 'left' },
         {
+          label: 'LLMs',
+          position: 'left',
+          items: [
+            {
+              label: 'llms.txt',
+              href: 'pathname:///llms.txt',
+            },
+            {
+              label: 'llms-full.txt',
+              href: 'pathname:///llms-full.txt',
+            },
+          ],
+        },
+        {
           to: 'https://github.com/react-native-documents/document-picker/tree/main/example',
           label: 'Example app',
           position: 'right',
@@ -198,7 +229,5 @@ const config: Config = {
     },
   } satisfies Preset.ThemeConfig,
 }
-
-console.log({ config: JSON.stringify(config.plugins) })
 
 export default config

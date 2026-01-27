@@ -35,8 +35,7 @@ export type BaseOptions = {
    * */
   presentationStyle?: PresentationStyle
   /**
-   * Android only - Optional, only provide a value if `viewDocument` rejects with `IllegalArgumentException`. Represents the unique identifier for an Android application.
-   * @default application package name, which usually is the same as the application id.
+   * Android only - Optional, only provide a value if calling {@link viewDocument} rejects with `IllegalArgumentException`. Represents the unique identifier for an Android application. Defaults to application package name, which usually is the same as the application id.
    */
   androidApplicationId?: string
 }

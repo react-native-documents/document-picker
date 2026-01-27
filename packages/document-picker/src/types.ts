@@ -2,11 +2,11 @@ export type NonEmptyArray<T> = [T, ...Array<T>]
 import type { ModalPropsIOS } from 'react-native'
 
 /**
- * If you've requested long-term access to a directory or file, this object will be returned in the response.
+ * If you've requested long-term access to a directory or file, this object is returned in the response.
  * In order to access the same directory or file in the future, you must store the `bookmark` opaque string,
  * and then pass it to the document viewer if you want to preview the file.
  *
- * See the Document viewer source on how to retrieve the file from the bookmark, if you need to do that (advanced use case).
+ * See the Document viewer sources on how to retrieve the file from the bookmark, if you need to do that (advanced use case).
  * */
 export type BookmarkingResponse =
   | {
