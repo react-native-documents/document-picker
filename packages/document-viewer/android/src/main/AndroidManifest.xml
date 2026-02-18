@@ -4,8 +4,8 @@
   <application>
     <!-- android:authorities needs to be unique to an app, so we cannot hardcode it  -->
     <provider
-      android:name="androidx.core.content.FileProvider"
-      android:authorities="${applicationId}.reactnativedocumentviewer.fileprovider"
+      android:name=".DocumentViewerFileProvider"
+      android:authorities="${applicationId}.fileprovider"
       android:exported="false"
       android:grantUriPermissions="true">
       <meta-data
