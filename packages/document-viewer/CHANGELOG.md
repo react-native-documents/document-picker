@@ -1,5 +1,11 @@
 # @react-native-documents/viewer
 
+## 4.0.0
+
+### Major Changes
+
+- 828eabd: fix: use unique FileProvider name to prevent conflict with other FileProvider
+
 ## 3.0.1
 
 ### Patch Changes
