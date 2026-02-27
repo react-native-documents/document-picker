@@ -1,6 +1,7 @@
 ---
 sidebar_position: 80
 sidebar_label: License
+description: MIT license for the document picker and viewer packages
 ---
 
 # License

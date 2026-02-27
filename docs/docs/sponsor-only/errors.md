@@ -1,5 +1,6 @@
 ---
 sidebar_position: 60
+description: Error handling guide covering error codes, isErrorWithCode helper, and best practices for document picker and viewer
 ---
 
 # Error handling

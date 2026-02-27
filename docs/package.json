@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "ENABLE_DOC_GEN=true docusaurus start",
-    "build": "docusaurus build",
+    "build": "docusaurus build && node scripts/clean-llm-files.mjs",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",

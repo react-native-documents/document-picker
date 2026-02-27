@@ -1,5 +1,6 @@
 ---
 sidebar_position: 0
+description: Introduction to @react-native-documents/picker and @react-native-documents/viewer packages for picking, saving, and viewing documents in React Native
 ---
 
 # Introduction
