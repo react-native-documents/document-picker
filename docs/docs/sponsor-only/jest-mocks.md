@@ -1,5 +1,6 @@
 ---
 sidebar_position: 50
+description: Jest module mocks for testing with @react-native-documents/picker and @react-native-documents/viewer
 ---
 
 # Jest module mocks

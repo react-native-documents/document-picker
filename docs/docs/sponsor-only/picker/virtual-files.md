@@ -1,3 +1,7 @@
+---
+description: Handle Android virtual files (Google Docs, Sheets) in the document picker with allowVirtualFiles
+---
+
 # Virtual files
 
 Virtual files are an Android-only concept. You have almost surely encountered them in your Google Drive - all the Google Docs, Sheets, Presentations, etc. are virtual files and cannot normally be selected.

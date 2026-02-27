@@ -74,10 +74,32 @@ const config: Config = {
     [
       'docusaurus-plugin-llms',
       {
-        // Enable both content cleaning options for optimal LLM output
-        ignoreFiles: ['license**', 'other-libs**'],
+        ignoreFiles: ['license*', 'other-libs*'],
         fullContent: true,
+        excludeImports: false,
         removeDuplicateHeadings: true,
+        description:
+          'Document picker and viewer for React Native and Expo apps (Android, iOS). Packages: @react-native-documents/picker, @react-native-documents/viewer',
+        rootContent: `## Overview\n\n\`@react-native-documents/picker\` lets users pick, import, or save documents from the device's file system. \`@react-native-documents/viewer\` previews documents using native viewers (QuickLook on iOS, Intent.ACTION_VIEW on Android).\n\nKey features:\n- **Import mode**: pick a file and keep your own copy\n- **Open mode**: access the selected document directly, with optional long-term permissions\n- **Save As dialog**: let users save files to a location of their choice\n- **Directory picker**: pick a directory for file I/O operations\n- **Document viewer**: preview files by uri or bookmark\n\n## Quick start\n\n1. Install the package (see Installation & Setup)\n2. Use \`pick()\` to let users select documents\n3. Optionally use \`keepLocalCopy()\` to save files to your app's storage\n4. Use \`viewDocument()\` from the viewer package to preview files\n\n## Docs`,
+        fullRootContent: `## Overview\n\n\`@react-native-documents/picker\` lets users pick, import, or save documents from the device's file system. \`@react-native-documents/viewer\` previews documents using native viewers (QuickLook on iOS, Intent.ACTION_VIEW on Android).\n\nKey features:\n- **Import mode**: pick a file and keep your own copy of it\n- **Open mode**: access the selected document directly, with optional long-term access permissions that persist across app restarts\n- **Save As dialog**: present \`saveDocuments()\` to let users save files to a location of their choice\n- **Directory picker**: pick a directory for file I/O with optional long-term access\n- **Virtual files**: handle Android virtual files (Google Docs, Sheets) via \`allowVirtualFiles\`\n- **Document viewer**: preview files by uri or bookmark using \`viewDocument()\`\n- **keepLocalCopy**: separate file picking from copying, making your app more responsive\n\nKey patterns:\n- Use \`pick()\` to present the document picker, destructure the result: \`const [result] = await pick()\`\n- Handle errors with \`isErrorWithCode()\` helper and \`errorCodes\` object\n- Use \`keepLocalCopy()\` after picking to save to app storage (replaces the old \`copyTo\` option)\n- Use \`requestLongTermAccess\` for persistent file access across app restarts`,
+        includeOrder: [
+          'install*',
+          'intro*',
+          '**/picker/import-mode*',
+          '**/picker/open-mode*',
+          '**/picker/save-as-dialog*',
+          '**/picker/keeping-local-copy*',
+          '**/picker/limiting-selectable-files*',
+          '**/picker/directory-picker*',
+          '**/picker/virtual-files*',
+          '**/picker/integrating-on-android*',
+          '**/viewer*',
+          'errors*',
+          'jest-mocks*',
+          'migration*',
+          'doc-picker-api/**',
+          'doc-viewer-api/**',
+        ],
       },
     ],
     ...(process.env.ENABLE_DOC_GEN === 'true'

@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+description: Migration guide from react-native-document-picker to @react-native-documents/picker with step-by-step instructions
 ---
 
 # Migrating from the old document-picker
