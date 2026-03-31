@@ -3330,7 +3330,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-native-documents/picker@workspace:packages/document-picker"
   dependencies:
-    "@tsconfig/node18": "npm:^18.2.4"
+    "@tsconfig/node20": "npm:^20.1.0"
     react-native-builder-bob: "npm:^0.40.13"
     typescript: "npm:^5.7.3"
   peerDependencies:
@@ -3343,7 +3343,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-native-documents/viewer@workspace:packages/document-viewer"
   dependencies:
-    "@tsconfig/node18": "npm:^18.2.4"
+    "@tsconfig/node20": "npm:^20.1.0"
     react-native-builder-bob: "npm:^0.40.13"
     typescript: "npm:^5.7.3"
   peerDependencies:
@@ -3750,10 +3750,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node18@npm:^18.2.4":
-  version: 18.2.4
-  resolution: "@tsconfig/node18@npm:18.2.4"
-  checksum: 10c0/cdfd17f212660374eb2765cd5907b2252e43cfa2623cd52307a49f004327ef49bbe7d53c78b0aca57f33e9a5cb0d7d2eb5ded9be1235e6212f65c9f0699322b6
+"@tsconfig/node20@npm:^20.1.0":
+  version: 20.1.9
+  resolution: "@tsconfig/node20@npm:20.1.9"
+  checksum: 10c0/04e4e515dc6ce9386af74accb565884c3771b355208acc3d3dee32f0ce4c1d12e59319e05200fb2b87a8655ed4d8eb9910e36667a91e4683879feea9938d90d1
   languageName: node
   linkType: hard
 
