@@ -12564,12 +12564,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pod-install@npm:1.0.7":
-  version: 1.0.7
-  resolution: "pod-install@npm:1.0.7"
+"pod-install@npm:1.0.15":
+  version: 1.0.15
+  resolution: "pod-install@npm:1.0.15"
   bin:
     pod-install: build/index.js
-  checksum: 10c0/56d2d08d245c6f1f44642c31825b3e8c7aff0342ebd6eaff3f6a82126b371d7212f29c2e1a13af8eecc2a23905259e0c02898834b7d62b998f0f2aad776ab206
+  checksum: 10c0/d54daba7043ceb39c22e72310494003429b3a24c8338c49b25f5228ddf5c5f5d4896468502b163c92d8cff5b3f4b59c9ec1e65cdb27a0e90d623a9a180bd3e25
   languageName: node
   linkType: hard
 
@@ -12963,7 +12963,7 @@ __metadata:
     appium-uiautomator2-driver: "npm:^3.1.0"
     babel-plugin-module-resolver: "npm:^5.0.2"
     invariant: "npm:^2.2.4"
-    pod-install: "npm:1.0.7"
+    pod-install: "npm:1.0.15"
     react: "npm:19.1.0"
     react-native: "npm:^0.81.4"
     react-native-test-app: "npm:^4.4.12"
@@ -12988,7 +12988,7 @@ __metadata:
     eslint-config-prettier: "npm:^9.1.2"
     eslint-plugin-prettier: "npm:^5.5.4"
     jest: "npm:^29.7.0"
-    pod-install: "npm:1.0.7"
+    pod-install: "npm:1.0.15"
     prettier: "npm:^3.6.2"
     typescript: "npm:^5.7.3"
   languageName: unknown
