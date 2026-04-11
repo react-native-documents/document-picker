@@ -2310,7 +2310,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/faster@npm:^3.9.2":
+"@docusaurus/faster@npm:3.9.2":
   version: 3.9.2
   resolution: "@docusaurus/faster@npm:3.9.2"
   dependencies:
@@ -2387,7 +2387,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/module-type-aliases@npm:3.9.2, @docusaurus/module-type-aliases@npm:^3.9.2":
+"@docusaurus/module-type-aliases@npm:3.9.2":
   version: 3.9.2
   resolution: "@docusaurus/module-type-aliases@npm:3.9.2"
   dependencies:
@@ -2762,14 +2762,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/tsconfig@npm:^3.9.2":
+"@docusaurus/tsconfig@npm:3.9.2":
   version: 3.9.2
   resolution: "@docusaurus/tsconfig@npm:3.9.2"
   checksum: 10c0/d46241cb488d60f785710ee24980aad394423eaf5f76b64b0d47158fcbe19dd68a886898db83b1b65de18dfeb6c27d78adc8f8c4451d1ac29cc9da009ed15cd4
   languageName: node
   linkType: hard
 
-"@docusaurus/types@npm:3.9.2, @docusaurus/types@npm:^3.9.2":
+"@docusaurus/types@npm:3.9.2":
   version: 3.9.2
   resolution: "@docusaurus/types@npm:3.9.2"
   dependencies:
@@ -6421,23 +6421,23 @@ __metadata:
   resolution: "docs@workspace:."
   dependencies:
     "@docusaurus/core": "npm:^3.9.2"
-    "@docusaurus/faster": "npm:^3.9.2"
-    "@docusaurus/module-type-aliases": "npm:^3.9.2"
+    "@docusaurus/faster": "npm:3.9.2"
+    "@docusaurus/module-type-aliases": "npm:3.9.2"
     "@docusaurus/plugin-ideal-image": "npm:^3.9.2"
     "@docusaurus/preset-classic": "npm:^3.9.2"
-    "@docusaurus/tsconfig": "npm:^3.9.2"
-    "@docusaurus/types": "npm:^3.9.2"
+    "@docusaurus/tsconfig": "npm:3.9.2"
+    "@docusaurus/types": "npm:3.9.2"
     "@mdx-js/react": "npm:3.1.1"
     clsx: "npm:^2.1.1"
     docusaurus-lunr-search: "npm:^3.6.1"
-    docusaurus-plugin-llms: "npm:^0.2.2"
-    docusaurus-plugin-typedoc: "npm:^1.4.2"
+    docusaurus-plugin-llms: "npm:0.2.2"
+    docusaurus-plugin-typedoc: "npm:1.4.2"
     prism-react-renderer: "npm:^2.4.1"
     react: "npm:^19.2.4"
     react-dom: "npm:^19.2.4"
-    typedoc: "npm:^0.28.16"
-    typedoc-plugin-markdown: "npm:^4.9.0"
-    typescript: "npm:~5.9.3"
+    typedoc: "npm:0.28.16"
+    typedoc-plugin-markdown: "npm:4.9.0"
+    typescript: "npm:5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -6467,7 +6467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-llms@npm:^0.2.2":
+"docusaurus-plugin-llms@npm:0.2.2":
   version: 0.2.2
   resolution: "docusaurus-plugin-llms@npm:0.2.2"
   dependencies:
@@ -6480,7 +6480,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-typedoc@npm:^1.4.2":
+"docusaurus-plugin-typedoc@npm:1.4.2":
   version: 1.4.2
   resolution: "docusaurus-plugin-typedoc@npm:1.4.2"
   dependencies:
@@ -13577,7 +13577,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc-plugin-markdown@npm:^4.9.0":
+"typedoc-plugin-markdown@npm:4.9.0":
   version: 4.9.0
   resolution: "typedoc-plugin-markdown@npm:4.9.0"
   peerDependencies:
@@ -13586,7 +13586,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typedoc@npm:^0.28.16":
+"typedoc@npm:0.28.16":
   version: 0.28.16
   resolution: "typedoc@npm:0.28.16"
   dependencies:
@@ -13603,7 +13603,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:~5.9.3":
+"typescript@npm:5.9.3":
   version: 5.9.3
   resolution: "typescript@npm:5.9.3"
   bin:
@@ -13613,7 +13613,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A~5.9.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>":
   version: 5.9.3
   resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
   bin:
