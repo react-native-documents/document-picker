@@ -8,7 +8,7 @@ jobs:
   support:
     runs-on: ubuntu-latest
     steps:
-      - uses: dessant/support-requests@v4
+      - uses: dessant/support-requests@47d5ea12f6c9e4a081637de9626b7319b415a3bf # v4
         with:
           github-token: ${{ github.token }}
           support-label: 'repro-required'
@@ -20,7 +20,7 @@ jobs:
             Please create a new issue with this and the maintainer will do his best to review it!.
           close-issue: true
           lock-issue: true
-      - uses: dessant/support-requests@v4
+      - uses: dessant/support-requests@47d5ea12f6c9e4a081637de9626b7319b415a3bf # v4
         with:
           github-token: ${{ github.token }}
           support-label: 'question'

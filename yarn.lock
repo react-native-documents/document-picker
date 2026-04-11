@@ -3300,7 +3300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-community/cli@npm:^20.0.2":
+"@react-native-community/cli@npm:20.0.2":
   version: 20.0.2
   resolution: "@react-native-community/cli@npm:20.0.2"
   dependencies:
@@ -3329,9 +3329,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-native-documents/picker@workspace:packages/document-picker"
   dependencies:
-    "@tsconfig/node22": "npm:^22.0.0"
-    react-native-builder-bob: "npm:^0.40.13"
-    typescript: "npm:^5.7.3"
+    "@tsconfig/node22": "npm:22.0.5"
+    react-native-builder-bob: "npm:0.40.13"
+    typescript: "npm:5.7.3"
   peerDependencies:
     react: "*"
     react-native: ">=0.79.0"
@@ -3342,9 +3342,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-native-documents/viewer@workspace:packages/document-viewer"
   dependencies:
-    "@tsconfig/node22": "npm:^22.0.0"
-    react-native-builder-bob: "npm:^0.40.13"
-    typescript: "npm:^5.7.3"
+    "@tsconfig/node22": "npm:22.0.5"
+    react-native-builder-bob: "npm:0.40.13"
+    typescript: "npm:5.7.3"
   peerDependencies:
     react: "*"
     react-native: ">=0.79.0"
@@ -3557,7 +3557,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native/metro-config@npm:^0.81.4":
+"@react-native/metro-config@npm:0.81.4":
   version: 0.81.4
   resolution: "@react-native/metro-config@npm:0.81.4"
   dependencies:
@@ -3749,7 +3749,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/node22@npm:^22.0.0":
+"@tsconfig/node22@npm:22.0.5":
   version: 22.0.5
   resolution: "@tsconfig/node22@npm:22.0.5"
   checksum: 10c0/c64b1d51e1556da9212463799f5096289d2cc8561eaed10cd0a0a36c25790b4c6bed30c0f846afccf8da75b5750326fa281216a908c2b67ead7b55adaf3eda22
@@ -3916,7 +3916,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/invariant@npm:^2.2.37":
+"@types/invariant@npm:2.2.37":
   version: 2.2.37
   resolution: "@types/invariant@npm:2.2.37"
   checksum: 10c0/f57ed8445036ebda8bc93804f088c2a13050bbeef4e4bc6ed531a70e2869250dbe59413f2a9ed7d8f3efa960f191e8dfca9d25414d63cbf604d348428f8c5b75
@@ -3948,7 +3948,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jasmine@npm:^5.1.5":
+"@types/jasmine@npm:5.1.15":
   version: 5.1.15
   resolution: "@types/jasmine@npm:5.1.15"
   checksum: 10c0/824119f85fd01f88a251fb654f58b135ba38d1085137b4bf57ecaa74b129ba617da58183b9f5f9cf271c86c72cf1f33b6277afb720a1734574cd953b4da2bf22
@@ -4465,7 +4465,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/browserstack-service@npm:^8.36.1":
+"@wdio/browserstack-service@npm:8.40.6":
   version: 8.40.6
   resolution: "@wdio/browserstack-service@npm:8.40.6"
   dependencies:
@@ -4493,7 +4493,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/cli@npm:^8.36.1":
+"@wdio/cli@npm:8.40.6":
   version: 8.40.6
   resolution: "@wdio/cli@npm:8.40.6"
   dependencies:
@@ -4557,7 +4557,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/jasmine-framework@npm:^8.36.1":
+"@wdio/jasmine-framework@npm:8.40.6":
   version: 8.40.6
   resolution: "@wdio/jasmine-framework@npm:8.40.6"
   dependencies:
@@ -4572,7 +4572,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/local-runner@npm:^8.36.1":
+"@wdio/local-runner@npm:8.40.6":
   version: 8.40.6
   resolution: "@wdio/local-runner@npm:8.40.6"
   dependencies:
@@ -4660,7 +4660,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wdio/spec-reporter@npm:^8.36.1":
+"@wdio/spec-reporter@npm:8.40.6":
   version: 8.40.6
   resolution: "@wdio/spec-reporter@npm:8.40.6"
   dependencies:
@@ -5026,7 +5026,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"appium-uiautomator2-driver@npm:^3.1.0":
+"appium-uiautomator2-driver@npm:3.9.0":
   version: 3.9.0
   resolution: "appium-uiautomator2-driver@npm:3.9.0"
   dependencies:
@@ -5056,7 +5056,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"appium@npm:^2.5.4":
+"appium@npm:2.12.1":
   version: 2.12.1
   resolution: "appium@npm:2.12.1"
   dependencies:
@@ -5438,7 +5438,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-module-resolver@npm:^5.0.2":
+"babel-plugin-module-resolver@npm:5.0.2":
   version: 5.0.2
   resolution: "babel-plugin-module-resolver@npm:5.0.2"
   dependencies:
@@ -12930,7 +12930,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-builder-bob@npm:^0.40.13":
+"react-native-builder-bob@npm:0.40.13":
   version: 0.40.13
   resolution: "react-native-builder-bob@npm:0.40.13"
   dependencies:
@@ -12967,27 +12967,27 @@ __metadata:
   resolution: "react-native-documents-example@workspace:example"
   dependencies:
     "@react-native-async-storage/async-storage": "npm:^2.2.0"
-    "@react-native-community/cli": "npm:^20.0.2"
+    "@react-native-community/cli": "npm:20.0.2"
     "@react-native-segmented-control/segmented-control": "npm:^2.5.7"
-    "@react-native/metro-config": "npm:^0.81.4"
-    "@types/invariant": "npm:^2.2.37"
-    "@types/jasmine": "npm:^5.1.5"
+    "@react-native/metro-config": "npm:0.81.4"
+    "@types/invariant": "npm:2.2.37"
+    "@types/jasmine": "npm:5.1.15"
     "@types/react": "npm:^19.1.13"
-    "@wdio/browserstack-service": "npm:^8.36.1"
-    "@wdio/cli": "npm:^8.36.1"
-    "@wdio/jasmine-framework": "npm:^8.36.1"
-    "@wdio/local-runner": "npm:^8.36.1"
-    "@wdio/spec-reporter": "npm:^8.36.1"
-    appium: "npm:^2.5.4"
-    appium-uiautomator2-driver: "npm:^3.1.0"
-    babel-plugin-module-resolver: "npm:^5.0.2"
+    "@wdio/browserstack-service": "npm:8.40.6"
+    "@wdio/cli": "npm:8.40.6"
+    "@wdio/jasmine-framework": "npm:8.40.6"
+    "@wdio/local-runner": "npm:8.40.6"
+    "@wdio/spec-reporter": "npm:8.40.6"
+    appium: "npm:2.12.1"
+    appium-uiautomator2-driver: "npm:3.9.0"
+    babel-plugin-module-resolver: "npm:5.0.2"
     invariant: "npm:^2.2.4"
     pod-install: "npm:1.0.7"
     react: "npm:19.1.0"
     react-native: "npm:^0.81.4"
-    react-native-test-app: "npm:^4.4.12"
-    ts-node: "npm:^10.9.2"
-    wdio-wait-for: "npm:^3.0.11"
+    react-native-test-app: "npm:4.4.12"
+    ts-node: "npm:10.9.2"
+    wdio-wait-for: "npm:3.0.11"
   languageName: unknown
   linkType: soft
 
@@ -13023,7 +13023,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-test-app@npm:^4.4.12":
+"react-native-test-app@npm:4.4.12":
   version: 4.4.12
   resolution: "react-native-test-app@npm:4.4.12"
   dependencies:
@@ -14857,7 +14857,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.9.2":
+"ts-node@npm:10.9.2":
   version: 10.9.2
   resolution: "ts-node@npm:10.9.2"
   dependencies:
@@ -15106,7 +15106,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.7.3":
+"typescript@npm:5.7.3, typescript@npm:^5.7.3":
   version: 5.7.3
   resolution: "typescript@npm:5.7.3"
   bin:
@@ -15126,7 +15126,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.7.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.7.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.7.3#optional!builtin<compat/typescript>":
   version: 5.7.3
   resolution: "typescript@patch:typescript@npm%3A5.7.3#optional!builtin<compat/typescript>::version=5.7.3&hash=5786d5"
   bin:
@@ -15430,7 +15430,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wdio-wait-for@npm:^3.0.11":
+"wdio-wait-for@npm:3.0.11":
   version: 3.0.11
   resolution: "wdio-wait-for@npm:3.0.11"
   checksum: 10c0/13042b0f6e669d2aae0faffc31b45142288615de8a5bb0895dba9a6743b9e84db24434b298e1b154253dffbc37d77904b35daee3da7f2e1808d848607ef39c77
