@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/react-native-documents/sponsors-only#readme",
   "devDependencies": {
-    "@react-native-community/cli": "20.0.2",
+    "@react-native-community/cli": "20.1.3",
     "@react-native/metro-config": "0.81.4",
     "@types/invariant": "2.2.37",
     "@types/jasmine": "5.1.15",
