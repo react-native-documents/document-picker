@@ -40,7 +40,7 @@
     "@wdio/spec-reporter": "8.40.6",
     "appium": "2.12.1",
     "appium-uiautomator2-driver": "3.9.0",
-    "babel-plugin-module-resolver": "5.0.2",
+    "babel-plugin-module-resolver": "5.0.3",
     "pod-install": "1.0.7",
     "react-native-test-app": "4.4.12",
     "ts-node": "10.9.2",
