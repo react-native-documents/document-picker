@@ -32,7 +32,7 @@
     "@react-native/metro-config": "0.81.4",
     "@types/invariant": "2.2.37",
     "@types/jasmine": "5.1.15",
-    "@types/react": "^19.1.13",
+    "@types/react": "19.1.13",
     "@wdio/browserstack-service": "8.40.6",
     "@wdio/cli": "8.40.6",
     "@wdio/jasmine-framework": "8.40.6",
@@ -64,7 +64,7 @@
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-segmented-control/segmented-control": "^2.5.7",
     "invariant": "^2.2.4",
-    "react": "19.1.0",
+    "react": "19.2.5",
     "react-native": "^0.81.4"
   }
 }
