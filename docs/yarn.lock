@@ -6446,7 +6446,7 @@ __metadata:
     "@mdx-js/react": "npm:3.1.1"
     clsx: "npm:^2.1.1"
     docusaurus-lunr-search: "npm:^3.6.1"
-    docusaurus-plugin-llms: "npm:0.2.2"
+    docusaurus-plugin-llms: "npm:0.4.0"
     docusaurus-plugin-typedoc: "npm:1.4.2"
     prism-react-renderer: "npm:^2.4.1"
     react: "npm:^19.2.4"
@@ -6483,16 +6483,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-llms@npm:0.2.2":
-  version: 0.2.2
-  resolution: "docusaurus-plugin-llms@npm:0.2.2"
+"docusaurus-plugin-llms@npm:0.4.0":
+  version: 0.4.0
+  resolution: "docusaurus-plugin-llms@npm:0.4.0"
   dependencies:
     gray-matter: "npm:^4.0.3"
     minimatch: "npm:^9.0.3"
     yaml: "npm:^2.8.1"
   peerDependencies:
     "@docusaurus/core": ^3.0.0
-  checksum: 10c0/9fced1f053fce6ef7acc44a27837b2a44f7fc2635b4b32fc02f3980e65ec587a9d0b62ff83cdadbbad6be53bc161cd4baf904d07d1d6a15630b55592d15bf553
+  checksum: 10c0/bd47226c7b631a30af77d9693c6c2bb206487496932b3092b59f6e9e89c546188b397da05321aa33a7ca1def69366286fdd60ad4a5de6ff45e0d6212a34beb60
   languageName: node
   linkType: hard
 
