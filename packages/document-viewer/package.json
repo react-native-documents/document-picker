@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@tsconfig/node22": "22.0.5",
-    "react-native-builder-bob": "0.40.13",
+    "react-native-builder-bob": "0.41.0",
     "typescript": "5.7.3"
   },
   "peerDependencies": {
