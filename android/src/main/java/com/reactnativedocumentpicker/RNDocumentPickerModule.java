@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.BaseActivityEventListener;
-import com.facebook.react.bridge.GuardedResultAsyncTask;
+import android.os.AsyncTask;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -229,14 +229,13 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
     }
   }
 
-  private static class ProcessDataTask extends GuardedResultAsyncTask<ReadableArray> {
+  private static class ProcessDataTask extends AsyncTask<Void, Void, ReadableArray> {
     private final WeakReference<Context> weakContext;
     private final List<Uri> uris;
     private final String copyTo;
     private final Promise promise;
 
     protected ProcessDataTask(ReactContext reactContext, List<Uri> uris, String copyTo, Promise promise) {
-      super(reactContext.getExceptionHandler());
       this.weakContext = new WeakReference<>(reactContext.getApplicationContext());
       this.uris = uris;
       this.copyTo = copyTo;
@@ -244,7 +243,7 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
     }
 
     @Override
-    protected ReadableArray doInBackgroundGuarded() {
+    protected ReadableArray doInBackground(Void... voids) {
       WritableArray results = Arguments.createArray();
       for (Uri uri : uris) {
         results.pushMap(getMetadata(uri));
@@ -253,7 +252,7 @@ public class RNDocumentPickerModule extends NativeDocumentPickerSpec {
     }
 
     @Override
-    protected void onPostExecuteGuarded(ReadableArray readableArray) {
+    protected void onPostExecute(ReadableArray readableArray) {
       promise.resolve(readableArray);
     }
 
