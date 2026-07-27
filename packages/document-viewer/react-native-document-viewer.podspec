@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => "13.0" }
-  s.source       = { :git => "https://github.com/react-native-documents/sponsors-only.git", :tag => "v#{s.version}" }
+  s.source       = { :git => "https://github.com/react-native-documents/document-picker.git", :tag => "v#{s.version}" }
   s.frameworks   = 'QuickLook'
 
   s.source_files = ["ios/**/*.{h,m,mm}"]
