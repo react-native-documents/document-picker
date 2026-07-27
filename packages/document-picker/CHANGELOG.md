@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 12.0.2
+
+### Patch Changes
+
+- 923c1f8: fix: point podspec source URLs to the public repository
+
 ## 12.0.1
 
 ### Patch Changes

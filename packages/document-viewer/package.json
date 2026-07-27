@@ -1,6 +1,6 @@
 {
   "name": "@react-native-documents/viewer",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A react native interface to preview documents",
   "funding": "https://github.com/react-native-documents/document-picker?sponsor=1",
   "main": "./lib/module/index.js",
