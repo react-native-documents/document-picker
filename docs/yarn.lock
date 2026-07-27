@@ -6446,7 +6446,7 @@ __metadata:
     "@mdx-js/react": "npm:3.1.1"
     clsx: "npm:^2.1.1"
     docusaurus-lunr-search: "npm:^3.6.1"
-    docusaurus-plugin-llms: "npm:0.2.2"
+    docusaurus-plugin-llms: "npm:0.5.1"
     docusaurus-plugin-typedoc: "npm:1.4.2"
     prism-react-renderer: "npm:^2.4.1"
     react: "npm:^19.2.4"
@@ -6483,16 +6483,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"docusaurus-plugin-llms@npm:0.2.2":
-  version: 0.2.2
-  resolution: "docusaurus-plugin-llms@npm:0.2.2"
+"docusaurus-plugin-llms@npm:0.5.1":
+  version: 0.5.1
+  resolution: "docusaurus-plugin-llms@npm:0.5.1"
   dependencies:
-    gray-matter: "npm:^4.0.3"
-    minimatch: "npm:^9.0.3"
-    yaml: "npm:^2.8.1"
+    gray-matter: "npm:4.0.3"
+    minimatch: "npm:9.0.3"
+    yaml: "npm:2.8.1"
   peerDependencies:
     "@docusaurus/core": ^3.0.0
-  checksum: 10c0/9fced1f053fce6ef7acc44a27837b2a44f7fc2635b4b32fc02f3980e65ec587a9d0b62ff83cdadbbad6be53bc161cd4baf904d07d1d6a15630b55592d15bf553
+  checksum: 10c0/3b614c3efe3f9096e353a5bb51766e80af742812963cf411e2715146848f6220bfb323e9431a0bfa61465f0993f8917e5e27ab46560b079b8fb6ada3ffaa9583
   languageName: node
   linkType: hard
 
@@ -7592,7 +7592,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gray-matter@npm:^4.0.3":
+"gray-matter@npm:4.0.3, gray-matter@npm:^4.0.3":
   version: 4.0.3
   resolution: "gray-matter@npm:4.0.3"
   dependencies:
@@ -10114,6 +10114,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minimatch@npm:9.0.3":
+  version: 9.0.3
+  resolution: "minimatch@npm:9.0.3"
+  dependencies:
+    brace-expansion: "npm:^2.0.1"
+  checksum: 10c0/85f407dcd38ac3e180f425e86553911d101455ca3ad5544d6a7cec16286657e4f8a9aa6695803025c55e31e35a91a2252b5dc8e7d527211278b8b65b4dbd5eac
+  languageName: node
+  linkType: hard
+
 "minimatch@npm:^10.1.1":
   version: 10.1.1
   resolution: "minimatch@npm:10.1.1"
@@ -10129,15 +10138,6 @@ __metadata:
   dependencies:
     brace-expansion: "npm:^5.0.5"
   checksum: 10c0/6bb058bd6324104b9ec2f763476a35386d05079c1f5fe4fbf1f324a25237cd4534d6813ecd71f48208f4e635c1221899bef94c3c89f7df55698fe373aaae20fd
-  languageName: node
-  linkType: hard
-
-"minimatch@npm:^9.0.3":
-  version: 9.0.5
-  resolution: "minimatch@npm:9.0.5"
-  dependencies:
-    brace-expansion: "npm:^2.0.1"
-  checksum: 10c0/de96cf5e35bdf0eab3e2c853522f98ffbe9a36c37797778d2665231ec1f20a9447a7e567cb640901f89e4daaa95ae5d70c65a9e8aa2bb0019b6facbc3c0575ed
   languageName: node
   linkType: hard
 
@@ -14449,12 +14449,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.8.1":
-  version: 2.8.2
-  resolution: "yaml@npm:2.8.2"
+"yaml@npm:2.8.1":
+  version: 2.8.1
+  resolution: "yaml@npm:2.8.1"
   bin:
     yaml: bin.mjs
-  checksum: 10c0/703e4dc1e34b324aa66876d63618dcacb9ed49f7e7fe9b70f1e703645be8d640f68ab84f12b86df8ac960bac37acf5513e115de7c970940617ce0343c8c9cd96
+  checksum: 10c0/7c587be00d9303d2ae1566e03bc5bc7fe978ba0d9bf39cc418c3139d37929dfcb93a230d9749f2cb578b6aa5d9ebebc322415e4b653cb83acd8bc0bc321707f3
   languageName: node
   linkType: hard
 
