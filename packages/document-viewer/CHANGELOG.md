@@ -1,5 +1,11 @@
 # @react-native-documents/viewer
 
+## 4.0.1
+
+### Patch Changes
+
+- 923c1f8: fix: point podspec source URLs to the public repository
+
 ## 4.0.0
 
 ### Major Changes
