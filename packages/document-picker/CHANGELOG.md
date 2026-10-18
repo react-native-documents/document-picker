@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 12.0.3
+
+### Patch Changes
+
+- 47631f4: fix(android): skip explicit Kotlin plugin when AGP registers the kotlin extension
+
 ## 12.0.2
 
 ### Patch Changes
