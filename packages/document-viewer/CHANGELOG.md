@@ -1,5 +1,11 @@
 # @react-native-documents/viewer
 
+## 4.0.2
+
+### Patch Changes
+
+- 47631f4: fix(android): skip explicit Kotlin plugin when AGP registers the kotlin extension
+
 ## 4.0.1
 
 ### Patch Changes
