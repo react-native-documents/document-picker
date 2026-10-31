@@ -215,6 +215,14 @@ class RNDocumentPickerModule(reactContext: ReactApplicationContext) :
     promise.resolve(results)
   }
 
+  override fun bookmarkToURI(uri: String, promise: Promise) {
+    val decodedBytes = Base64.decode(uri, Base64.DEFAULT)
+    val decodedURI = String(decodedBytes, Charsets.UTF_8)
+    val uri = Uri.parse(decodedURI)
+
+    promise.resolve(uri.toString())
+  }
+
   @SuppressLint("WrongConstant") // in takePersistableUriPermission
   private fun processDirectoryPickerResult(intent: Intent) {
     val uri: Uri? = intent.data
