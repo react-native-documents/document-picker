@@ -45,3 +45,4 @@ export {
   releaseSecureAccess,
   type ReleaseLongTermAccessResult,
 } from './release'
+export { bookmarkToURI } from './bookmark'

@@ -99,4 +99,41 @@ import UniformTypeIdentifiers
     }
   }
 
+  @objc(bookmarkToURI:resolver:rejecter:)
+  func bookmarkToURI(_ bookmark: String,
+                    resolver resolve: @escaping RCTPromiseResolveBlock,
+                    rejecter reject: @escaping RCTPromiseRejectBlock) {
+    guard let bookmarkData = Data(base64Encoded: bookmark) else {
+      reject("RNDocPicker", "Invalid base64 bookmark data", nil)
+      return
+    }
+
+    var isStale = false
+
+    do {
+      let restoredURL = try URL(resolvingBookmarkData: bookmarkData,
+                                options: [.withoutUI],
+                                relativeTo: nil,
+                                bookmarkDataIsStale: &isStale)
+
+      if isStale {
+        // TODO: recreate bookmark from restoredURL, replace stored copy
+        reject("RNDocPicker", "Bookmark was resolved but it's stale", nil)
+        return
+      }
+
+      if restoredURL.startAccessingSecurityScopedResource() {
+        // TODO: security scope should be stopped at some point? but if it's stopped now
+        // then the URI is useless at the TypeScript end
+        
+        // defer { restoredURL.stopAccessingSecurityScopedResource() }
+
+        resolve(restoredURL.absoluteString)
+      } else {
+        reject("RNDocPicker", "Could not access the security-scoped resource", nil)
+      }
+    } catch {
+      reject("RNDocPicker", "Unable to resolve the bookmark", error)
+    }
+  }
 }
