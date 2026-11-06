@@ -18,6 +18,9 @@
     "lib",
     "android",
     "ios",
+    "Package.swift",
+    "spm-headers",
+    "spm-support",
     "windows",
     "cpp",
     "LICENSE.md",
@@ -73,6 +76,9 @@
   "peerDependencies": {
     "react": "*",
     "react-native": ">=0.79.0"
+  },
+  "swiftpmConfig": {
+    "name": "react_native_document_picker"
   },
   "jest": {
     "preset": "react-native",
