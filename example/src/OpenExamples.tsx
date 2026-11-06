@@ -12,6 +12,7 @@ import {
   types,
   releaseLongTermAccess,
   releaseSecureAccess,
+  bookmarkToURI,
 } from '@react-native-documents/picker'
 import { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -198,6 +199,17 @@ export function OpenExamples() {
               }
             } else {
               console.warn('no suitable uri found', lastResults)
+            }
+          }}
+        />
+
+        <Button
+          title="Convert longTermAccess bookmark into a URI"
+          onPress={() => {
+            if (bookmark) {
+              bookmarkToURI(bookmark.bookmark).then(console.log).catch(handleError)
+            } else {
+              console.log('No stored bookmark found')
             }
           }}
         />

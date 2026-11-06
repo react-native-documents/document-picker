@@ -48,6 +48,7 @@ function mockFactory() {
       .mockResolvedValue([mockDocPickerResponse] satisfies DocumentPickerResponse[]),
     releaseSecureAccess: jest.fn().mockResolvedValue(null),
     releaseLongTermAccess: jest.fn().mockResolvedValue([]),
+    bookmarkToURI: jest.fn().mockResolvedValue(''),
   })
   return {
     NativeDocumentPicker: mockNativeModule,

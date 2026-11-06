@@ -26,6 +26,7 @@ export interface Spec extends TurboModule {
   isKnownType(kind: string, value: string): Object
   releaseSecureAccess(uris: string[]): Promise<null>
   releaseLongTermAccess(uris: string[]): Promise<Object>
+  bookmarkToURI(bookmark: string): Promise<string>
 }
 
 export const NativeDocumentPicker = TurboModuleRegistry.getEnforcing<Spec>('RNDocumentPicker')
