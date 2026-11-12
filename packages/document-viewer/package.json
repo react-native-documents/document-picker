@@ -18,6 +18,7 @@
     "lib",
     "android",
     "ios",
+    "Package.swift",
     "windows",
     "cpp",
     "LICENSE.md",
@@ -71,6 +72,9 @@
   "peerDependencies": {
     "react": "*",
     "react-native": ">=0.79.0"
+  },
+  "swiftpmConfig": {
+    "name": "react_native_document_viewer"
   },
   "jest": {
     "preset": "react-native",
