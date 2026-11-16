@@ -1,5 +1,11 @@
 # @react-native-documents/viewer
 
+## 4.1.0
+
+### Minor Changes
+
+- 4a72b14: feat(ios): add Swift Package Manager support
+
 ## 4.0.2
 
 ### Patch Changes
