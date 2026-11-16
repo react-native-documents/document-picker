@@ -1,5 +1,11 @@
 # @react-native-documents/picker
 
+## 12.1.0
+
+### Minor Changes
+
+- fb6d9a6: feat(ios): add Swift Package Manager support
+
 ## 12.0.3
 
 ### Patch Changes
