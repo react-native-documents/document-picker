@@ -66,4 +66,8 @@ public abstract class NativeDocumentPickerSpec extends ReactContextBaseJavaModul
   @ReactMethod
   @DoNotStrip
   public abstract void releaseLongTermAccess(ReadableArray uris, Promise promise);
+
+  @ReactMethod
+  @DoNotStrip
+  public abstract void bookmarkToURI(String bookmark, Promise promise);
 }

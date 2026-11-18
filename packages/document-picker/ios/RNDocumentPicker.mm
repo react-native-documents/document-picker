@@ -92,6 +92,12 @@ RCT_EXPORT_METHOD(releaseLongTermAccess:(NSArray *)uris resolve:(RCTPromiseResol
   resolve([NSNull null]);
 }
 
+RCT_EXPORT_METHOD(bookmarkToURI:(NSString *)uri resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject) {
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [self.docSaver bookmarkToURI:uri resolve:resolve reject:reject];
+  });
+}
+
 // Thanks to this guard, we won't compile this code when we build for the old architecture.
 #ifdef RCT_NEW_ARCH_ENABLED
 
